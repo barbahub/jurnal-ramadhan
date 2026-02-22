@@ -1,6 +1,6 @@
 {
-  "name": "Jurnal Ramadan",
-  "short_name": "Ramadan",
+  "name": "Amalin - Jurnal Ramadan",
+"short_name": "Amalin",
   "description": "Aplikasi Checklist Ibadah Harian Ramadan",
   "start_url": "./index.html",
   "display": "standalone",
@@ -16,3 +16,4 @@
   ]
 
 }
+
