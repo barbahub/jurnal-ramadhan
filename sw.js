@@ -1,8 +1,8 @@
 const CACHE_NAME = 'ramadan-cache-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/manifest.json'
+  './',
+  './index.html',
+  './manifest.json'
 ];
 
 // Install Service Worker dan simpan file ke cache
@@ -23,4 +23,5 @@ self.addEventListener('fetch', event => {
         return response || fetch(event.request);
       })
   );
+
 });
