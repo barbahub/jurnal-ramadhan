@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,74 +7,226 @@
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="icon.png" type="image/png">
     <link rel="apple-touch-icon" href="icon.png">
-    <script src="https://cdn.tailwindcss.com"></script>
     <meta name="theme-color" content="#10B981">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Konfigurasi Dark Mode Tailwind
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
-<body class="bg-gray-50 font-sans text-gray-800">
+<body class="bg-gray-100 dark:bg-gray-900 font-sans text-gray-800 dark:text-gray-100 transition-colors duration-300">
 
-    <div class="max-w-md mx-auto bg-white min-h-screen shadow-lg relative">
-        <div class="bg-emerald-500 text-white p-6 rounded-b-3xl shadow-md">
-            <h1 class="text-2xl font-bold text-center">Amalin</h1>
-            <p class="text-center text-emerald-100 text-sm mt-1">Checklist Ibadah Harian</p>
+    <div id="app-container" class="max-w-md mx-auto bg-white dark:bg-gray-800 min-h-screen shadow-lg relative transition-colors duration-300">
+        
+        <div class="bg-emerald-500 dark:bg-emerald-700 text-white p-6 rounded-b-3xl shadow-md flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold">Amalin</h1>
+                <p class="text-emerald-100 dark:text-emerald-200 text-sm mt-1">Jurnal Ramadan</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="bg-white/20 px-3 py-1.5 rounded-full text-sm font-bold shadow-sm backdrop-blur-sm">
+                    <span id="streak-display">🔥 0 Hari</span>
+                </div>
+                <button id="dark-toggle" class="p-2 bg-white/20 rounded-full hover:bg-white/30 transition text-xl">
+                    🌙
+                </button>
+            </div>
         </div>
 
         <div class="p-6">
-            <h2 class="text-lg font-semibold mb-4 text-gray-700">Ibadah Hari Ini</h2>
+            <h2 class="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">Target Hari Ini</h2>
             <div class="space-y-3" id="checklist-container">
-                <label class="flex items-center p-4 bg-gray-50 rounded-xl border border-gray-100 shadow-sm cursor-pointer hover:bg-emerald-50 transition">
+                <label class="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600 shadow-sm cursor-pointer hover:bg-emerald-50 dark:hover:bg-gray-600 transition">
                     <input type="checkbox" id="puasa" class="w-6 h-6 text-emerald-500 rounded focus:ring-emerald-400 checklist-item">
                     <span class="ml-4 font-medium">Puasa Wajib</span>
                 </label>
-                <label class="flex items-center p-4 bg-gray-50 rounded-xl border border-gray-100 shadow-sm cursor-pointer hover:bg-emerald-50 transition">
+                <label class="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600 shadow-sm cursor-pointer hover:bg-emerald-50 dark:hover:bg-gray-600 transition">
                     <input type="checkbox" id="tarawih" class="w-6 h-6 text-emerald-500 rounded focus:ring-emerald-400 checklist-item">
                     <span class="ml-4 font-medium">Salat Tarawih</span>
                 </label>
-                <label class="flex items-center p-4 bg-gray-50 rounded-xl border border-gray-100 shadow-sm cursor-pointer hover:bg-emerald-50 transition">
+                <label class="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600 shadow-sm cursor-pointer hover:bg-emerald-50 dark:hover:bg-gray-600 transition">
                     <input type="checkbox" id="tadarus" class="w-6 h-6 text-emerald-500 rounded focus:ring-emerald-400 checklist-item">
                     <span class="ml-4 font-medium">Tadarus Al-Quran</span>
                 </label>
-                <label class="flex items-center p-4 bg-gray-50 rounded-xl border border-gray-100 shadow-sm cursor-pointer hover:bg-emerald-50 transition">
+                <label class="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600 shadow-sm cursor-pointer hover:bg-emerald-50 dark:hover:bg-gray-600 transition">
                     <input type="checkbox" id="sedekah" class="w-6 h-6 text-emerald-500 rounded focus:ring-emerald-400 checklist-item">
                     <span class="ml-4 font-medium">Sedekah / Berbagi</span>
                 </label>
             </div>
         </div>
 
-        <div class="p-6 mt-4">
-            <div class="bg-amber-100 p-4 rounded-xl border border-amber-200">
-                <h3 class="font-bold text-amber-800 text-sm">✨ Inspirasi Sedekah Hari Ini</h3>
-                <p class="text-xs text-amber-700 mt-1 mb-3">Lengkapi ibadah dengan berbagi takjil untuk Ojol & jalanan. Mini snack gift praktis mulai Rp3.000 aja!</p>
-                <a href="https://shopee.co.id/kadosouvenir/48306321581" target="_blank" class="block w-full text-center bg-orange-500 text-white font-semibold py-2 rounded-lg text-sm hover:bg-orange-600 transition">
+        <div class="px-6 pb-4">
+            <h2 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300">Koleksi Badge</h2>
+            <div class="flex gap-3 overflow-x-auto pb-2">
+                <div id="badge-tarawih" class="opacity-40 grayscale text-center min-w-[80px]">
+                    <div class="text-3xl bg-gray-100 dark:bg-gray-700 rounded-full w-14 h-14 flex items-center justify-center mx-auto mb-1">🕌</div>
+                    <p class="text-[10px] font-bold">Si Paling Tarawih</p>
+                </div>
+                <div id="badge-sedekah" class="opacity-40 grayscale text-center min-w-[80px]">
+                    <div class="text-3xl bg-gray-100 dark:bg-gray-700 rounded-full w-14 h-14 flex items-center justify-center mx-auto mb-1">🎁</div>
+                    <p class="text-[10px] font-bold">Sultan Sedekah</p>
+                </div>
+                <div id="badge-tadarus" class="opacity-40 grayscale text-center min-w-[80px]">
+                    <div class="text-3xl bg-gray-100 dark:bg-gray-700 rounded-full w-14 h-14 flex items-center justify-center mx-auto mb-1">📖</div>
+                    <p class="text-[10px] font-bold">KhatamSkuy</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-6 pb-4 flex gap-3">
+            <button id="btn-share" class="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-md">
+                📸 Pamerin Pahala!
+            </button>
+            <button id="btn-export" class="flex-1 bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 border border-emerald-300 dark:border-emerald-700">
+                📥 Unduh Rapor
+            </button>
+        </div>
+
+        <div class="px-6 pb-8 mt-2">
+            <div class="bg-amber-100 dark:bg-amber-900/40 p-4 rounded-xl border border-amber-200 dark:border-amber-800">
+                <h3 class="font-bold text-amber-800 dark:text-amber-400 text-sm">✨ Inspirasi Sedekah Hari Ini</h3>
+                <p class="text-xs text-amber-700 dark:text-amber-500 mt-1 mb-3">Lengkapi ibadah dengan berbagi takjil untuk Ojol & jalanan. Mini snack gift praktis mulai Rp3.000 aja!</p>
+                <a href="LINK_TOKO_SHOPEE_ANDA_DI_SINI" target="_blank" class="block w-full text-center bg-orange-500 text-white font-semibold py-2 rounded-lg text-sm hover:bg-orange-600 transition">
                     Cek Paket Takjil di Shopee
                 </a>
             </div>
         </div>
+
+        <div id="export-card" class="absolute left-[-9999px] top-0 w-[400px] bg-gradient-to-br from-emerald-400 to-teal-600 p-8 rounded-3xl text-white">
+            <h2 class="text-3xl font-bold text-center mb-2">Amalin</h2>
+            <p class="text-center text-emerald-100 mb-6 border-b border-emerald-300 pb-4">Rapor Ibadah Harian</p>
+            <div class="bg-white/20 p-4 rounded-xl backdrop-blur-sm mb-4">
+                <p class="font-bold text-lg mb-2">Pencapaianku:</p>
+                <ul id="export-list" class="space-y-2 font-medium"></ul>
+            </div>
+            <div class="text-center mt-6">
+                <span class="bg-yellow-400 text-yellow-900 px-4 py-2 rounded-full font-bold shadow-lg" id="export-streak">🔥 Streak: 0 Hari</span>
+            </div>
+            <p class="text-center text-xs text-emerald-200 mt-8 italic">"Hari ini lebih baik dari kemarin."</p>
+        </div>
+
     </div>
 
     <script>
-        // Mendaftarkan Service Worker untuk PWA
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
-                .then(() => console.log('Service Worker terdaftar!'))
-                .catch(err => console.error('Gagal mendaftar Service Worker', err));
+        // --- 1. DARK MODE TOGGLE ---
+        const darkToggle = document.getElementById('dark-toggle');
+        const htmlElement = document.documentElement;
+        
+        // Cek preferensi awal
+        if (localStorage.getItem('theme') === 'dark') {
+            htmlElement.classList.add('dark');
+            darkToggle.innerText = '☀️';
         }
 
-        // Logika Menyimpan Centang ke Local Storage
-        const checkboxes = document.querySelectorAll('.checklist-item');
-        
-        // Memuat data yang sudah tersimpan saat aplikasi dibuka
-        checkboxes.forEach(box => {
-            const savedState = localStorage.getItem(box.id);
-            if (savedState === 'true') box.checked = true;
+        darkToggle.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+            if (htmlElement.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+                darkToggle.innerText = '☀️';
+            } else {
+                localStorage.setItem('theme', 'light');
+                darkToggle.innerText = '🌙';
+            }
+        });
 
-            // Menyimpan data setiap kali dicentang
+        // --- 2. SISTEM STREAK & RESET HARIAN ---
+        const today = new Date().toDateString();
+        let lastVisit = localStorage.getItem('lastVisit');
+        let streak = parseInt(localStorage.getItem('streak') || 0);
+
+        // Jika hari berganti (bukan hari ini), reset centang tapi pertahankan/hitung streak
+        if (lastVisit !== today) {
+            if (lastVisit) {
+                // Cek apakah kemarin ada ibadah yang dicentang
+                const yesterdayCompleted = localStorage.getItem('completedYesterday') === 'true';
+                if (!yesterdayCompleted) streak = 0; // Reset jika bolong
+            }
+            
+            // Reset checklist harian
+            ['puasa', 'tarawih', 'tadarus', 'sedekah'].forEach(id => {
+                localStorage.setItem(id, 'false');
+            });
+            localStorage.setItem('completedYesterday', 'false');
+            localStorage.setItem('lastVisit', today);
+            localStorage.setItem('streak', streak);
+        }
+
+        document.getElementById('streak-display').innerText = `🔥 ${streak} Hari`;
+
+        // --- 3. CHECKLIST & BADGE SYSTEM ---
+        const checkboxes = document.querySelectorAll('.checklist-item');
+        let dailyCount = 0;
+
+        function updateBadges() {
+            // Logika sederhana: Jika sudah sering mencentang, badge menyala (hilangkan grayscale)
+            if (localStorage.getItem('tarawih_total') >= 3) document.getElementById('badge-tarawih').classList.remove('opacity-40', 'grayscale');
+            if (localStorage.getItem('sedekah_total') >= 2) document.getElementById('badge-sedekah').classList.remove('opacity-40', 'grayscale');
+            if (localStorage.getItem('tadarus_total') >= 5) document.getElementById('badge-tadarus').classList.remove('opacity-40', 'grayscale');
+        }
+
+        checkboxes.forEach(box => {
+            // Load state
+            if (localStorage.getItem(box.id) === 'true') {
+                box.checked = true;
+                dailyCount++;
+            }
+
+            // Save state & hitung total untuk Badge
             box.addEventListener('change', function() {
                 localStorage.setItem(this.id, this.checked);
+                
+                // Tambah/Kurang total ibadah untuk badge
+                let totalKey = this.id + '_total';
+                let currentTotal = parseInt(localStorage.getItem(totalKey) || 0);
+                localStorage.setItem(totalKey, this.checked ? currentTotal + 1 : currentTotal - 1);
+                
+                // Update status kegiatan hari ini untuk streak besok
+                let newDailyCount = document.querySelectorAll('.checklist-item:checked').length;
+                if (newDailyCount > 0) {
+                    localStorage.setItem('completedYesterday', 'true');
+                    if (streak === 0 && lastVisit === today) {
+                        streak = 1; // Langsung dapat 1 api jika hari ini baru mulai
+                        localStorage.setItem('streak', streak);
+                        document.getElementById('streak-display').innerText = `🔥 ${streak} Hari`;
+                    }
+                }
+                updateBadges();
             });
         });
+        updateBadges(); // Panggil saat awal load
+
+        // --- 4. EXPORT & SHARE SYSTEM (html2canvas) ---
+        function generateImage(filename) {
+            const exportCard = document.getElementById('export-card');
+            const exportList = document.getElementById('export-list');
+            exportList.innerHTML = ''; // Bersihkan list
+            
+            // Masukkan data yang dicentang hari ini
+            checkboxes.forEach(box => {
+                let li = document.createElement('li');
+                li.innerText = box.checked ? `✅ ${box.nextElementSibling.innerText}` : `❌ ${box.nextElementSibling.innerText}`;
+                exportList.appendChild(li);
+            });
+            document.getElementById('export-streak').innerText = `🔥 Streak: ${streak} Hari`;
+
+            // Proses menjadi gambar
+            html2canvas(exportCard, { scale: 2 }).then(canvas => {
+                let link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+
+        document.getElementById('btn-share').addEventListener('click', () => generateImage('Amalin-Story.png'));
+        document.getElementById('btn-export').addEventListener('click', () => generateImage('Rapor-Amalin.png'));
+
+        // Pendaftaran PWA Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
     </script>
 </body>
-
 </html>
-
-
