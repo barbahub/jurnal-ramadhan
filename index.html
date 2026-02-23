@@ -16,9 +16,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 font-sans text-gray-800 dark:text-gray-100 transition-colors duration-300">
+<body class="bg-gray-100 dark:bg-gray-900 font-sans text-gray-800 dark:text-gray-100 transition-colors duration-300 antialiased">
 
-    <div id="app-container" class="max-w-md mx-auto bg-white dark:bg-gray-800 min-h-screen shadow-lg relative overflow-hidden transition-colors duration-300">
+    <div id="app-container" class="max-w-md mx-auto bg-white dark:bg-gray-800 min-h-screen shadow-lg relative overflow-x-hidden pb-20 transition-colors duration-300">
         
         <div class="bg-emerald-500 dark:bg-emerald-700 text-white p-6 rounded-b-3xl shadow-md flex justify-between items-center relative z-10">
             <div>
@@ -35,78 +35,102 @@
             </div>
         </div>
 
-        <div class="px-6 pt-6">
-            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-xl border border-gray-100 dark:border-gray-600 shadow-sm">
-                <input type="text" id="user-name" placeholder="Nama Lengkap..." class="w-full bg-transparent border-b border-gray-300 dark:border-gray-500 focus:border-emerald-500 outline-none py-1 mb-2 font-semibold text-gray-700 dark:text-gray-200">
-                <input type="text" id="user-class" placeholder="Kelas / No. Absen..." class="w-full bg-transparent border-b border-gray-300 dark:border-gray-500 focus:border-emerald-500 outline-none py-1 text-sm text-gray-600 dark:text-gray-300">
-            </div>
-        </div>
-
-        <div class="p-6">
-            <h2 class="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">Target Hari Ini</h2>
-            <div class="space-y-3" id="checklist-container">
-                <label class="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600 shadow-sm cursor-pointer hover:bg-emerald-50 dark:hover:bg-gray-600 transition">
-                    <input type="checkbox" id="puasa" class="w-6 h-6 text-emerald-500 rounded focus:ring-emerald-400 checklist-item">
-                    <span class="ml-4 font-medium">Puasa Wajib</span>
-                </label>
-                <label class="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600 shadow-sm cursor-pointer hover:bg-emerald-50 dark:hover:bg-gray-600 transition">
-                    <input type="checkbox" id="tarawih" class="w-6 h-6 text-emerald-500 rounded focus:ring-emerald-400 checklist-item">
-                    <span class="ml-4 font-medium">Salat Tarawih</span>
-                </label>
-                <label class="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600 shadow-sm cursor-pointer hover:bg-emerald-50 dark:hover:bg-gray-600 transition">
-                    <input type="checkbox" id="tadarus" class="w-6 h-6 text-emerald-500 rounded focus:ring-emerald-400 checklist-item">
-                    <span class="ml-4 font-medium">Tadarus Al-Quran</span>
-                </label>
-                <label class="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600 shadow-sm cursor-pointer hover:bg-emerald-50 dark:hover:bg-gray-600 transition">
-                    <input type="checkbox" id="sedekah" class="w-6 h-6 text-emerald-500 rounded focus:ring-emerald-400 checklist-item">
-                    <span class="ml-4 font-medium">Sedekah / Berbagi</span>
-                </label>
-            </div>
-        </div>
-
-        <div class="px-6 pb-4">
-            <h2 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300">Koleksi Badge</h2>
-            <div class="flex gap-3 overflow-x-auto pb-2">
-                <div id="badge-tarawih" class="opacity-40 grayscale text-center min-w-[80px] transition-all duration-500">
-                    <div class="text-3xl bg-gray-100 dark:bg-gray-700 rounded-full w-14 h-14 flex items-center justify-center mx-auto mb-1 shadow-sm">🕌</div>
-                    <p class="text-[10px] font-bold">Si Paling Tarawih</p>
-                </div>
-                <div id="badge-sedekah" class="opacity-40 grayscale text-center min-w-[80px] transition-all duration-500">
-                    <div class="text-3xl bg-gray-100 dark:bg-gray-700 rounded-full w-14 h-14 flex items-center justify-center mx-auto mb-1 shadow-sm">🎁</div>
-                    <p class="text-[10px] font-bold">Sultan Sedekah</p>
-                </div>
-                <div id="badge-tadarus" class="opacity-40 grayscale text-center min-w-[80px] transition-all duration-500">
-                    <div class="text-3xl bg-gray-100 dark:bg-gray-700 rounded-full w-14 h-14 flex items-center justify-center mx-auto mb-1 shadow-sm">📖</div>
-                    <p class="text-[10px] font-bold">KhatamSkuy</p>
+        <div id="view-home" class="block animate-[fadeIn_0.3s_ease-in-out]">
+            <div class="p-6">
+                <h2 class="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">Target Hari Ini</h2>
+                <div class="space-y-3" id="checklist-container">
+                    <label class="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600 shadow-sm cursor-pointer hover:bg-emerald-50 dark:hover:bg-gray-600 transition">
+                        <input type="checkbox" id="puasa" class="w-6 h-6 text-emerald-500 rounded focus:ring-emerald-400 checklist-item">
+                        <span class="ml-4 font-medium">Puasa Wajib</span>
+                    </label>
+                    <label class="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600 shadow-sm cursor-pointer hover:bg-emerald-50 dark:hover:bg-gray-600 transition">
+                        <input type="checkbox" id="tarawih" class="w-6 h-6 text-emerald-500 rounded focus:ring-emerald-400 checklist-item">
+                        <span class="ml-4 font-medium">Salat Tarawih</span>
+                    </label>
+                    <label class="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600 shadow-sm cursor-pointer hover:bg-emerald-50 dark:hover:bg-gray-600 transition">
+                        <input type="checkbox" id="tadarus" class="w-6 h-6 text-emerald-500 rounded focus:ring-emerald-400 checklist-item">
+                        <span class="ml-4 font-medium">Tadarus Al-Quran</span>
+                    </label>
+                    <label class="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600 shadow-sm cursor-pointer hover:bg-emerald-50 dark:hover:bg-gray-600 transition">
+                        <input type="checkbox" id="sedekah" class="w-6 h-6 text-emerald-500 rounded focus:ring-emerald-400 checklist-item">
+                        <span class="ml-4 font-medium">Sedekah / Berbagi</span>
+                    </label>
                 </div>
             </div>
-        </div>
 
-        <div id="voucher-banner" class="hidden px-6 pb-4">
-            <div class="bg-gradient-to-r from-orange-400 to-rose-500 p-4 rounded-xl shadow-lg text-white text-center transform hover:scale-105 transition">
-                <h3 class="font-bold text-sm">🎉 Reward Streak 7 Hari!</h3>
-                <p class="text-xs mt-1 mb-2">Screenshot ini & tukar dengan diskon Suvenir / Takjil di Shopee!</p>
-                <div class="bg-white/20 font-mono font-bold py-1 rounded tracking-widest">AMALIN-PRO</div>
+            <div class="px-6 pb-4">
+                <h2 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300">Koleksi Badge</h2>
+                <div class="flex gap-3 overflow-x-auto pb-2">
+                    <div id="badge-tarawih" class="opacity-40 grayscale text-center min-w-[80px] transition-all duration-500">
+                        <div class="text-3xl bg-gray-100 dark:bg-gray-700 rounded-full w-14 h-14 flex items-center justify-center mx-auto mb-1 shadow-sm">🕌</div>
+                        <p class="text-[10px] font-bold">Si Paling Tarawih</p>
+                    </div>
+                    <div id="badge-sedekah" class="opacity-40 grayscale text-center min-w-[80px] transition-all duration-500">
+                        <div class="text-3xl bg-gray-100 dark:bg-gray-700 rounded-full w-14 h-14 flex items-center justify-center mx-auto mb-1 shadow-sm">🎁</div>
+                        <p class="text-[10px] font-bold">Sultan Sedekah</p>
+                    </div>
+                    <div id="badge-tadarus" class="opacity-40 grayscale text-center min-w-[80px] transition-all duration-500">
+                        <div class="text-3xl bg-gray-100 dark:bg-gray-700 rounded-full w-14 h-14 flex items-center justify-center mx-auto mb-1 shadow-sm">📖</div>
+                        <p class="text-[10px] font-bold">KhatamSkuy</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="voucher-banner" class="hidden px-6 pb-4">
+                <div class="bg-gradient-to-r from-orange-400 to-rose-500 p-4 rounded-xl shadow-lg text-white text-center transform hover:scale-105 transition">
+                    <h3 class="font-bold text-sm">🎉 Reward Streak 7 Hari!</h3>
+                    <p class="text-xs mt-1 mb-2">Screenshot ini & tukar dengan diskon Suvenir / Takjil di Shopee!</p>
+                    <div class="bg-white/20 font-mono font-bold py-1 rounded tracking-widest">AMALIN-PRO</div>
+                </div>
+            </div>
+
+            <div class="px-6 pb-4 flex gap-3">
+                <button id="btn-share" class="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-md text-sm">
+                    📸 Pamerin!
+                </button>
+                <button id="btn-export" class="flex-1 bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 border border-emerald-300 dark:border-emerald-700 text-sm">
+                    📥 Unduh Rapor
+                </button>
+            </div>
+
+            <div class="px-6 pb-4">
+                <div class="bg-amber-100 dark:bg-amber-900/40 p-4 rounded-xl border border-amber-200 dark:border-amber-800">
+                    <h3 class="font-bold text-amber-800 dark:text-amber-400 text-sm">✨ Skuy Sedekah Hari Ini</h3>
+                    <p class="text-xs text-amber-700 dark:text-amber-500 mt-1 mb-3">Lengkapi ibadah dengan berbagi takjil jalanan. Mini snack gift estetik mulai Rp3.000 aja!</p>
+                    <a href="https://shopee.co.id/kadosouvenir/50106297771" target="_blank" class="block w-full text-center bg-orange-500 text-white font-semibold py-2 rounded-lg text-sm hover:bg-orange-600 transition">
+                        Cek Etalase Shopee
+                    </a>
+                </div>
             </div>
         </div>
 
-        <div class="px-6 pb-4 flex gap-3">
-            <button id="btn-share" class="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-md text-sm">
-                📸 Pamerin!
+        <div id="view-profile" class="hidden animate-[fadeIn_0.3s_ease-in-out]">
+            <div class="p-6 text-center">
+                <div class="w-24 h-24 bg-gradient-to-tr from-emerald-400 to-teal-500 rounded-full mx-auto flex items-center justify-center shadow-lg mb-4 text-4xl text-white font-bold" id="avatar-initial">
+                    A
+                </div>
+                <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100">Profil Publik</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Identitas ini akan tampil di Rapor Ibadahmu.</p>
+                
+                <div class="bg-gray-50 dark:bg-gray-700 p-5 rounded-2xl border border-gray-100 dark:border-gray-600 shadow-sm text-left">
+                    <label class="block text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-1">Nama Lengkap</label>
+                    <input type="text" id="user-name" placeholder="Ketik nama kamu..." class="w-full bg-transparent border-b-2 border-gray-200 dark:border-gray-500 focus:border-emerald-500 outline-none py-2 mb-5 font-semibold text-gray-700 dark:text-gray-200 transition">
+                    
+                    <label class="block text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-1">Bio Singkat</label>
+                    <input type="text" id="user-bio" placeholder="Misal: Pejuang Subuh / Skenda '25" class="w-full bg-transparent border-b-2 border-gray-200 dark:border-gray-500 focus:border-emerald-500 outline-none py-2 text-sm text-gray-600 dark:text-gray-300 transition">
+                </div>
+            </div>
+        </div>
+
+        <div class="fixed bottom-0 w-full max-w-md bg-white/90 dark:bg-gray-800/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-700 flex justify-around p-2 z-50">
+            <button id="nav-btn-home" class="flex-1 py-2 flex flex-col items-center text-emerald-600 dark:text-emerald-400 transition transform scale-105">
+                <span class="text-xl mb-1">🏠</span>
+                <span class="text-[10px] font-bold">Home</span>
             </button>
-            <button id="btn-export" class="flex-1 bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 border border-emerald-300 dark:border-emerald-700 text-sm">
-                📥 Unduh Tugas
+            <button id="nav-btn-profile" class="flex-1 py-2 flex flex-col items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition">
+                <span class="text-xl mb-1">👤</span>
+                <span class="text-[10px] font-bold">Profil</span>
             </button>
-        </div>
-
-        <div class="px-6 pb-8">
-            <div class="bg-amber-100 dark:bg-amber-900/40 p-4 rounded-xl border border-amber-200 dark:border-amber-800">
-                <h3 class="font-bold text-amber-800 dark:text-amber-400 text-sm">✨ Skuy Sedekah Hari Ini</h3>
-                <p class="text-xs text-amber-700 dark:text-amber-500 mt-1 mb-3">Lengkapi ibadah dengan berbagi takjil jalanan. Mini snack gift estetik mulai Rp3.000 aja!</p>
-                <a href="LINK_TOKO_SHOPEE_ANDA_DI_SINI" target="_blank" class="block w-full text-center bg-orange-500 text-white font-semibold py-2 rounded-lg text-sm hover:bg-orange-600 transition">
-                    Cek Etalase Shopee
-                </a>
-            </div>
         </div>
 
         <div id="export-card" class="absolute left-[-9999px] top-0 w-[400px] h-[711px] bg-gradient-to-br from-emerald-500 to-teal-800 p-8 flex flex-col justify-between text-white">
@@ -117,21 +141,59 @@
 
             <div class="bg-white/10 p-6 rounded-2xl backdrop-blur-md border border-white/20 shadow-2xl">
                 <div class="border-b border-white/20 pb-4 mb-4">
-                    <h3 id="export-name" class="font-bold text-xl text-emerald-100 uppercase tracking-wide">NAMA SISWA</h3>
-                    <p id="export-class" class="text-sm text-emerald-200">Kelas / No</p>
+                    <h3 id="export-name" class="font-bold text-xl text-emerald-100 uppercase tracking-wide">NAMA PENGGUNA</h3>
+                    <p id="export-bio" class="text-sm text-emerald-200">Bio Singkat</p>
                 </div>
                 <ul id="export-list" class="space-y-3 font-medium text-lg"></ul>
             </div>
 
             <div class="text-center mb-8">
                 <span class="bg-yellow-400 text-yellow-900 px-6 py-2 rounded-full font-extrabold shadow-lg text-lg inline-block mb-6" id="export-streak">🔥 Streak: 0 Hari</span>
-                <p id="export-quote" class="text-center text-sm text-emerald-100 italic px-4 font-medium leading-relaxed">"Capek boleh, nyerah jangan. Tarawih dulu bos!"</p>
+                <p id="export-quote" class="text-center text-sm text-emerald-100 italic px-4 font-medium leading-relaxed">"Quotes hari ini"</p>
             </div>
         </div>
 
     </div>
 
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+
     <script>
+        // --- Tab Navigation Logic ---
+        const viewHome = document.getElementById('view-home');
+        const viewProfile = document.getElementById('view-profile');
+        const btnHome = document.getElementById('nav-btn-home');
+        const btnProfile = document.getElementById('nav-btn-profile');
+
+        function switchTab(tab) {
+            if (tab === 'home') {
+                viewHome.classList.remove('hidden');
+                viewHome.classList.add('block');
+                viewProfile.classList.remove('block');
+                viewProfile.classList.add('hidden');
+                
+                // Style Aktif
+                btnHome.className = "flex-1 py-2 flex flex-col items-center text-emerald-600 dark:text-emerald-400 transition transform scale-105";
+                btnProfile.className = "flex-1 py-2 flex flex-col items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition";
+            } else {
+                viewProfile.classList.remove('hidden');
+                viewProfile.classList.add('block');
+                viewHome.classList.remove('block');
+                viewHome.classList.add('hidden');
+                
+                // Style Aktif
+                btnProfile.className = "flex-1 py-2 flex flex-col items-center text-emerald-600 dark:text-emerald-400 transition transform scale-105";
+                btnHome.className = "flex-1 py-2 flex flex-col items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition";
+            }
+        }
+
+        btnHome.addEventListener('click', () => switchTab('home'));
+        btnProfile.addEventListener('click', () => switchTab('profile'));
+
         // --- Dark Mode ---
         const darkToggle = document.getElementById('dark-toggle');
         const htmlElement = document.documentElement;
@@ -148,12 +210,23 @@
 
         // --- Load & Save Profil ---
         const nameInput = document.getElementById('user-name');
-        const classInput = document.getElementById('user-class');
-        nameInput.value = localStorage.getItem('userName') || '';
-        classInput.value = localStorage.getItem('userClass') || '';
+        const bioInput = document.getElementById('user-bio');
+        const avatarInitial = document.getElementById('avatar-initial');
         
-        nameInput.addEventListener('input', () => localStorage.setItem('userName', nameInput.value));
-        classInput.addEventListener('input', () => localStorage.setItem('userClass', classInput.value));
+        nameInput.value = localStorage.getItem('userName') || '';
+        bioInput.value = localStorage.getItem('userBio') || '';
+        
+        function updateAvatar() {
+            let initial = nameInput.value ? nameInput.value.charAt(0).toUpperCase() : 'A';
+            avatarInitial.innerText = initial;
+        }
+        updateAvatar();
+
+        nameInput.addEventListener('input', () => {
+            localStorage.setItem('userName', nameInput.value);
+            updateAvatar();
+        });
+        bioInput.addEventListener('input', () => localStorage.setItem('userBio', bioInput.value));
 
         // --- Quotes Dinamis ala Gen Z ---
         const skenaQuotes = [
@@ -202,30 +275,21 @@
         function checkAllCompleted() {
             const allChecked = Array.from(checkboxes).every(box => box.checked);
             if (allChecked) {
-                confetti({
-                    particleCount: 100,
-                    spread: 70,
-                    origin: { y: 0.6 },
-                    colors: ['#10B981', '#F59E0B', '#3B82F6']
-                });
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#10B981', '#F59E0B', '#3B82F6'] });
                 if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
             }
         }
 
         checkboxes.forEach(box => {
-            // Load status centang
             if (localStorage.getItem(box.id) === 'true') box.checked = true;
 
             box.addEventListener('change', function() {
-                // Simpan status centang
                 localStorage.setItem(this.id, this.checked);
                 
-                // --- Logika Penambahan Total untuk Badge ---
                 let totalKey = this.id + '_total';
                 let currentTotal = parseInt(localStorage.getItem(totalKey) || 0);
                 localStorage.setItem(totalKey, this.checked ? currentTotal + 1 : currentTotal - 1);
                 
-                // --- Logika Streak Harian ---
                 let newDailyCount = document.querySelectorAll('.checklist-item:checked').length;
                 if (newDailyCount > 0) {
                     localStorage.setItem('completedYesterday', 'true');
@@ -236,23 +300,22 @@
                     }
                 }
                 
-                updateBadges(); // Perbarui tampilan badge
-                if(this.checked) checkAllCompleted(); // Cek apakah butuh confetti
+                updateBadges();
+                if(this.checked) checkAllCompleted();
             });
         });
         
-        updateBadges(); // Panggil saat aplikasi pertama kali dimuat
+        updateBadges();
 
         // --- Ekspor & Share ---
         function generateImage(filename) {
             const exportCard = document.getElementById('export-card');
             const exportList = document.getElementById('export-list');
             
-            // Set Profil di Gambar
+            // Mengambil Profil & Bio
             document.getElementById('export-name').innerText = nameInput.value || 'Hamba Allah';
-            document.getElementById('export-class').innerText = classInput.value || 'Data belum diisi';
+            document.getElementById('export-bio').innerText = bioInput.value || 'Orang Baik';
 
-            // Set Checklist di Gambar
             exportList.innerHTML = ''; 
             checkboxes.forEach(box => {
                 let li = document.createElement('li');
@@ -264,7 +327,6 @@
             });
             document.getElementById('export-streak').innerText = `🔥 Streak: ${streak} Hari`;
 
-            // Eksekusi Pembuatan Gambar
             html2canvas(exportCard, { scale: 2, useCORS: true }).then(canvas => {
                 let link = document.createElement('a');
                 link.download = filename;
@@ -274,9 +336,8 @@
         }
 
         document.getElementById('btn-share').addEventListener('click', () => generateImage('Amalin-Story.png'));
-        document.getElementById('btn-export').addEventListener('click', () => generateImage('Tugas-Amalin.png'));
+        document.getElementById('btn-export').addEventListener('click', () => generateImage('Rapor-Amalin.png'));
 
-        // Pendaftaran PWA
         if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
     </script>
 </body>
