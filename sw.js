@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ramadan-cache-v1';
+const CACHE_NAME = 'ramadan-cache-v2';
 const urlsToCache = [
   './',
   './index.html',
@@ -25,3 +25,4 @@ self.addEventListener('fetch', event => {
   );
 
 });
+
