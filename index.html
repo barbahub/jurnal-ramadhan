@@ -143,6 +143,21 @@
 
         <div id="view-profile" class="hidden animate-[fadeIn_0.4s_ease-out]">
             <div class="p-6">
+
+                <div class="mb-6">
+                    <button id="btn-login" class="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-100 font-bold py-3.5 rounded-2xl flex items-center justify-center gap-3 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 transition">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                        Hubungkan Akun Google
+                    </button>
+                    <button id="btn-logout" class="hidden w-full bg-rose-100 text-rose-600 font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-sm hover:bg-rose-200 transition">
+                        Keluar (Logout)
+                    </button>
+                </div>
                 <div class="bg-gray-50 dark:bg-gray-700/50 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm text-center mb-6 relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-emerald-400 to-teal-600 opacity-20"></div>
                     <div class="w-20 h-20 bg-gradient-to-tr from-emerald-500 to-teal-600 rounded-full mx-auto flex items-center justify-center shadow-lg mb-3 text-3xl text-white font-extrabold relative z-10 border-4 border-white dark:border-gray-800" id="avatar-initial">
@@ -288,7 +303,7 @@
             });
         });
 
-        // --- 4. Load & Save Profil ---
+        // --- 4. Load & Save Profil Bawaan ---
         const nameInput = document.getElementById('user-name');
         const bioInput = document.getElementById('user-bio');
         const avatarInitial = document.getElementById('avatar-initial');
@@ -297,7 +312,10 @@
         bioInput.value = localStorage.getItem('userBio') || '';
         
         function updateAvatar() {
-            avatarInitial.innerText = nameInput.value ? nameInput.value.charAt(0).toUpperCase() : 'A';
+            // Hanya update jika tidak ada gambar (belum login)
+            if(!avatarInitial.querySelector('img')){
+                avatarInitial.innerText = nameInput.value ? nameInput.value.charAt(0).toUpperCase() : 'A';
+            }
         }
         updateAvatar();
 
@@ -314,9 +332,11 @@
             "Jangan cuma push rank game, push rank pahala juga dong!",
             "Rebahan elit, puasa bolong sulit. Yuk genapin puasanya!",
             "Validasi jalur langit lebih penting dari validasi netizen.",
-            "Minimal hari ini ada satu kebaikan yang nyantol, bestie."
+            "Minimal hari ini ada satu kebaikan yang nyantol, bestie.",
+            "Tetap menyala abangku! Puasa full senyum hari ini."
         ];
-        document.getElementById('export-quote').innerText = `"${skenaQuotes[new Date().getDate() % skenaQuotes.length]}"`;
+        const quoteIndex = new Date().getDate() % skenaQuotes.length;
+        document.getElementById('export-quote').innerText = `"${skenaQuotes[quoteIndex]}"`;
 
         // --- 6. Sistem Streak & Reset Harian ---
         const today = new Date().toDateString();
@@ -345,7 +365,7 @@
             document.getElementById('voucher-banner').classList.remove('hidden');
         }
 
-        // --- 7. Badges, Checklist & Confetti (Dari kode lama Anda) ---
+        // --- 7. Badges, Checklist & Confetti ---
         const checkboxes = document.querySelectorAll('.checklist-item');
         
         function updateBadges() {
@@ -393,7 +413,7 @@
         
         updateBadges();
 
-        // --- 8. Ekspor Rapor (Dari kode lama Anda) ---
+        // --- 8. Ekspor Rapor ---
         function generateImage(filename) {
             const exportCard = document.getElementById('export-card');
             const exportList = document.getElementById('export-list');
@@ -429,6 +449,69 @@
 
         // Pendaftaran PWA
         if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+        // 🔴🔴 TUGAS ANDA: GANTI TEKS DI BAWAH INI DENGAN KODE DARI FIREBASE ANDA 🔴🔴
+        const firebaseConfig = {
+            apiKey: "AIzaSyDxabPizF0ShqaQSaJ142Rapxa9JcNq65o",
+            authDomain: "amalin-app.firebaseapp.com",
+            projectId: "amalin-app",
+            storageBucket: "amalin-app.firebasestorage.app",
+            messagingSenderId: "745183481034",
+            appId: "1:745183481034:web:23b7ba95bf02c355c8f833"
+        };
+        // 🔴🔴 BATAS EDIT 🔴🔴
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        const btnLogin = document.getElementById('btn-login');
+        const btnLogout = document.getElementById('btn-logout');
+
+        btnLogin.addEventListener('click', async () => {
+            try { await signInWithPopup(auth, provider); } 
+            catch (error) { console.error("Gagal Login:", error); alert("Ups, gagal masuk: " + error.message); }
+        });
+
+        btnLogout.addEventListener('click', async () => {
+            try { await signOut(auth); } 
+            catch (error) { console.error("Gagal Logout:", error); }
+        });
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // JIKA BERHASIL LOGIN:
+                btnLogin.classList.add('hidden');
+                btnLogout.classList.remove('hidden');
+                
+                // Ubah nama di kotak input sesuai nama Google, lalu kunci agar tak bisa diedit
+                nameInput.value = user.displayName;
+                nameInput.readOnly = true;
+                nameInput.classList.add('text-emerald-600', 'dark:text-emerald-400');
+                localStorage.setItem('userName', user.displayName); 
+                
+                // Ubah huruf inisial menjadi Foto Profil Google
+                avatarInitial.innerHTML = `<img src="${user.photoURL}" class="w-full h-full rounded-full object-cover border-4 border-white dark:border-gray-800" referrerpolicy="no-referrer" alt="Foto Profil">`;
+                
+            } else {
+                // JIKA BELUM LOGIN / LOGOUT:
+                btnLogin.classList.remove('hidden');
+                btnLogout.classList.add('hidden');
+                
+                // Buka kembali kunci nama
+                nameInput.readOnly = false;
+                nameInput.classList.remove('text-emerald-600', 'dark:text-emerald-400');
+                
+                // Kembalikan ke inisial huruf
+                let initial = nameInput.value ? nameInput.value.charAt(0).toUpperCase() : 'A';
+                avatarInitial.innerHTML = initial;
+            }
+        });
     </script>
 </body>
 </html>
