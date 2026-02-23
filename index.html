@@ -456,14 +456,25 @@
         import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
         // 🔴🔴 TUGAS ANDA: GANTI TEKS DI BAWAH INI DENGAN KODE DARI FIREBASE ANDA 🔴🔴
-        const firebaseConfig = {
-            apiKey: "AIzaSyDxabPizF0ShqaQSaJ142Rapxa9JcNq65o",
-            authDomain: "amalin-app.firebaseapp.com",
-            projectId: "amalin-app",
-            storageBucket: "amalin-app.firebasestorage.app",
-            messagingSenderId: "745183481034",
-            appId: "1:745183481034:web:23b7ba95bf02c355c8f833"
-        };
+        <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDxabPizF0ShqaQSaJ142Rapxa9JcNq65o",
+    authDomain: "amalin-app.firebaseapp.com",
+    projectId: "amalin-app",
+    storageBucket: "amalin-app.firebasestorage.app",
+    messagingSenderId: "745183481034",
+    appId: "1:745183481034:web:23b7ba95bf02c355c8f833"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+</script>
         // 🔴🔴 BATAS EDIT 🔴🔴
 
         const app = initializeApp(firebaseConfig);
@@ -515,3 +526,4 @@
     </script>
 </body>
 </html>
+
