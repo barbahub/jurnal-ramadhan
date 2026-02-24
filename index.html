@@ -99,12 +99,15 @@
 
         <div id="view-target" class="hidden animate-[fadeIn_0.4s_ease-out] flex-1">
             <div class="p-5">
+                
                 <div id="gacha-container" class="bg-gradient-to-r from-rose-500 to-pink-600 p-6 rounded-3xl shadow-lg text-white mb-6 relative overflow-hidden text-center cursor-pointer transform hover:scale-[1.02] transition shadow-rose-500/30">
                     <div class="absolute -left-4 -bottom-4 text-7xl opacity-20 transform -rotate-12">🎁</div>
                     <h3 class="font-black text-lg mb-1 drop-shadow-md relative z-10">Gacha Kebaikan Hari Ini</h3>
-                    <p class="text-xs text-rose-100 font-medium mb-3 relative z-10">Tap kotak ini untuk undi misi rahasia! (+50 Koin)</p>
+                    <p class="text-xs text-rose-100 font-medium mb-3 relative z-10" id="gacha-subtitle">Tap kotak ini untuk undi misi rahasia! (+50 Koin)</p>
                     <div id="gacha-result" class="hidden bg-white/20 backdrop-blur-md p-3 rounded-2xl border border-white/30 text-sm font-bold mt-2 relative z-10"></div>
                 </div>
+
+                <div id="flash-quest-container"></div>
 
                 <div class="flex justify-between items-end mb-3">
                     <h2 class="text-lg font-extrabold text-gray-800 dark:text-gray-100">Daily Quests 🎯</h2>
@@ -151,6 +154,14 @@
                     </label>
                 </div>
 
+                <div class="bg-amber-100 dark:bg-amber-900/40 p-5 rounded-2xl border border-amber-200 dark:border-amber-800 mb-6">
+                    <h3 class="font-bold text-amber-800 dark:text-amber-400 text-sm mb-1 flex items-center gap-1">✨ Inspirasi Sedekah</h3>
+                    <p class="text-xs text-amber-700 dark:text-amber-500 mb-4 leading-relaxed">Lengkapi ibadah dengan berbagi takjil untuk Ojol & jalanan. Ada mini snack hampers gift praktis mulai Rp3.000 aja!</p>
+                    <a href="https://shopee.co.id/kadosouvenir/50106297771" target="_blank" class="block w-full text-center bg-orange-500 text-white font-bold py-2.5 rounded-xl text-sm hover:bg-orange-600 transition shadow-md shadow-orange-500/20">
+                        Cek Paket Takjil di Shopee
+                    </a>
+                </div>
+
                 <div class="flex gap-3 mb-6">
                     <button id="btn-share" class="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3.5 rounded-2xl transition shadow-md shadow-indigo-500/30 text-sm">📸 Story Rapor</button>
                     <button id="btn-export" class="flex-1 bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 font-bold py-3.5 rounded-2xl transition border border-emerald-300 text-sm">📥 Unduh Rapor</button>
@@ -195,22 +206,6 @@
                             <div class="bg-gradient-to-r from-emerald-400 to-teal-500 h-3.5 rounded-full transition-all duration-1000 ease-out shadow-md" id="exp-bar" style="width: 0%"></div>
                         </div>
                         <p class="mt-3 text-xs font-bold text-gray-400 dark:text-gray-500" id="display-title-bot">Gelar: Newbie Tobat</p>
-                    </div>
-                </div>
-
-                <h2 class="text-sm font-bold mb-3 text-gray-500 dark:text-gray-400 uppercase tracking-wider">Rak Trofi Badge</h2>
-                <div class="flex gap-3 overflow-x-auto pb-4 mb-4">
-                    <div id="badge-tarawih" class="opacity-40 grayscale text-center min-w-[85px] transition-all duration-500">
-                        <div class="text-3xl bg-white dark:bg-gray-800 rounded-2xl w-16 h-16 flex items-center justify-center mx-auto mb-2 shadow-sm border border-gray-100 dark:border-gray-700">🕌</div>
-                        <p class="text-[10px] font-bold text-gray-600 dark:text-gray-300">Si Paling Tarawih</p>
-                    </div>
-                    <div id="badge-sedekah" class="opacity-40 grayscale text-center min-w-[85px] transition-all duration-500">
-                        <div class="text-3xl bg-white dark:bg-gray-800 rounded-2xl w-16 h-16 flex items-center justify-center mx-auto mb-2 shadow-sm border border-gray-100 dark:border-gray-700">🎁</div>
-                        <p class="text-[10px] font-bold text-gray-600 dark:text-gray-300">Sultan Sedekah</p>
-                    </div>
-                    <div id="badge-tadarus" class="opacity-40 grayscale text-center min-w-[85px] transition-all duration-500">
-                        <div class="text-3xl bg-white dark:bg-gray-800 rounded-2xl w-16 h-16 flex items-center justify-center mx-auto mb-2 shadow-sm border border-gray-100 dark:border-gray-700">📖</div>
-                        <p class="text-[10px] font-bold text-gray-600 dark:text-gray-300">KhatamSkuy</p>
                     </div>
                 </div>
 
@@ -262,7 +257,22 @@
     </style>
 
     <script>
-        // --- Vanilla JS UI Logic ---
+        // --- 1. DARK MODE GRATIS ---
+        const darkToggle = document.getElementById('dark-toggle');
+        const htmlElement = document.documentElement;
+        // Pengecekan status dark mode di awal
+        if (localStorage.getItem('theme') === 'dark') { 
+            htmlElement.classList.add('dark'); 
+            darkToggle.innerText = '☀️'; 
+        }
+        // Fungsi klik ganti tema
+        darkToggle.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+            localStorage.setItem('theme', htmlElement.classList.contains('dark') ? 'dark' : 'light');
+            darkToggle.innerText = htmlElement.classList.contains('dark') ? '☀️' : '🌙';
+        });
+
+        // --- 2. TAB NAVIGASI ---
         const views = { home: document.getElementById('view-home'), target: document.getElementById('view-target'), profile: document.getElementById('view-profile') };
         const btns = { home: document.getElementById('nav-btn-home'), target: document.getElementById('nav-btn-target'), profile: document.getElementById('nav-btn-profile') };
         const activeClass = "flex-1 py-2.5 flex flex-col items-center text-emerald-600 dark:text-emerald-400 transition transform scale-105 bg-emerald-50 dark:bg-emerald-900/30 rounded-3xl";
@@ -277,6 +287,7 @@
         btns.target.addEventListener('click', () => switchTab('target'));
         btns.profile.addEventListener('click', () => switchTab('profile'));
 
+        // --- 3. PROFIL & LEVELING LOKAL ---
         const nameInput = document.getElementById('user-name'); const bioInput = document.getElementById('user-bio');
         nameInput.value = localStorage.getItem('userName') || ''; bioInput.value = localStorage.getItem('userBio') || '';
         nameInput.addEventListener('input', () => { localStorage.setItem('userName', nameInput.value); });
@@ -308,7 +319,122 @@
         }
         updateStatsUI();
 
-        // Gacha & Misi Checklists
+        // --- 4. GACHA KEBAIKAN (DIPERBAIKI & DITAMBAH 25 MISI) ---
+        const gachaBtn = document.getElementById('gacha-container');
+        const gachaRes = document.getElementById('gacha-result');
+        const gachaSubtitle = document.getElementById('gacha-subtitle');
+        
+        const gachaQuests25 = [
+            "Traktir teman minuman hari ini", "Senyum tulus ke 3 orang asing", "Bantu ortu membereskan rumah", 
+            "Sedekah subuh Rp2.000", "Baca Al-Kahfi 10 ayat pertama", "Berbagi makanan ke tetangga", 
+            "Pungut 3 sampah di jalanan", "Beri rating bintang 5 ke kurir", "Maafkan kesalahan orang hari ini", 
+            "Baca istighfar 100x hari ini", "Telepon/chat keluarga yang jauh", "Tahan amarah saat sedang kesal", 
+            "Beri komentar positif di medsos", "Berdoa untuk kebaikan sahabat", "Rapikan sandal/sepatu di masjid", 
+            "Isi kotak amal terdekat", "Ucapkan terima kasih ke satpam", "Baca sholawat nabi 100x", 
+            "Niatkan puasa sunnah untuk besok", "Bagikan ilmu bermanfaat di WA", "Matikan air/lampu yang tak terpakai", 
+            "Beri makan hewan jalanan", "Selesaikan tugas/kerjaan lebih awal", "Tabung sebagian uang jajan hari ini", 
+            "Dengarkan curhat teman dengan baik"
+        ];
+        
+        let hasGachaToday = localStorage.getItem('gachaDate') === new Date().toDateString();
+        
+        function renderGachaResult(questText) {
+            gachaRes.innerHTML = `<label class="flex items-center justify-between cursor-pointer group mt-2 p-3 bg-white/30 rounded-xl border border-white/40 shadow-sm"><div class="flex items-center gap-3"><input type="checkbox" id="quest-gacha" class="w-6 h-6 text-rose-500 rounded checklist-item" data-exp="50"><span class="font-bold text-sm text-white drop-shadow-md text-left leading-tight">${questText}</span></div></label>`;
+            gachaRes.classList.remove('hidden');
+            gachaSubtitle.classList.add('hidden');
+        }
+
+        if(hasGachaToday) {
+            renderGachaResult(localStorage.getItem('gachaMission'));
+        }
+
+        gachaBtn.addEventListener('click', () => {
+            if(!hasGachaToday) {
+                let randomQuest = gachaQuests25[Math.floor(Math.random() * gachaQuests25.length)];
+                localStorage.setItem('gachaDate', new Date().toDateString());
+                localStorage.setItem('gachaMission', randomQuest);
+                
+                renderGachaResult(randomQuest);
+                confetti({particleCount: 80, spread: 60, colors: ['#fb7185', '#f43f5e', '#ffffff']});
+                hasGachaToday = true;
+                attachChecklistListeners(); // Ikat event listener ke checkbox gacha baru
+            }
+        });
+
+        // --- 5. FLASH QUEST DINAMIS (25 MISI ROTASI HARIAN) ---
+        const flashQuests25 = [
+            { id: "fq-1", title: "Pejuang Subuh Berjamaah", exp: 50, start: 4, end: 6 },
+            { id: "fq-2", title: "Sholat Dhuha 2 Rakaat", exp: 40, start: 7, end: 11 },
+            { id: "fq-3", title: "Sedekah Makan Siang", exp: 30, start: 11, end: 13 },
+            { id: "fq-4", title: "Sholat Ashar di Awal Waktu", exp: 40, start: 15, end: 16 },
+            { id: "fq-5", title: "Mengaji Ba'da Maghrib", exp: 50, start: 18, end: 19 },
+            { id: "fq-6", title: "Sholat Isya Berjamaah", exp: 50, start: 19, end: 21 },
+            { id: "fq-7", title: "Sholat Tahajud Malam", exp: 60, start: 2, end: 4 },
+            { id: "fq-8", title: "Bersih-bersih Kamar Pagi", exp: 20, start: 5, end: 8 },
+            { id: "fq-9", title: "Jalan Sehat & Berzikir", exp: 30, start: 6, end: 8 },
+            { id: "fq-10", title: "Dengar Podcast Islami", exp: 20, start: 12, end: 14 },
+            { id: "fq-11", title: "Istirahat Siang (Qailulah)", exp: 20, start: 13, end: 14 },
+            { id: "fq-12", title: "Sholat Rawatib Qobliyah Dzuhur", exp: 40, start: 11, end: 13 },
+            { id: "fq-13", title: "Baca Buku Islami Sore", exp: 30, start: 16, end: 17 },
+            { id: "fq-14", title: "Menyiapkan Sarapan Keluarga", exp: 40, start: 5, end: 7 },
+            { id: "fq-15", title: "Sholat Witir Sebelum Tidur", exp: 50, start: 21, end: 23 },
+            { id: "fq-16", title: "Bersyukur & Jurnal Malam", exp: 30, start: 20, end: 22 },
+            { id: "fq-17", title: "Infaq Subuh Online", exp: 50, start: 4, end: 6 },
+            { id: "fq-18", title: "Zikir Sore Petang", exp: 40, start: 15, end: 18 },
+            { id: "fq-19", title: "Baca Al-Waqiah Sore", exp: 40, start: 15, end: 17 },
+            { id: "fq-20", title: "Berbagi Cemilan Sore", exp: 40, start: 15, end: 17 },
+            { id: "fq-21", title: "Mendoakan Ortu Ba'da Maghrib", exp: 30, start: 18, end: 20 },
+            { id: "fq-22", title: "Muhasabah Diri Malam", exp: 30, start: 21, end: 23 },
+            { id: "fq-23", title: "Membantu Pekerjaan Dapur", exp: 30, start: 16, end: 18 },
+            { id: "fq-24", title: "Mengulang Hafalan Surah", exp: 40, start: 6, end: 9 },
+            { id: "fq-25", title: "Membaca Surah Al-Mulk", exp: 40, start: 19, end: 22 }
+        ];
+
+        // Pilih misi berdasarkan hari ke-berapa dalam setahun ini
+        const today = new Date();
+        const startOfYear = new Date(today.getFullYear(), 0, 0);
+        const dayOfYear = Math.floor((today - startOfYear) / (1000 * 60 * 60 * 24));
+        
+        const todayFlash = flashQuests25[dayOfYear % flashQuests25.length];
+        const currentHour = today.getHours();
+        
+        // Cek apakah jam saat ini masuk dalam jendela waktu Flash Quest
+        const isFlashActive = currentHour >= todayFlash.start && currentHour <= todayFlash.end;
+        const flashStatusText = isFlashActive ? "🟢 BUKA SEKARANG" : `${todayFlash.start.toString().padStart(2, '0')}:00 - ${todayFlash.end.toString().padStart(2, '0')}:00`;
+        const flashStatusClass = isFlashActive ? "text-emerald-500" : "text-gray-500";
+
+        // Render HTML Flash Quest Dinamis
+        document.getElementById('flash-quest-container').innerHTML = `
+            <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm mb-6 flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="bg-red-500 text-white text-[9px] font-black px-2 py-0.5 rounded-md animate-pulse">FLASH QUEST</span>
+                        <span class="text-xs font-bold ${flashStatusClass}" id="flash-time-status">${flashStatusText}</span>
+                    </div>
+                    <p class="font-bold text-sm dark:text-gray-200">${todayFlash.title}</p>
+                    <p class="text-xs text-yellow-500 font-bold">+${todayFlash.exp} Koin & EXP</p>
+                </div>
+                <label class="relative flex items-center justify-center cursor-pointer group" id="flash-quest-label">
+                    <input type="checkbox" id="${todayFlash.id}" class="w-8 h-8 text-emerald-500 rounded-xl focus:ring-emerald-400 checklist-item peer" ${isFlashActive ? '' : 'disabled'} data-exp="${todayFlash.exp}">
+                    <div class="absolute text-gray-400 peer-disabled:block hidden pointer-events-none text-xl">🔒</div>
+                </label>
+            </div>
+        `;
+
+
+        // --- 6. CHECKLIST LOGIC & STREAK ---
+        const todayStr = new Date().toDateString();
+        let lastVisitStr = localStorage.getItem('lastVisit');
+        let streakNum = parseInt(localStorage.getItem('streak') || 0);
+
+        if (lastVisitStr !== todayStr) {
+            if (lastVisitStr && localStorage.getItem('completedYesterday') !== 'true') streakNum = 0;
+            // Reset checklist reguler
+            ['quest-puasa', 'quest-tarawih', 'quest-tadarus', 'quest-sedekah', 'quest-gacha', todayFlash.id].forEach(id => { localStorage.setItem(id, 'false'); });
+            localStorage.setItem('completedYesterday', 'false'); localStorage.setItem('lastVisit', todayStr); localStorage.setItem('streak', streakNum);
+        }
+        document.getElementById('streak-display').innerText = `🔥 ${streakNum}`;
+
         function attachChecklistListeners() {
             document.querySelectorAll('.checklist-item').forEach(box => {
                 if (localStorage.getItem(box.id) === 'true') box.checked = true;
@@ -335,14 +461,24 @@
                     localStorage.setItem('totalKoin', totalKoin);
                     document.getElementById('koin-display').innerText = totalKoin;
                     updateStatsUI();
+
+                    // Streak Check
+                    let anyChecked = document.querySelectorAll('.checklist-item:checked').length > 0;
+                    if (anyChecked) {
+                        localStorage.setItem('completedYesterday', 'true');
+                        if (streakNum === 0 && lastVisitStr === todayStr) {
+                            streakNum = 1; localStorage.setItem('streak', streakNum); document.getElementById('streak-display').innerText = `🔥 ${streakNum}`;
+                        }
+                    }
                 });
             });
         }
-        attachChecklistListeners();
+        // Panggil setelah HTML dirender
+        attachChecklistListeners(); 
 
-        // --- SISTEM MARKETPLACE ---
+        // --- 7. SISTEM MARKETPLACE TOKO ---
         const shopCatalog = [
-            { id: "theme_dark_pro", name: "Dark Mode Keren", price: 300, icon: "🌙" },
+            { id: "badge_sultan", name: "Badge Sultan 👑", price: 300, icon: "👑" }, // Menggantikan Dark Mode karena DM sudah gratis
             { id: "confetti_gold", name: "Confetti Emas", price: 500, icon: "✨" },
             { id: "voucher_snack", name: "Voucher Snack", price: 5000, icon: "🎁" }
         ];
@@ -375,7 +511,6 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        // Ganti onSnapshot dengan getDoc/getDocs untuk Efisiensi
         import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, increment, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-messaging.js";
 
@@ -398,7 +533,7 @@
         const btnLogout = document.getElementById('btn-logout');
         const nameInputFire = document.getElementById('user-name');
         
-        // --- 1. FITUR LEADERBOARD MINGGUAN (ON-DEMAND / HEMAT KUOTA) ---
+        // --- LEADERBOARD MINGGUAN (ON-DEMAND) ---
         const leaderboardContainer = document.getElementById('leaderboard-container');
         const btnRefreshLeaderboard = document.getElementById('btn-refresh-leaderboard');
         
@@ -448,24 +583,17 @@
                 console.error(e);
             }
         }
-        
-        // Panggil hanya saat tombol refresh ditekan
         btnRefreshLeaderboard.addEventListener('click', fetchLeaderboard);
 
-        // Sinkronisasi EXP ke Firebase
         window.syncExpToFirebase = async (expVal) => {
             const user = auth.currentUser;
             if(!user) return;
             try {
                 const userRef = doc(db, "users", user.uid);
-                await updateDoc(userRef, {
-                    total_exp: increment(expVal),
-                    weekly_exp: increment(expVal) 
-                });
+                await updateDoc(userRef, { total_exp: increment(expVal), weekly_exp: increment(expVal) });
             } catch (e) { console.error("Gagal sync EXP:", e); }
         };
 
-        // Tombol Reset Peringkat (Khusus Admin)
         const btnAdminReset = document.getElementById('btn-admin-reset');
         btnAdminReset.addEventListener('click', async () => {
             if(confirm("Yakin mereset poin mingguan SEMUA user?")) {
@@ -478,35 +606,32 @@
                     });
                     await Promise.all(promises);
                     alert("Leaderboard berhasil di-reset!");
-                    fetchLeaderboard(); // Refresh UI
+                    fetchLeaderboard(); 
                 } catch(e) { alert("Error: " + e.message); }
                 btnAdminReset.innerText = "⚠️ Reset";
             }
         });
 
-
-        // --- 2. FITUR MISI GLOBAL (BATCHING & DINAMIS 100 MISI) ---
+        // --- MISI GLOBAL (BATCHING & DINAMIS) ---
         const daftarMisiGlobal = [
             { title: "10.000 Centang Ibadah Bersama", target: 10000 },
             { title: "5.000 Sholat Subuh Berjamaah", target: 5000 },
             { title: "25.000 Halaman Al-Quran Dibaca", target: 25000 },
             { title: "15.000 Misi Sedekah Selesai", target: 15000 }
-            // Tambah sampai 100 misi di sini...
         ];
 
-        const tglRilis = new Date("2026-02-01T00:00:00"); // Ganti ke Tgl Rilis Asli
+        const tglRilis = new Date("2026-02-01T00:00:00"); 
         const tglHariIni = new Date();
-        const selisihMinggu = Math.floor(Math.max(0, tglHariIni - tglRilis) / (1000 * 60 * 60 * 24 * 7));
-        const misiSaatIni = daftarMisiGlobal[selisihMinggu % daftarMisiGlobal.length];
-        const nomorMinggu = selisihMinggu + 1; 
+        const selisihMingguGlobal = Math.floor(Math.max(0, tglHariIni - tglRilis) / (1000 * 60 * 60 * 24 * 7));
+        const misiSaatIni = daftarMisiGlobal[selisihMingguGlobal % daftarMisiGlobal.length];
+        const nomorMinggu = selisihMingguGlobal + 1; 
 
         document.getElementById('global-mission-title').innerText = misiSaatIni.title;
         const globalMisiRef = doc(db, "global_stats", `misi_minggu_ke_${nomorMinggu}`);
         
-        let pendingGlobalPoints = 0; // Tumpukan poin lokal (Batch)
+        let pendingGlobalPoints = 0; 
         let isSyncingGlobal = false;
 
-        // Fungsi Tarik Data Progress (On-Demand)
         async function fetchGlobalProgress() {
             try {
                 const docSnap = await getDoc(globalMisiRef);
@@ -529,20 +654,18 @@
             } catch (e) { console.error("Gagal tarik progress:", e); }
         }
 
-        // Kumpulkan poin di lokal dulu
         window.addPendingGlobalMission = (poin) => {
             if(!auth.currentUser) return;
             pendingGlobalPoints += poin;
             document.getElementById('sync-status').innerText = `Tertunda: ${pendingGlobalPoints} centang. Menunggu sinkronisasi...`;
         };
 
-        // Fungsi tembak borongan ke Firebase
         async function syncGlobalMissionBatch() {
             if (pendingGlobalPoints === 0 || isSyncingGlobal || !auth.currentUser) return;
             
             isSyncingGlobal = true;
             const poinToSync = pendingGlobalPoints;
-            pendingGlobalPoints = 0; // Reset lokal
+            pendingGlobalPoints = 0; 
             document.getElementById('sync-status').innerText = "Sinkronisasi ke pusat... 📡";
             
             try {
@@ -553,28 +676,24 @@
                 }, { merge: true });
                 
                 document.getElementById('sync-status').innerText = "✅ Tersinkronisasi!";
-                fetchGlobalProgress(); // Update UI Progress bar
+                fetchGlobalProgress(); 
             } catch (error) {
-                // Kembalikan poin jika gagal
                 pendingGlobalPoints += poinToSync; 
                 document.getElementById('sync-status').innerText = "❌ Gagal jaringan. Akan dicoba lagi.";
             } finally {
                 isSyncingGlobal = false;
             }
         }
-
-        // Sinkronisasi otomatis setiap 10 detik JIKA ada poin tertunda
         setInterval(syncGlobalMissionBatch, 10000);
 
 
-        // --- 3. FITUR PUSH NOTIFICATION (FCM) ---
+        // --- NOTIFIKASI PUSH ---
         const btnEnableNotif = document.getElementById('btn-enable-notif');
         async function requestNotificationPermission() {
             try {
                 const permission = await Notification.requestPermission();
                 if (permission === 'granted') {
-                    // GANTI DENGAN VAPID KEY KAMU DARI FIREBASE CONSOLE
-                    const token = await getToken(messaging, { vapidKey: 'BM7njp-Zw-HeqIVGyPBz59K3-8PYqS69DKDPFLZGGqHicLZMcM1TXn0wN3n-DZUx1bUDnUImxy74VnAFPMGNOBI' });
+                    const token = await getToken(messaging, { vapidKey: 'GANTI_DENGAN_VAPID_KEY_FIREBASE_KAMU' });
                     if (token) {
                         if(auth.currentUser) await updateDoc(doc(db, "users", auth.currentUser.uid), { fcmToken: token });
                         btnEnableNotif.classList.add('hidden');
@@ -590,7 +709,7 @@
         });
 
 
-        // --- 4. AUTH & INIT DATA ---
+        // --- AUTH & INIT DATA ---
         btnLogin.addEventListener('click', async () => {
             try { await signInWithPopup(auth, provider); } catch (e) { alert(e.message); }
         });
@@ -601,10 +720,8 @@
                 btnLogin.classList.add('hidden'); btnLogout.classList.remove('hidden');
                 nameInputFire.value = user.displayName; nameInputFire.readOnly = true;
                 
-                // Jika UID adalah Admin, tampilkan tombol Reset
-                if(user.uid === "BuhxemHnifSfdrgtr9cvHbDGh643") {
-                    btnAdminReset.classList.remove('hidden');
-                    btnAdminReset.classList.add('block');
+                if(user.uid === "UID_ADMIN_KAMU_DISINI") {
+                    btnAdminReset.classList.remove('hidden'); btnAdminReset.classList.add('block');
                 }
                 
                 if(Notification.permission !== 'granted') btnEnableNotif.classList.remove('hidden');
@@ -623,18 +740,15 @@
                     }, { merge: true });
                 }
 
-                // Tarik data saat baru login
                 fetchLeaderboard();
                 fetchGlobalProgress();
 
             } else {
                 btnLogin.classList.remove('hidden'); btnLogout.classList.add('hidden');
-                btnAdminReset.classList.add('hidden');
-                btnEnableNotif.classList.add('hidden');
+                btnAdminReset.classList.add('hidden'); btnEnableNotif.classList.add('hidden');
                 nameInputFire.readOnly = false;
             }
         });
     </script>
 </body>
 </html>
-
