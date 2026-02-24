@@ -663,17 +663,27 @@
             updateHeatmap();
         }
 
-        // --- 10. ATTACH LISTENERS (CHECKLIST PERMANEN) ---
+        // --- 10. ATTACH LISTENERS (CHECKLIST PERMANEN & RESET HARIAN TASBIH) ---
         const todayStr = new Date().toDateString();
         let lastVisitStr = localStorage.getItem('lastVisit');
         let streakNum = parseInt(localStorage.getItem('streak') || 0);
 
         if (lastVisitStr !== todayStr) {
             if (lastVisitStr && localStorage.getItem('completedYesterday') !== 'true') streakNum = 0;
+            
+            // 1. Reset Checklist Harian
             let resets = ['quest-puasa', 'quest-tarawih', 'quest-tadarus', 'quest-sedekah', 'quest-gacha', todayFlash.id];
             sholatWajib.forEach(q => resets.push(q.id));
             resets.forEach(id => localStorage.setItem(id, 'false'));
-            localStorage.setItem('completedYesterday', 'false'); localStorage.setItem('lastVisit', todayStr); localStorage.setItem('streak', streakNum);
+            
+            // 2. Reset Tasbih Harian menjadi 0
+            ['tasbih_subhanallah', 'tasbih_alhamdulillah', 'tasbih_allahuakbar', 'tasbih_custom'].forEach(t_id => {
+                localStorage.setItem(t_id, 0);
+            });
+
+            localStorage.setItem('completedYesterday', 'false'); 
+            localStorage.setItem('lastVisit', todayStr); 
+            localStorage.setItem('streak', streakNum);
         }
         document.getElementById('streak-display').innerText = `🔥 ${streakNum}`;
 
