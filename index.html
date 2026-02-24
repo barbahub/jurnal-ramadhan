@@ -118,6 +118,34 @@
 
                 <div id="flash-quest-container"></div>
 
+                <div class="bg-gradient-to-br from-teal-500 to-emerald-600 rounded-3xl p-6 shadow-lg text-white mb-6 text-center transform transition hover:scale-[1.01]">
+                    <h3 class="font-black text-lg mb-1 flex justify-center items-center gap-2">
+                        <span>📿</span> Smart Tasbih
+                    </h3>
+                    <p class="text-[10px] text-teal-100 mb-3 font-medium">Dapat +10 Koin tiap 33x, dan +500 EXP tiap 1000x!</p>
+                    
+                    <select id="tasbih-type" class="bg-white/20 text-white font-bold text-sm rounded-xl px-4 py-2 mb-5 outline-none border border-white/30 backdrop-blur-sm cursor-pointer appearance-none text-center">
+                        <option value="subhanallah" class="text-gray-800">Subhanallah</option>
+                        <option value="alhamdulillah" class="text-gray-800">Alhamdulillah</option>
+                        <option value="allahuakbar" class="text-gray-800">Allahu Akbar</option>
+                        <option value="custom" class="text-gray-800">Custom (Bebas)</option>
+                    </select>
+
+                    <div class="flex justify-center mb-4">
+                        <button id="btn-tasbih" class="w-32 h-32 rounded-full bg-white/10 border-[6px] border-white/30 flex items-center justify-center text-5xl font-black shadow-inner active:scale-90 active:bg-white/20 transition-all backdrop-blur-md">
+                            <span id="tasbih-counter">0</span>
+                        </button>
+                    </div>
+                    
+                    <div class="w-full bg-black/20 rounded-full h-2.5 overflow-hidden shadow-inner">
+                        <div id="tasbih-bar" class="bg-gradient-to-r from-yellow-300 to-yellow-500 h-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                    <div class="flex justify-between text-[9px] font-bold text-teal-100 mt-1.5">
+                        <span id="tasbih-reset" class="cursor-pointer hover:text-white transition">↻ Reset</span>
+                        <span>Target: <span id="tasbih-target-text">33</span></span>
+                    </div>
+                </div>
+
                 <div class="flex justify-between items-end mb-3">
                     <h2 class="text-lg font-extrabold text-gray-800 dark:text-gray-100">Sunnah & Daily Habits 🎯</h2>
                 </div>
@@ -252,6 +280,18 @@
                         <div class="text-3xl bg-white dark:bg-gray-800 rounded-2xl w-16 h-16 flex items-center justify-center mx-auto mb-2 shadow-sm border border-gray-100 dark:border-gray-700">📖</div>
                         <p class="text-[10px] font-bold text-gray-600 dark:text-gray-300">KhatamSkuy</p>
                     </div>
+                    <div id="badge-tahajud" class="opacity-40 grayscale text-center min-w-[85px] transition-all duration-500">
+                        <div class="text-3xl bg-white dark:bg-gray-800 rounded-2xl w-16 h-16 flex items-center justify-center mx-auto mb-2 shadow-sm border border-gray-100 dark:border-gray-700">🌌</div>
+                        <p class="text-[10px] font-bold text-gray-600 dark:text-gray-300">Ahli Tahajud</p>
+                    </div>
+                    <div id="badge-tasbih" class="opacity-40 grayscale text-center min-w-[85px] transition-all duration-500">
+                        <div class="text-3xl bg-white dark:bg-gray-800 rounded-2xl w-16 h-16 flex items-center justify-center mx-auto mb-2 shadow-sm border border-gray-100 dark:border-gray-700">📿</div>
+                        <p class="text-[10px] font-bold text-gray-600 dark:text-gray-300">Master Dzikir</p>
+                    </div>
+                    <div id="badge-habit" class="opacity-40 grayscale text-center min-w-[85px] transition-all duration-500">
+                        <div class="text-3xl bg-white dark:bg-gray-800 rounded-2xl w-16 h-16 flex items-center justify-center mx-auto mb-2 shadow-sm border border-gray-100 dark:border-gray-700">🔥</div>
+                        <p class="text-[10px] font-bold text-gray-600 dark:text-gray-300">Habit Builder</p>
+                    </div>
                 </div>
 
                 <div class="border-t-2 border-dashed border-gray-200 dark:border-gray-700 pt-5 mb-6">
@@ -356,7 +396,7 @@
         let totalKoin = parseInt(localStorage.getItem('totalKoin') || 0);
         document.getElementById('koin-display').innerText = totalKoin;
         
-        function calculateLevel(exp) { let lvl = Math.floor(exp / 100) + 1; return lvl > 50 ? 50 : lvl; }
+        function calculateLevel(exp) { return Math.floor(exp / 100) + 1 > 50 ? 50 : Math.floor(exp / 100) + 1; }
         function getTitle(lvl) {
             if(lvl < 5) return "Newbie Tobat";
             if(lvl < 10) return "Skena Masjid";
@@ -387,7 +427,7 @@
         }
         updateStatsUI();
 
-        // --- 5. RENDER SHOLAT WAJIB ---
+        // --- 5. RENDER SHOLAT WAJIB (WAKTU KETAT & PERMANEN) ---
         const sholatWajib = [
             { id: "sw-subuh", title: "Sholat Subuh", start: 4, end: 6, exp: 50, type: "ketuhanan" },
             { id: "sw-dhuhur", title: "Sholat Dhuhur", start: 11, end: 15, exp: 50, type: "ketuhanan" },
@@ -400,23 +440,48 @@
             const container = document.getElementById('sholat-wajib-container');
             if(!container) return;
             let html = '';
+            
             sholatWajib.forEach(q => {
-                const isActive = currentHour >= q.start && currentHour <= q.end;
-                const statusClass = isActive ? "text-emerald-500 animate-pulse font-black" : "text-gray-400 font-bold";
-                const statusText = isActive ? "🟢 Masuk Waktu!" : `${q.start.toString().padStart(2, '0')}:00 - ${q.end.toString().padStart(2, '0')}:00`;
-                const disabledAttr = isActive ? "" : "disabled";
-                const borderClass = isActive ? "border-emerald-400 shadow-emerald-500/20 shadow-md bg-emerald-50 dark:bg-emerald-900/20" : "border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50";
+                const isDone = localStorage.getItem(q.id) === 'true'; 
+                const isPast = currentHour > q.end; 
+                const isActive = currentHour >= q.start && currentHour <= q.end; 
+                
+                let statusText, statusClass, borderClass, disabledAttr = "disabled";
+                let checkIcon = "🔒";
+
+                if (isDone) {
+                    statusText = "✅ Terselesaikan";
+                    statusClass = "text-emerald-600 dark:text-emerald-400 font-bold";
+                    borderClass = "border-emerald-300 bg-emerald-50 dark:bg-emerald-900/30 opacity-80";
+                    checkIcon = "✅";
+                } else if (isPast) {
+                    statusText = "❌ Waktu Terlewat";
+                    statusClass = "text-rose-500 font-bold";
+                    borderClass = "border-rose-200 bg-rose-50 dark:bg-rose-900/20 opacity-70 grayscale-[50%]";
+                    checkIcon = "❌";
+                } else if (isActive) {
+                    statusText = "🟢 SEDANG BERLANGSUNG!";
+                    statusClass = "text-emerald-500 animate-pulse font-black";
+                    borderClass = "border-emerald-400 shadow-emerald-500/20 shadow-md bg-white dark:bg-gray-800";
+                    disabledAttr = ""; 
+                    checkIcon = "";
+                } else {
+                    statusText = `⏳ Nanti: ${q.start.toString().padStart(2, '0')}:00 - ${q.end.toString().padStart(2, '0')}:00`;
+                    statusClass = "text-gray-400 font-bold";
+                    borderClass = "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 opacity-80";
+                    checkIcon = "⏳";
+                }
 
                 html += `
                 <label class="flex items-center justify-between p-4 rounded-2xl border ${borderClass} cursor-pointer group relative overflow-hidden transition-all">
                     <div class="flex items-center gap-4">
-                        <input type="checkbox" id="${q.id}" class="w-6 h-6 text-emerald-500 rounded-lg focus:ring-emerald-400 checklist-item peer" ${disabledAttr} data-exp="${q.exp}" data-type="${q.type}">
+                        <input type="checkbox" id="${q.id}" class="w-6 h-6 text-emerald-500 rounded-lg focus:ring-emerald-400 checklist-item peer" ${disabledAttr} ${isDone ? 'checked' : ''} data-exp="${q.exp}" data-type="${q.type}">
                         <div>
-                            <span class="block font-bold text-sm text-gray-700 dark:text-gray-200 group-hover:text-emerald-500 transition">${q.title}</span>
+                            <span class="block font-bold text-sm text-gray-800 dark:text-gray-100 transition">${q.title}</span>
                             <span class="text-[10px] ${statusClass}">${statusText}</span>
                         </div>
                     </div>
-                    <div class="absolute right-4 text-gray-400 peer-disabled:block hidden pointer-events-none text-xl">🔒</div>
+                    <div class="absolute right-4 text-gray-400 peer-disabled:block hidden pointer-events-none text-xl">${checkIcon}</div>
                 </label>`;
             });
             container.innerHTML = html;
@@ -596,52 +661,60 @@
             updateHeatmap();
         }
 
-        // --- 10. ATTACH LISTENERS (RESET & SYNC) ---
+        // --- 10. ATTACH LISTENERS (CHECKLIST PERMANEN) ---
         const todayStr = new Date().toDateString();
         let lastVisitStr = localStorage.getItem('lastVisit');
         let streakNum = parseInt(localStorage.getItem('streak') || 0);
 
         if (lastVisitStr !== todayStr) {
             if (lastVisitStr && localStorage.getItem('completedYesterday') !== 'true') streakNum = 0;
-            // Kumpulkan ID harian yang harus direset
             let resets = ['quest-puasa', 'quest-tarawih', 'quest-tadarus', 'quest-sedekah', 'quest-gacha', todayFlash.id];
             sholatWajib.forEach(q => resets.push(q.id));
             resets.forEach(id => localStorage.setItem(id, 'false'));
-            
             localStorage.setItem('completedYesterday', 'false'); localStorage.setItem('lastVisit', todayStr); localStorage.setItem('streak', streakNum);
         }
         document.getElementById('streak-display').innerText = `🔥 ${streakNum}`;
 
         function attachChecklistListeners() {
             document.querySelectorAll('.checklist-item').forEach(box => {
-                if (localStorage.getItem(box.id) === 'true') box.checked = true;
-                let newBox = box.cloneNode(true); box.parentNode.replaceChild(newBox, box);
+                if (localStorage.getItem(box.id) === 'true') {
+                    box.checked = true;
+                    box.disabled = true; // Kunci permanen jika sudah pernah dicentang
+                }
+                
+                let newBox = box.cloneNode(true); 
+                box.parentNode.replaceChild(newBox, box);
                 
                 newBox.addEventListener('change', function() {
-                    localStorage.setItem(this.id, this.checked);
+                    // Hanya izinkan mencentang (true), cegah uncheck
+                    if (!this.checked) {
+                        this.checked = true;
+                        return;
+                    }
+
+                    localStorage.setItem(this.id, 'true');
+                    this.disabled = true; 
+                    
                     let expVal = parseInt(this.getAttribute('data-exp') || 0);
                     let questType = this.getAttribute('data-type') || 'ketuhanan'; 
                     
-                    if(this.checked) {
-                        totalExp += expVal; totalKoin += expVal; 
-                        statsRadar[questType] += 5; localStorage.setItem('statsRadar', JSON.stringify(statsRadar));
-                        if(window.radarChartInstance) renderRadarChart();
-                        logActivityForHeatmap();
-
-                        confetti({ particleCount: 100, spread: 70, origin: { y: 0.5 } });
-                        if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-                        
-                        if(window.addPendingGlobalMission) window.addPendingGlobalMission(1);
-                        if(window.syncExpToFirebase) window.syncExpToFirebase(expVal);
-                    } else { 
-                        totalExp -= expVal; totalKoin -= expVal;
-                        statsRadar[questType] = Math.max(10, statsRadar[questType] - 5); localStorage.setItem('statsRadar', JSON.stringify(statsRadar));
-                        if(window.radarChartInstance) renderRadarChart();
-                        if(window.syncExpToFirebase) window.syncExpToFirebase(-expVal);
-                    }
+                    totalExp += expVal; totalKoin += expVal; 
                     
-                    localStorage.setItem('totalExp', totalExp); localStorage.setItem('totalKoin', totalKoin);
-                    document.getElementById('koin-display').innerText = totalKoin; updateStatsUI();
+                    statsRadar[questType] += 5; 
+                    localStorage.setItem('statsRadar', JSON.stringify(statsRadar));
+                    if(window.radarChartInstance) renderRadarChart();
+                    logActivityForHeatmap(); 
+
+                    confetti({ particleCount: 150, spread: 80, origin: { y: 0.5 } });
+                    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                    
+                    if(window.addPendingGlobalMission) window.addPendingGlobalMission(1);
+                    if(window.syncExpToFirebase) window.syncExpToFirebase(expVal);
+                    
+                    localStorage.setItem('totalExp', totalExp); 
+                    localStorage.setItem('totalKoin', totalKoin);
+                    document.getElementById('koin-display').innerText = totalKoin; 
+                    updateStatsUI();
 
                     let anyChecked = document.querySelectorAll('.checklist-item:checked').length > 0;
                     if (anyChecked) {
@@ -650,17 +723,78 @@
                             streakNum = 1; localStorage.setItem('streak', streakNum); document.getElementById('streak-display').innerText = `🔥 ${streakNum}`;
                         }
                     }
+                    
+                    // Render ulang sholat wajib jika yang dicentang adalah sholat
+                    if(this.id.startsWith("sw-")) renderSholatWajib();
                 });
             });
         }
-        // Panggil attach setelah SEMUA elemen dynamic (Sholat, Flash, Epic) selesai dirender
         attachChecklistListeners(); 
 
-        // --- 11. TOKO ---
+
+        // --- 11. TASBIH DIGITAL & MARKETPLACE TOKO ---
+        let currentTasbihType = document.getElementById('tasbih-type') ? document.getElementById('tasbih-type').value : 'subhanallah';
+        let tasbihCount = parseInt(localStorage.getItem(`tasbih_${currentTasbihType}`) || 0);
+        
+        const tasbihBtn = document.getElementById('btn-tasbih');
+        const tasbihCounterDisplay = document.getElementById('tasbih-counter');
+        const tasbihBar = document.getElementById('tasbih-bar');
+        const tasbihTypeSelector = document.getElementById('tasbih-type');
+        const tasbihResetBtn = document.getElementById('tasbih-reset');
+        
+        function updateTasbihUI() {
+            if(!tasbihCounterDisplay) return;
+            tasbihCounterDisplay.innerText = tasbihCount;
+            let progress = (tasbihCount % 33) / 33 * 100;
+            if(tasbihCount > 0 && tasbihCount % 33 === 0) progress = 100;
+            tasbihBar.style.width = `${progress}%`;
+        }
+        
+        if (tasbihTypeSelector) {
+            tasbihTypeSelector.addEventListener('change', (e) => {
+                currentTasbihType = e.target.value;
+                tasbihCount = parseInt(localStorage.getItem(`tasbih_${currentTasbihType}`) || 0);
+                updateTasbihUI();
+            });
+        }
+
+        if (tasbihBtn) {
+            tasbihBtn.addEventListener('click', () => {
+                tasbihCount++;
+                localStorage.setItem(`tasbih_${currentTasbihType}`, tasbihCount);
+                if (navigator.vibrate) navigator.vibrate(30); 
+                
+                if (tasbihCount % 33 === 0) {
+                    totalKoin += 10; totalExp += 5;
+                    localStorage.setItem('totalKoin', totalKoin); localStorage.setItem('totalExp', totalExp);
+                    document.getElementById('koin-display').innerText = totalKoin; updateStatsUI();
+                    confetti({ particleCount: 40, spread: 50, origin: { y: 0.8 } });
+                    if (navigator.vibrate) navigator.vibrate([100, 50, 100]); 
+                }
+                
+                if (tasbihCount === 1000) {
+                    totalExp += 500; localStorage.setItem('totalExp', totalExp); updateStatsUI();
+                    alert("MashaAllah! Kamu mencapai 1000x Dzikir. +500 EXP Bonus dberikan!");
+                    confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 } });
+                }
+                updateTasbihUI();
+            });
+        }
+
+        if (tasbihResetBtn) {
+            tasbihResetBtn.addEventListener('click', () => {
+                if(confirm("Yakin ingin mereset angka tasbih ini ke 0?")) {
+                    tasbihCount = 0; localStorage.setItem(`tasbih_${currentTasbihType}`, 0); updateTasbihUI();
+                }
+            });
+        }
+        updateTasbihUI();
+
         const shopCatalog = [
-            { id: "badge_sultan", name: "Badge Sultan 👑", price: 300, icon: "👑" }, 
-            { id: "confetti_gold", name: "Confetti Emas", price: 500, icon: "✨" },
-            { id: "voucher_snack", name: "Voucher Snack", price: 5000, icon: "🎁" }
+            { id: "badge_sultan", name: "Gelar: Sultan Sedekah 👑", price: 500, icon: "👑" }, 
+            { id: "confetti_gold", name: "Efek Confetti Emas", price: 800, icon: "✨" },
+            { id: "frame_diamond", name: "Bingkai Avatar Berlian", price: 1500, icon: "💎" },
+            { id: "title_sepuh", name: "Gelar: Sepuh Jalur Langit", price: 2000, icon: "📜" }
         ];
         let unlockedItems = JSON.parse(localStorage.getItem('unlockedItems') || '[]');
         window.renderShop = function() {
@@ -771,7 +905,6 @@
             { title: "25.000 Halaman Al-Quran Dibaca", target: 25000 },
             { title: "15.000 Misi Sedekah Selesai", target: 15000 }
         ];
-        // Definisi ulang tgl rilis khusus untuk fungsi Global Misi Firebase
         const tglRilisFB = new Date("2026-02-01T00:00:00"); 
         const todayFB = new Date();
         const selisihMingguGlobal = Math.floor(Math.max(0, todayFB - tglRilisFB) / (1000 * 60 * 60 * 24 * 7));
