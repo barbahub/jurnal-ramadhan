@@ -43,40 +43,44 @@
 
         <div id="view-home" class="block animate-[fadeIn_0.4s_ease-out] flex-1">
             <div class="p-5">
+                
+                <div class="bg-gradient-to-br from-emerald-600 to-teal-800 rounded-3xl p-5 shadow-lg text-white mb-6 relative overflow-hidden transform transition hover:scale-[1.01]">
+                    <div class="absolute -right-2 -bottom-4 text-7xl opacity-20">🤝</div>
+                    <div class="flex justify-between items-start mb-3 relative z-10">
+                        <div>
+                            <span class="bg-rose-500 text-white text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-wide shadow-sm animate-pulse">Misi Global Mingguan</span>
+                            <h2 id="global-mission-title" class="text-lg font-extrabold mt-1.5 leading-tight">Memuat Misi...</h2>
+                        </div>
+                        <div class="bg-white/20 p-2 rounded-xl backdrop-blur-sm text-center border border-white/30 shadow-inner">
+                            <span class="block text-[9px] font-bold text-emerald-100 uppercase tracking-wider">Reward</span>
+                            <span class="block text-sm font-black">🎁 Gacha</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 relative z-10">
+                        <div class="flex justify-between text-xs font-bold text-emerald-100 mb-1.5">
+                            <span id="global-progress-text">Memuat data...</span>
+                            <span id="global-progress-percent">0%</span>
+                        </div>
+                        <div class="w-full bg-black/30 rounded-full h-4 shadow-inner overflow-hidden border border-white/10">
+                            <div class="bg-gradient-to-r from-yellow-400 to-yellow-300 h-full transition-all duration-1000 ease-out relative" id="global-progress-bar" style="width: 0%">
+                                <div class="absolute inset-0 bg-white/20 w-full animate-[pulse_2s_ease-in-out_infinite]"></div>
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-emerald-200 mt-2 font-medium text-center">Setiap centang ibadahmu memajukan bar ini secara live!</p>
+                    </div>
+                </div>
+
                 <div class="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl p-5 shadow-lg text-white mb-6 relative overflow-hidden">
                     <div class="absolute -right-4 -top-4 text-8xl opacity-10">👑</div>
                     <div class="flex justify-between items-end mb-4 relative z-10">
                         <h2 class="text-lg font-extrabold tracking-wide flex items-center gap-2">
-                            <span>🏆</span> Top Global Rank
+                            <span>🏆</span> Top Rank Global
                         </h2>
-                        <span class="text-[10px] font-bold bg-white/20 px-2 py-1 rounded-full">Minggu Ini</span>
+                        <span class="text-[10px] font-bold bg-white/20 px-2 py-1 rounded-full cursor-pointer" id="btn-reset-leaderboard">Minggu Ini ↻</span>
                     </div>
                     
-                    <div class="space-y-3 relative z-10">
-                        <div class="flex items-center justify-between bg-white/10 p-2.5 rounded-2xl border border-yellow-400/50 backdrop-blur-sm">
-                            <div class="flex items-center gap-3">
-                                <span class="font-black text-yellow-400 text-lg w-5 text-center">1</span>
-                                <div class="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-yellow-900 font-bold text-xs shadow-inner">D</div>
-                                <span class="font-bold text-sm">Dimas (8A)</span>
-                            </div>
-                            <span class="text-xs font-black text-yellow-300 bg-yellow-900/40 px-2 py-1 rounded-lg">1,450 EXP</span>
-                        </div>
-                        <div class="flex items-center justify-between bg-white/10 p-2 rounded-2xl border border-gray-300/30 backdrop-blur-sm">
-                            <div class="flex items-center gap-3">
-                                <span class="font-bold text-gray-300 text-base w-5 text-center">2</span>
-                                <div class="w-7 h-7 rounded-full bg-gray-300 flex items-center justify-center text-gray-800 font-bold text-xs">N</div>
-                                <span class="font-semibold text-sm">Nadia Bestie</span>
-                            </div>
-                            <span class="text-xs font-bold text-gray-200">1,200 EXP</span>
-                        </div>
-                        <div class="flex items-center justify-between bg-white/10 p-2 rounded-2xl border border-orange-400/30 backdrop-blur-sm">
-                            <div class="flex items-center gap-3">
-                                <span class="font-bold text-orange-300 text-base w-5 text-center">3</span>
-                                <div class="w-7 h-7 rounded-full bg-orange-400 flex items-center justify-center text-orange-900 font-bold text-xs">Y</div>
-                                <span class="font-semibold text-sm">Yanto Skenda</span>
-                            </div>
-                            <span class="text-xs font-bold text-orange-200">950 EXP</span>
-                        </div>
+                    <div class="space-y-3 relative z-10" id="leaderboard-container">
+                        <div class="text-center text-xs py-4 text-indigo-200 font-bold animate-pulse">Memuat jawara minggu ini...</div>
                     </div>
                 </div>
 
@@ -85,28 +89,7 @@
                     <span class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-100 dark:bg-emerald-900/50 px-2 py-1 rounded-md">Real-time</span>
                 </div>
                 
-                <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm mb-4">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-400 to-indigo-500 flex items-center justify-center text-white font-bold shadow-inner">D</div>
-                            <div>
-                                <h3 class="font-bold text-sm flex items-center gap-1">Dimas <span class="bg-blue-100 text-blue-700 text-[8px] px-1.5 py-0.5 rounded font-black">Lv.12</span></h3>
-                                <p class="text-[10px] text-gray-500 dark:text-gray-400">Menyelesaikan Epic Quest!</p>
-                            </div>
-                        </div>
-                        <span class="text-[10px] text-gray-400">2 mnt lalu</span>
-                    </div>
-                    <div class="bg-indigo-50 dark:bg-indigo-900/30 p-3 rounded-2xl mb-3 border border-indigo-100 dark:border-indigo-800/50">
-                        <p class="text-sm font-bold text-indigo-800 dark:text-indigo-300 flex items-center gap-2">
-                            <span class="text-xl">🔥</span> Selesai cuci piring emak (+50 EXP)
-                        </p>
-                    </div>
-                    <button class="text-xs font-bold text-gray-500 dark:text-gray-400 flex items-center gap-1 hover:text-emerald-500 transition btn-respect">
-                        <span>🙏</span> <span class="respect-count">12</span> Respect
-                    </button>
-                </div>
-
-                <div class="text-center py-6 bg-gray-50 dark:bg-gray-800 rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-700 mt-6">
+                <div class="text-center py-6 bg-gray-50 dark:bg-gray-800 rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-700 mt-2 mb-4">
                     <p class="text-sm font-bold text-gray-400 dark:text-gray-500 mb-1">Selesaikan quest untuk pamer!</p>
                 </div>
             </div>
@@ -114,27 +97,11 @@
 
         <div id="view-target" class="hidden animate-[fadeIn_0.4s_ease-out] flex-1">
             <div class="p-5">
-                
                 <div id="gacha-container" class="bg-gradient-to-r from-rose-500 to-pink-600 p-6 rounded-3xl shadow-lg text-white mb-6 relative overflow-hidden text-center cursor-pointer transform hover:scale-[1.02] transition shadow-rose-500/30">
                     <div class="absolute -left-4 -bottom-4 text-7xl opacity-20 transform -rotate-12">🎁</div>
                     <h3 class="font-black text-lg mb-1 drop-shadow-md relative z-10">Gacha Kebaikan Hari Ini</h3>
                     <p class="text-xs text-rose-100 font-medium mb-3 relative z-10">Tap kotak ini untuk undi misi rahasia! (+50 Koin)</p>
                     <div id="gacha-result" class="hidden bg-white/20 backdrop-blur-md p-3 rounded-2xl border border-white/30 text-sm font-bold mt-2 relative z-10"></div>
-                </div>
-
-                <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm mb-6 flex items-center justify-between">
-                    <div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <span class="bg-red-500 text-white text-[9px] font-black px-2 py-0.5 rounded-md animate-pulse">FLASH QUEST</span>
-                            <span class="text-xs font-bold text-gray-500" id="flash-time-status">04:00 - 06:00</span>
-                        </div>
-                        <p class="font-bold text-sm dark:text-gray-200">Pejuang Subuh Berjamaah</p>
-                        <p class="text-xs text-yellow-500 font-bold">+50 Koin & EXP</p>
-                    </div>
-                    <label class="relative flex items-center justify-center cursor-pointer group" id="flash-quest-label">
-                        <input type="checkbox" id="quest-subuh" class="w-8 h-8 text-emerald-500 rounded-xl focus:ring-emerald-400 checklist-item peer" disabled data-exp="50">
-                        <div class="absolute text-gray-400 peer-disabled:block hidden pointer-events-none text-xl">🔒</div>
-                    </label>
                 </div>
 
                 <div class="flex justify-between items-end mb-3">
@@ -147,7 +114,7 @@
                             <input type="checkbox" id="quest-puasa" class="w-6 h-6 text-emerald-500 rounded-lg focus:ring-emerald-400 checklist-item" data-exp="20">
                             <div>
                                 <span class="block font-bold text-sm text-gray-700 dark:text-gray-200 group-hover:text-emerald-500 transition">Puasa Wajib Full</span>
-                                <span class="text-[10px] font-bold text-yellow-600 bg-yellow-100 dark:bg-yellow-900/50 px-1.5 py-0.5 rounded">+20 Koin</span>
+                                <span class="text-[10px] font-bold text-yellow-600 bg-yellow-100 dark:bg-yellow-900/50 px-1.5 py-0.5 rounded">+20 Koin & EXP</span>
                             </div>
                         </div>
                     </label>
@@ -156,16 +123,7 @@
                             <input type="checkbox" id="quest-tarawih" class="w-6 h-6 text-emerald-500 rounded-lg focus:ring-emerald-400 checklist-item" data-exp="20">
                             <div>
                                 <span class="block font-bold text-sm text-gray-700 dark:text-gray-200 group-hover:text-emerald-500 transition">Salat Tarawih</span>
-                                <span class="text-[10px] font-bold text-yellow-600 bg-yellow-100 dark:bg-yellow-900/50 px-1.5 py-0.5 rounded">+20 Koin</span>
-                            </div>
-                        </div>
-                    </label>
-                    <label class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm cursor-pointer hover:border-emerald-400 transition group">
-                        <div class="flex items-center gap-4">
-                            <input type="checkbox" id="quest-tadarus" class="w-6 h-6 text-emerald-500 rounded-lg focus:ring-emerald-400 checklist-item" data-exp="20">
-                            <div>
-                                <span class="block font-bold text-sm text-gray-700 dark:text-gray-200 group-hover:text-emerald-500 transition">Tadarus Al-Quran</span>
-                                <span class="text-[10px] font-bold text-yellow-600 bg-yellow-100 dark:bg-yellow-900/50 px-1.5 py-0.5 rounded">+20 Koin</span>
+                                <span class="text-[10px] font-bold text-yellow-600 bg-yellow-100 dark:bg-yellow-900/50 px-1.5 py-0.5 rounded">+20 Koin & EXP</span>
                             </div>
                         </div>
                     </label>
@@ -176,7 +134,7 @@
                             <div>
                                 <span class="text-[9px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-wider block mb-0.5">Epic Quest</span>
                                 <span class="block font-bold text-sm text-amber-900 dark:text-amber-100">Bagi Takjil / Sedekah</span>
-                                <span class="text-[10px] font-bold text-yellow-600 bg-yellow-100 dark:bg-yellow-900/50 px-1.5 py-0.5 rounded mt-1 inline-block">+50 Koin</span>
+                                <span class="text-[10px] font-bold text-yellow-600 bg-yellow-100 dark:bg-yellow-900/50 px-1.5 py-0.5 rounded mt-1 inline-block">+50 Koin & EXP</span>
                             </div>
                         </div>
                     </label>
@@ -200,6 +158,9 @@
                     <button id="btn-logout" class="hidden w-full bg-rose-100 text-rose-600 font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-sm hover:bg-rose-200 transition">
                         Keluar Akun
                     </button>
+                    <button id="btn-enable-notif" class="hidden w-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-sm hover:bg-indigo-100 transition mt-3 border border-indigo-200 dark:border-indigo-800">
+                        🔔 Aktifkan Pengingat Ibadah
+                    </button>
                 </div>
 
                 <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-[2rem] border border-gray-200 dark:border-gray-700 shadow-lg text-center mb-6 relative overflow-hidden">
@@ -221,37 +182,12 @@
                     </div>
                 </div>
 
-                <h2 class="text-sm font-bold mb-3 text-gray-500 dark:text-gray-400 uppercase tracking-wider">Rak Trofi Badge</h2>
-                <div class="flex gap-3 overflow-x-auto pb-4 mb-4">
-                    <div id="badge-tarawih" class="opacity-40 grayscale text-center min-w-[85px] transition-all duration-500">
-                        <div class="text-3xl bg-white dark:bg-gray-800 rounded-2xl w-16 h-16 flex items-center justify-center mx-auto mb-2 shadow-sm border border-gray-100 dark:border-gray-700">🕌</div>
-                        <p class="text-[10px] font-bold text-gray-600 dark:text-gray-300">Si Paling Tarawih</p>
-                    </div>
-                    <div id="badge-sedekah" class="opacity-40 grayscale text-center min-w-[85px] transition-all duration-500">
-                        <div class="text-3xl bg-white dark:bg-gray-800 rounded-2xl w-16 h-16 flex items-center justify-center mx-auto mb-2 shadow-sm border border-gray-100 dark:border-gray-700">🎁</div>
-                        <p class="text-[10px] font-bold text-gray-600 dark:text-gray-300">Sultan Sedekah</p>
-                    </div>
-                    <div id="badge-tadarus" class="opacity-40 grayscale text-center min-w-[85px] transition-all duration-500">
-                        <div class="text-3xl bg-white dark:bg-gray-800 rounded-2xl w-16 h-16 flex items-center justify-center mx-auto mb-2 shadow-sm border border-gray-100 dark:border-gray-700">📖</div>
-                        <p class="text-[10px] font-bold text-gray-600 dark:text-gray-300">KhatamSkuy</p>
-                    </div>
-                </div>
-
                 <div class="border-t-2 border-dashed border-gray-200 dark:border-gray-700 pt-5 mb-6">
                     <div class="flex justify-between items-end mb-4">
                         <h2 class="text-lg font-extrabold text-gray-800 dark:text-gray-100">Toko Kebaikan 🛒</h2>
                         <span class="text-[10px] bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-400 px-2 py-1 rounded font-bold">Tukar Koinmu</span>
                     </div>
-                    <div id="shop-container" class="grid grid-cols-2 gap-3">
-                        </div>
-                </div>
-
-                <div id="voucher-banner" class="hidden mt-4">
-                    <div class="bg-gradient-to-r from-orange-400 to-rose-500 p-4 rounded-2xl shadow-lg text-white text-center transform hover:scale-105 transition">
-                        <h3 class="font-bold text-sm">🎉 Reward Streak 7 Hari!</h3>
-                        <p class="text-xs mt-1 mb-2">Screenshot ini & klaim bonus Suvenir dari toko kami!</p>
-                        <div class="bg-white/20 font-mono font-bold py-1.5 rounded-lg tracking-widest text-lg border border-white/30">AMALIN-PRO</div>
-                    </div>
+                    <div id="shop-container" class="grid grid-cols-2 gap-3"></div>
                 </div>
             </div>
         </div>
@@ -277,17 +213,12 @@
             <div class="bg-white/10 p-6 rounded-[2rem] backdrop-blur-md border border-white/20 shadow-2xl">
                 <div class="border-b border-white/20 pb-4 mb-4 text-center">
                     <h3 id="export-name" class="font-black text-3xl text-white tracking-wide uppercase">PLAYER</h3>
-                    <p id="export-bio" class="text-sm text-emerald-200 font-bold mt-1">Skena</p>
                 </div>
                 <div class="bg-black/20 rounded-2xl p-3 mb-4 text-center flex justify-between px-6">
                     <div><p class="text-[10px] text-emerald-300 font-bold">LEVEL</p><p class="font-black text-2xl" id="export-level">1</p></div>
                     <div><p class="text-[10px] text-yellow-400 font-bold">TOTAL EXP</p><p class="font-black text-2xl text-yellow-400" id="export-exp">0</p></div>
                 </div>
                 <ul id="export-list" class="space-y-3 font-semibold text-base px-1"></ul>
-            </div>
-            <div class="text-center mb-8">
-                <span class="bg-yellow-400 text-yellow-900 px-6 py-2.5 rounded-full font-black shadow-lg text-lg inline-block mb-6 border-2 border-yellow-200" id="export-streak">🔥 Streak: 0</span>
-                <p class="text-center text-xs text-emerald-100 italic px-4 font-medium">"Level up imanmu hari ini!"</p>
             </div>
         </div>
 
@@ -299,7 +230,7 @@
     </style>
 
     <script>
-        // --- Tab Logic ---
+        // --- Vanilla JS UI Logic ---
         const views = { home: document.getElementById('view-home'), target: document.getElementById('view-target'), profile: document.getElementById('view-profile') };
         const btns = { home: document.getElementById('nav-btn-home'), target: document.getElementById('nav-btn-target'), profile: document.getElementById('nav-btn-profile') };
         const activeClass = "flex-1 py-2.5 flex flex-col items-center text-emerald-600 dark:text-emerald-400 transition transform scale-105 bg-emerald-50 dark:bg-emerald-900/30 rounded-3xl";
@@ -314,24 +245,16 @@
         btns.target.addEventListener('click', () => switchTab('target'));
         btns.profile.addEventListener('click', () => switchTab('profile'));
 
-        // --- Basic Profile Logic ---
         const nameInput = document.getElementById('user-name'); const bioInput = document.getElementById('user-bio');
         nameInput.value = localStorage.getItem('userName') || ''; bioInput.value = localStorage.getItem('userBio') || '';
         nameInput.addEventListener('input', () => { localStorage.setItem('userName', nameInput.value); });
         bioInput.addEventListener('input', () => localStorage.setItem('userBio', bioInput.value));
 
-        // --- RPG ENGINE: EXP, LEVEL & KOIN ---
         let totalExp = parseInt(localStorage.getItem('totalExp') || 0);
         let totalKoin = parseInt(localStorage.getItem('totalKoin') || 0);
-        
-        // Render UI Koin Pertama Kali
         document.getElementById('koin-display').innerText = totalKoin;
         
-        function calculateLevel(exp) {
-            let lvl = Math.floor(exp / 100) + 1;
-            return lvl > 50 ? 50 : lvl;
-        }
-
+        function calculateLevel(exp) { let lvl = Math.floor(exp / 100) + 1; return lvl > 50 ? 50 : lvl; }
         function getTitle(lvl) {
             if(lvl < 5) return "Newbie Tobat";
             if(lvl < 10) return "Skena Masjid";
@@ -341,12 +264,9 @@
         }
 
         function updateStatsUI() {
-            let currentLevel = calculateLevel(totalExp);
-            let currentTitle = getTitle(currentLevel);
-            let expNextLevel = currentLevel * 100;
-            let expCurrentLevel = totalExp % 100;
+            let currentLevel = calculateLevel(totalExp); let currentTitle = getTitle(currentLevel);
+            let expNextLevel = currentLevel * 100; let expCurrentLevel = totalExp % 100;
             let percent = (expCurrentLevel / 100) * 100;
-
             document.getElementById('header-level').innerText = `Lv.${currentLevel}`;
             document.getElementById('header-title').innerText = currentTitle;
             document.getElementById('display-level').innerText = `Level ${currentLevel}`;
@@ -356,102 +276,38 @@
         }
         updateStatsUI();
 
-        // --- Gacha Kebaikan Logic ---
-        const gachaBtn = document.getElementById('gacha-container');
-        const gachaRes = document.getElementById('gacha-result');
-        const gachaMissions = ["Traktir temen minuman", "Senyum ke 3 orang asing", "Bantu ortu tanpa diminta", "Sedekah subuh Rp2.000", "Baca Al-Kahfi 10 ayat"];
-        
-        let hasGachaToday = localStorage.getItem('gachaDate') === new Date().toDateString();
-        if(hasGachaToday) {
-            gachaRes.innerHTML = `<label class="flex items-center justify-between cursor-pointer group mt-2 p-2 bg-white/30 rounded-xl"><div class="flex items-center gap-2"><input type="checkbox" id="quest-gacha" class="w-5 h-5 text-rose-500 rounded checklist-item" data-exp="50"><span class="font-bold text-sm text-white">${localStorage.getItem('gachaMission')}</span></div></label>`;
-            gachaRes.classList.remove('hidden');
-        }
-
-        gachaBtn.addEventListener('click', () => {
-            if(!hasGachaToday) {
-                let randomQuest = gachaMissions[Math.floor(Math.random() * gachaMissions.length)];
-                localStorage.setItem('gachaDate', new Date().toDateString());
-                localStorage.setItem('gachaMission', randomQuest);
-                gachaRes.innerHTML = `<label class="flex items-center justify-between cursor-pointer group mt-2 p-2 bg-white/30 rounded-xl"><div class="flex items-center gap-2"><input type="checkbox" id="quest-gacha" class="w-5 h-5 text-rose-500 rounded checklist-item" data-exp="50"><span class="font-bold text-sm text-white">${randomQuest}</span></div></label>`;
-                gachaRes.classList.remove('hidden');
-                confetti({particleCount: 50, spread: 40, colors: ['#fb7185', '#f43f5e']});
-                hasGachaToday = true;
-                attachChecklistListeners(); // Re-attach
-            }
-        });
-
-        // --- Flash Quest Logic (Time Gated) ---
-        const hour = new Date().getHours();
-        const flashQuestBox = document.getElementById('quest-subuh');
-        const flashTimeStatus = document.getElementById('flash-time-status');
-        if (hour >= 4 && hour <= 6) {
-            flashQuestBox.disabled = false;
-            flashTimeStatus.innerText = "🟢 BUKA SEKARANG";
-            flashTimeStatus.classList.replace('text-gray-500', 'text-emerald-500');
-        }
-
-        // --- Daily Streak & Checkbox Logic ---
-        const todayStr = new Date().toDateString();
-        let lastVisitStr = localStorage.getItem('lastVisit');
-        let streakNum = parseInt(localStorage.getItem('streak') || 0);
-
-        if (lastVisitStr !== todayStr) {
-            if (lastVisitStr && localStorage.getItem('completedYesterday') !== 'true') streakNum = 0;
-            ['quest-puasa', 'quest-tarawih', 'quest-tadarus', 'quest-sedekah', 'quest-subuh', 'quest-gacha'].forEach(id => { localStorage.setItem(id, 'false'); });
-            localStorage.setItem('completedYesterday', 'false'); localStorage.setItem('lastVisit', todayStr); localStorage.setItem('streak', streakNum);
-        }
-        document.getElementById('streak-display').innerText = `🔥 ${streakNum}`;
-        if (streakNum >= 7) document.getElementById('voucher-banner').classList.remove('hidden');
-
-        // Logic Badge
-        function updateBadges() {
-            if (localStorage.getItem('quest-tarawih_total') >= 3) document.getElementById('badge-tarawih').classList.remove('opacity-40', 'grayscale');
-            if (localStorage.getItem('quest-sedekah_total') >= 2) document.getElementById('badge-sedekah').classList.remove('opacity-40', 'grayscale');
-            if (localStorage.getItem('quest-tadarus_total') >= 5) document.getElementById('badge-tadarus').classList.remove('opacity-40', 'grayscale');
-        }
-
+        // Gacha & Misi Checklists
         function attachChecklistListeners() {
             document.querySelectorAll('.checklist-item').forEach(box => {
                 if (localStorage.getItem(box.id) === 'true') box.checked = true;
-                
                 let newBox = box.cloneNode(true); box.parentNode.replaceChild(newBox, box);
                 
                 newBox.addEventListener('change', function() {
                     localStorage.setItem(this.id, this.checked);
-                    
                     let expVal = parseInt(this.getAttribute('data-exp') || 0);
+                    
                     if(this.checked) {
-                        totalExp += expVal;
-                        totalKoin += expVal; // Koin bertambah sesuai EXP
+                        totalExp += expVal; totalKoin += expVal; 
                         confetti({ particleCount: 100, spread: 70, origin: { y: 0.5 } });
                         if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                        
+                        if(window.incrementGlobalMission) window.incrementGlobalMission();
+                        
+                        // SYNC EXP KE LEADERBOARD FIREBASE
+                        if(window.syncExpToFirebase) window.syncExpToFirebase(expVal);
                     } else { 
-                        totalExp -= expVal;
-                        totalKoin -= expVal;
+                        totalExp -= expVal; totalKoin -= expVal;
+                        if(window.syncExpToFirebase) window.syncExpToFirebase(-expVal);
                     }
                     
-                    // Simpan Perubahan
                     localStorage.setItem('totalExp', totalExp);
                     localStorage.setItem('totalKoin', totalKoin);
                     document.getElementById('koin-display').innerText = totalKoin;
-                    
                     updateStatsUI();
-
-                    let tKey = this.id + '_total'; localStorage.setItem(tKey, parseInt(localStorage.getItem(tKey) || 0) + (this.checked ? 1 : -1));
-                    updateBadges();
-
-                    let anyChecked = document.querySelectorAll('.checklist-item:checked').length > 0;
-                    if (anyChecked) {
-                        localStorage.setItem('completedYesterday', 'true');
-                        if (streakNum === 0 && lastVisitStr === todayStr) {
-                            streakNum = 1; localStorage.setItem('streak', streakNum); document.getElementById('streak-display').innerText = `🔥 ${streakNum}`;
-                        }
-                    }
                 });
             });
         }
         attachChecklistListeners();
-        updateBadges();
 
         // --- SISTEM MARKETPLACE ---
         const shopCatalog = [
@@ -459,99 +315,39 @@
             { id: "confetti_gold", name: "Confetti Emas", price: 500, icon: "✨" },
             { id: "voucher_snack", name: "Voucher Snack", price: 5000, icon: "🎁" }
         ];
-
         let unlockedItems = JSON.parse(localStorage.getItem('unlockedItems') || '[]');
 
         window.renderShop = function() {
             const container = document.getElementById('shop-container');
-            if(!container) return;
-            container.innerHTML = ''; // bersihkan kontainer
-            
+            if(!container) return; container.innerHTML = ''; 
             shopCatalog.forEach(item => {
                 const isOwned = unlockedItems.includes(item.id);
                 const card = document.createElement('div');
                 card.className = `p-3 rounded-2xl border-2 text-center transition ${isOwned ? 'border-emerald-400 bg-emerald-50 dark:bg-emerald-900/30' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'}`;
-                
-                card.innerHTML = `
-                    <div class="text-4xl mb-2 drop-shadow-sm">${item.icon}</div>
-                    <h3 class="font-bold text-xs text-gray-700 dark:text-gray-200 mb-2">${item.name}</h3>
-                    ${isOwned 
-                        ? `<span class="text-emerald-600 dark:text-emerald-400 font-bold text-[11px] block py-1.5">✓ Dimiliki</span>`
-                        : `<button onclick="buyItem('${item.id}', ${item.price})" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-1.5 rounded-xl text-xs font-bold active:scale-95 transition shadow-sm">🪙 ${item.price}</button>`
-                    }
-                `;
+                card.innerHTML = `<div class="text-4xl mb-2 drop-shadow-sm">${item.icon}</div><h3 class="font-bold text-xs text-gray-700 dark:text-gray-200 mb-2">${item.name}</h3>${isOwned ? `<span class="text-emerald-600 dark:text-emerald-400 font-bold text-[11px] block py-1.5">✓ Dimiliki</span>` : `<button onclick="buyItem('${item.id}', ${item.price})" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-1.5 rounded-xl text-xs font-bold active:scale-95 transition shadow-sm">🪙 ${item.price}</button>`}`;
                 container.appendChild(card);
             });
-            
-            // Terapkan efek dark mode dari toko jika dimiliki
-            if(unlockedItems.includes("theme_dark_pro") && localStorage.getItem('theme') !== 'light') {
-                document.documentElement.classList.add('dark');
-                document.getElementById('dark-toggle').innerText = '☀️';
-            }
         }
-        
-        // Panggil render saat pertama kali dibuka
         renderShop();
 
         window.buyItem = async function(id, price) {
-            if (totalKoin < price) {
-                alert("Yah, Koin kamu kurang. Selesaikan quest lagi ya!");
-                return;
-            }
-            if (!confirm(`Yakin tukar ${price} koin untuk item ini?`)) return;
-
-            // Potong Koin & Simpan Lokal
-            totalKoin -= price;
-            unlockedItems.push(id);
-            localStorage.setItem('totalKoin', totalKoin);
-            localStorage.setItem('unlockedItems', JSON.stringify(unlockedItems));
-            
+            if (totalKoin < price) { alert("Koin kamu kurang!"); return; }
+            if (!confirm(`Yakin tukar ${price} koin?`)) return;
+            totalKoin -= price; unlockedItems.push(id);
+            localStorage.setItem('totalKoin', totalKoin); localStorage.setItem('unlockedItems', JSON.stringify(unlockedItems));
             document.getElementById('koin-display').innerText = totalKoin;
             renderShop();
-            alert("Berhasil ditukar! Alhamdulillah.");
-
-            // Lempar ke Firebase (jika fungsi tersedia dari module JS di bawah)
-            if(window.syncPurchaseToFirebase) {
-                window.syncPurchaseToFirebase(id, price);
-            }
+            if(window.syncPurchaseToFirebase) window.syncPurchaseToFirebase(id, price);
         };
-
-        // --- Export Rapor html2canvas ---
-        // (Tetap sama seperti kode asli Anda)
-        function generateImage(filename) {
-            const exportCard = document.getElementById('export-card');
-            document.getElementById('export-name').innerText = nameInput.value || 'Anonymous';
-            document.getElementById('export-bio').innerText = bioInput.value || 'Player Amalin';
-            document.getElementById('export-level').innerText = calculateLevel(totalExp);
-            document.getElementById('export-exp').innerText = totalExp;
-            document.getElementById('export-gelar').innerText = getTitle(calculateLevel(totalExp));
-            document.getElementById('export-streak').innerText = `🔥 Streak: ${streakNum}`;
-
-            const exportList = document.getElementById('export-list');
-            exportList.innerHTML = ''; 
-            document.querySelectorAll('#view-target .checklist-item').forEach(box => {
-                let li = document.createElement('li'); li.className = "flex items-center gap-3 bg-white/5 p-3 rounded-2xl";
-                let textNode = box.nextElementSibling || box.parentElement.querySelector('span'); 
-                let text = textNode.innerText.split('+')[0]; 
-                li.innerHTML = `<span class="text-2xl">${box.checked ? '✅' : '⏳'}</span> <span class="${box.checked ? 'text-white' : 'opacity-50 text-emerald-200 line-through'}">${text}</span>`;
-                exportList.appendChild(li);
-            });
-
-            html2canvas(exportCard, { scale: 2, useCORS: true }).then(canvas => {
-                let link = document.createElement('a'); link.download = filename; link.href = canvas.toDataURL('image/png'); link.click();
-            });
-        }
-        document.getElementById('btn-share').addEventListener('click', () => generateImage('Amalin-Story.png'));
-        document.getElementById('btn-export').addEventListener('click', () => generateImage('Rapor-Amalin.png'));
-
-        // Pendaftaran PWA
-        if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
     </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        // TAMBAHAN: query, orderBy, limit, collection untuk Leaderboard
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, increment, onSnapshot, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        // TAMBAHAN: Cloud Messaging untuk Push Notif
+        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-messaging.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDxabPizF0ShqaQSaJ142Rapxa9JcNq65o",
@@ -565,75 +361,149 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const messaging = getMessaging(app);
         const provider = new GoogleAuthProvider();
 
         const btnLogin = document.getElementById('btn-login');
         const btnLogout = document.getElementById('btn-logout');
         const nameInputFire = document.getElementById('user-name');
-        const avatarInitialFire = document.getElementById('avatar-initial');
+        
+        // --- 1. FITUR LEADERBOARD MINGGUAN (DINAMIS) ---
+        const leaderboardContainer = document.getElementById('leaderboard-container');
+        const qLeaderboard = query(collection(db, "users"), orderBy("weekly_exp", "desc"), limit(10));
+        
+        // Dengarkan perubahan Peringkat secara Real-time
+        onSnapshot(qLeaderboard, (snapshot) => {
+            leaderboardContainer.innerHTML = ''; // Kosongkan saat memuat baru
+            let rank = 1;
+            
+            snapshot.forEach((docSnap) => {
+                const userL = docSnap.data();
+                if(userL.weekly_exp > 0) { // Hanya tampilkan yang punya poin minggu ini
+                    let colorClasses = rank === 1 ? 'border-yellow-400/50 bg-yellow-400/10 text-yellow-400' 
+                                     : rank === 2 ? 'border-gray-300/30 bg-gray-300/10 text-gray-300'
+                                     : rank === 3 ? 'border-orange-400/30 bg-orange-400/10 text-orange-300'
+                                     : 'border-white/10 bg-white/5 text-gray-400';
+                                     
+                    const el = document.createElement('div');
+                    el.className = `flex items-center justify-between p-2.5 rounded-2xl border backdrop-blur-sm ${colorClasses}`;
+                    el.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <span class="font-black text-lg w-5 text-center">${rank}</span>
+                            <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center font-bold text-xs uppercase overflow-hidden">
+                                ${userL.photo ? `<img src="${userL.photo}" class="w-full h-full object-cover">` : userL.name.charAt(0)}
+                            </div>
+                            <span class="font-bold text-sm text-white">${userL.name}</span>
+                        </div>
+                        <span class="text-xs font-black bg-black/30 px-2 py-1 rounded-lg">${userL.weekly_exp} EXP</span>
+                    `;
+                    leaderboardContainer.appendChild(el);
+                    rank++;
+                }
+            });
+            
+            if(rank === 1) leaderboardContainer.innerHTML = '<div class="text-center text-xs py-4 text-indigo-200">Belum ada yang mengumpulkan EXP minggu ini. Jadilah yang pertama!</div>';
+        });
 
-        // FUNGSI SYNC UNTUK PEMBELIAN TOKO (Bisa dipanggil dari Vanilla JS atas)
-        window.syncPurchaseToFirebase = async (itemId, price) => {
+        // Sinkronisasi EXP saat Checklist Ditekan
+        window.syncExpToFirebase = async (expVal) => {
             const user = auth.currentUser;
-            if(!user) return; // Jika belum login, abaikan (sudah tersimpan di localStorage)
+            if(!user) return;
             try {
                 const userRef = doc(db, "users", user.uid);
                 await updateDoc(userRef, {
-                    koin: increment(-price),
-                    unlocked_items: arrayUnion(itemId)
+                    total_exp: increment(expVal),
+                    weekly_exp: increment(expVal) // Tambah juga ke poin mingguan
                 });
-            } catch (error) {
-                console.error("Gagal update Firebase:", error);
-            }
+            } catch (e) { console.error("Gagal sync EXP:", e); }
         };
 
-        btnLogin.addEventListener('click', async () => {
-            try { await signInWithPopup(auth, provider); } 
-            catch (error) { console.error(error); alert("Gagal masuk: " + error.message); }
+        // Tombol Rahasia Admin (Reset Peringkat Tiap Senin)
+        document.getElementById('btn-reset-leaderboard').addEventListener('click', async () => {
+            const user = auth.currentUser;
+            // Ganti UID di bawah ini dengan UID Firebase kamu sendiri agar hanya kamu yang bisa reset
+            if(user && user.uid === "UID_ADMIN_KAMU_DISINI") { 
+                if(confirm("Yakin ingin mereset peringkat mingguan semua user menjadi 0?")) {
+                    const usersSnap = await getDocs(collection(db, "users"));
+                    usersSnap.forEach(async (userDoc) => {
+                        await updateDoc(doc(db, "users", userDoc.id), { weekly_exp: 0 });
+                    });
+                    alert("Leaderboard berhasil di-reset!");
+                }
+            } else {
+                alert("Hanya Admin yang dapat mereset leaderboard.");
+            }
         });
 
-        btnLogout.addEventListener('click', async () => {
-            try { await signOut(auth); } catch (error) { console.error(error); }
+        // --- 2. FITUR PUSH NOTIFICATION (FCM) ---
+        const btnEnableNotif = document.getElementById('btn-enable-notif');
+        
+        async function requestNotificationPermission() {
+            try {
+                const permission = await Notification.requestPermission();
+                if (permission === 'granted') {
+                    // Masukkan VAPID KEY dari Firebase Console Project kamu di sini
+                    const token = await getToken(messaging, { vapidKey: 'GANTI_DENGAN_VAPID_KEY_FIREBASE_KAMU' });
+                    if (token) {
+                        console.log('Token FCM didapat:', token);
+                        // Simpan token ke database agar server bisa mengirim pesan ke HP ini
+                        if(auth.currentUser) {
+                            await updateDoc(doc(db, "users", auth.currentUser.uid), { fcmToken: token });
+                        }
+                        btnEnableNotif.classList.add('hidden');
+                        alert("Alhamdulillah, Pengingat Ibadah berhasil diaktifkan!");
+                    }
+                } else {
+                    alert("Akses notifikasi ditolak.");
+                }
+            } catch (error) {
+                console.error("Gagal mendapatkan token FCM:", error);
+            }
+        }
+
+        btnEnableNotif.addEventListener('click', requestNotificationPermission);
+        
+        // Dengarkan notifikasi saat aplikasi sedang dibuka
+        onMessage(messaging, (payload) => {
+            console.log('Pesan diterima saat app terbuka:', payload);
+            alert(`Pesan Baru: ${payload.notification.title}\n${payload.notification.body}`);
         });
+
+        // --- 3. AUTH & INIT DATA ---
+        btnLogin.addEventListener('click', async () => {
+            try { await signInWithPopup(auth, provider); } catch (e) { alert(e.message); }
+        });
+        btnLogout.addEventListener('click', async () => { await signOut(auth); });
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 btnLogin.classList.add('hidden'); btnLogout.classList.remove('hidden');
                 nameInputFire.value = user.displayName; nameInputFire.readOnly = true;
-                localStorage.setItem('userName', user.displayName); 
-                avatarInitialFire.innerHTML = `<img src="${user.photoURL}" class="w-full h-full rounded-full object-cover border-4 border-white dark:border-gray-700" referrerpolicy="no-referrer">`;
-                document.getElementById('user-name').dispatchEvent(new Event('input'));
+                
+                // Cek status Notifikasi
+                if(Notification.permission !== 'granted') {
+                    btnEnableNotif.classList.remove('hidden');
+                }
 
-                // SINKRONISASI DATA KOIN & TOKO KE FIREBASE
+                // Inisialisasi User Document di Firestore (termasuk EXP Mingguan)
                 const userRef = doc(db, "users", user.uid);
                 const docSnap = await getDoc(userRef);
                 
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    // Timpa data lokal dengan data server
-                    if(data.koin !== undefined) {
-                        localStorage.setItem('totalKoin', data.koin);
-                        document.getElementById('koin-display').innerText = data.koin;
-                        // Hacky way update variable totalKoin di window atas
-                        window.location.reload(); // (Opsional) Refresh page agar sync bersih
-                    }
-                    if(data.unlocked_items) {
-                        localStorage.setItem('unlockedItems', JSON.stringify(data.unlocked_items));
-                        window.renderShop(); // render ulang katalog
-                    }
-                } else {
-                    // Jika baru pertama kali login, buat dokumen baru & amankan data koin lokalnya
+                if (!docSnap.exists()) {
                     await setDoc(userRef, {
                         name: user.displayName,
+                        photo: user.photoURL,
                         koin: parseInt(localStorage.getItem('totalKoin') || 0),
+                        total_exp: parseInt(localStorage.getItem('totalExp') || 0),
+                        weekly_exp: 0, // Set poin mingguan pertama kali ke 0
                         unlocked_items: JSON.parse(localStorage.getItem('unlockedItems') || '[]')
-                    });
+                    }, { merge: true });
                 }
 
             } else {
                 btnLogin.classList.remove('hidden'); btnLogout.classList.add('hidden');
+                btnEnableNotif.classList.add('hidden');
                 nameInputFire.readOnly = false;
-                avatarInitialFire.innerHTML = nameInputFire.value ? nameInputFire.value.charAt(0).toUpperCase() : 'A';
             }
         });
     </script>
