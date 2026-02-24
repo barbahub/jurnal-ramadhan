@@ -28,11 +28,14 @@
                     <p class="text-emerald-100 text-[10px] font-medium tracking-wide uppercase" id="header-title">Newbie Tobat</p>
                 </div>
             </div>
-            <div class="flex items-center gap-3">
-                <div class="bg-white/20 px-3 py-1.5 rounded-full text-sm font-bold shadow-sm backdrop-blur-sm flex items-center gap-1 border border-white/30">
+            <div class="flex items-center gap-2">
+                <div class="bg-yellow-400/20 text-yellow-100 px-2.5 py-1.5 rounded-full text-xs font-bold shadow-sm backdrop-blur-sm border border-yellow-300/30">
+                    🪙 <span id="koin-display">0</span>
+                </div>
+                <div class="bg-white/20 px-2.5 py-1.5 rounded-full text-xs font-bold shadow-sm backdrop-blur-sm border border-white/30">
                     <span id="streak-display">🔥 0</span>
                 </div>
-                <button id="dark-toggle" class="p-2 bg-white/20 rounded-full hover:bg-white/30 transition text-lg shadow-sm border border-white/30">
+                <button id="dark-toggle" class="p-1.5 bg-white/20 rounded-full hover:bg-white/30 transition text-sm shadow-sm border border-white/30">
                     🌙
                 </button>
             </div>
@@ -40,7 +43,6 @@
 
         <div id="view-home" class="block animate-[fadeIn_0.4s_ease-out] flex-1">
             <div class="p-5">
-                
                 <div class="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl p-5 shadow-lg text-white mb-6 relative overflow-hidden">
                     <div class="absolute -right-4 -top-4 text-8xl opacity-10">👑</div>
                     <div class="flex justify-between items-end mb-4 relative z-10">
@@ -116,7 +118,7 @@
                 <div id="gacha-container" class="bg-gradient-to-r from-rose-500 to-pink-600 p-6 rounded-3xl shadow-lg text-white mb-6 relative overflow-hidden text-center cursor-pointer transform hover:scale-[1.02] transition shadow-rose-500/30">
                     <div class="absolute -left-4 -bottom-4 text-7xl opacity-20 transform -rotate-12">🎁</div>
                     <h3 class="font-black text-lg mb-1 drop-shadow-md relative z-10">Gacha Kebaikan Hari Ini</h3>
-                    <p class="text-xs text-rose-100 font-medium mb-3 relative z-10">Tap kotak ini untuk undi misi rahasia! (+50 EXP)</p>
+                    <p class="text-xs text-rose-100 font-medium mb-3 relative z-10">Tap kotak ini untuk undi misi rahasia! (+50 Koin)</p>
                     <div id="gacha-result" class="hidden bg-white/20 backdrop-blur-md p-3 rounded-2xl border border-white/30 text-sm font-bold mt-2 relative z-10"></div>
                 </div>
 
@@ -127,7 +129,7 @@
                             <span class="text-xs font-bold text-gray-500" id="flash-time-status">04:00 - 06:00</span>
                         </div>
                         <p class="font-bold text-sm dark:text-gray-200">Pejuang Subuh Berjamaah</p>
-                        <p class="text-xs text-emerald-500 font-bold">+50 EXP</p>
+                        <p class="text-xs text-yellow-500 font-bold">+50 Koin & EXP</p>
                     </div>
                     <label class="relative flex items-center justify-center cursor-pointer group" id="flash-quest-label">
                         <input type="checkbox" id="quest-subuh" class="w-8 h-8 text-emerald-500 rounded-xl focus:ring-emerald-400 checklist-item peer" disabled data-exp="50">
@@ -145,7 +147,7 @@
                             <input type="checkbox" id="quest-puasa" class="w-6 h-6 text-emerald-500 rounded-lg focus:ring-emerald-400 checklist-item" data-exp="20">
                             <div>
                                 <span class="block font-bold text-sm text-gray-700 dark:text-gray-200 group-hover:text-emerald-500 transition">Puasa Wajib Full</span>
-                                <span class="text-[10px] font-bold text-emerald-500 bg-emerald-100 dark:bg-emerald-900/50 px-1.5 py-0.5 rounded">+20 EXP</span>
+                                <span class="text-[10px] font-bold text-yellow-600 bg-yellow-100 dark:bg-yellow-900/50 px-1.5 py-0.5 rounded">+20 Koin</span>
                             </div>
                         </div>
                     </label>
@@ -154,7 +156,7 @@
                             <input type="checkbox" id="quest-tarawih" class="w-6 h-6 text-emerald-500 rounded-lg focus:ring-emerald-400 checklist-item" data-exp="20">
                             <div>
                                 <span class="block font-bold text-sm text-gray-700 dark:text-gray-200 group-hover:text-emerald-500 transition">Salat Tarawih</span>
-                                <span class="text-[10px] font-bold text-emerald-500 bg-emerald-100 dark:bg-emerald-900/50 px-1.5 py-0.5 rounded">+20 EXP</span>
+                                <span class="text-[10px] font-bold text-yellow-600 bg-yellow-100 dark:bg-yellow-900/50 px-1.5 py-0.5 rounded">+20 Koin</span>
                             </div>
                         </div>
                     </label>
@@ -163,7 +165,7 @@
                             <input type="checkbox" id="quest-tadarus" class="w-6 h-6 text-emerald-500 rounded-lg focus:ring-emerald-400 checklist-item" data-exp="20">
                             <div>
                                 <span class="block font-bold text-sm text-gray-700 dark:text-gray-200 group-hover:text-emerald-500 transition">Tadarus Al-Quran</span>
-                                <span class="text-[10px] font-bold text-emerald-500 bg-emerald-100 dark:bg-emerald-900/50 px-1.5 py-0.5 rounded">+20 EXP</span>
+                                <span class="text-[10px] font-bold text-yellow-600 bg-yellow-100 dark:bg-yellow-900/50 px-1.5 py-0.5 rounded">+20 Koin</span>
                             </div>
                         </div>
                     </label>
@@ -174,7 +176,7 @@
                             <div>
                                 <span class="text-[9px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-wider block mb-0.5">Epic Quest</span>
                                 <span class="block font-bold text-sm text-amber-900 dark:text-amber-100">Bagi Takjil / Sedekah</span>
-                                <span class="text-[10px] font-bold text-amber-600 bg-amber-100 dark:bg-amber-900/50 px-1.5 py-0.5 rounded mt-1 inline-block">+50 EXP</span>
+                                <span class="text-[10px] font-bold text-yellow-600 bg-yellow-100 dark:bg-yellow-900/50 px-1.5 py-0.5 rounded mt-1 inline-block">+50 Koin</span>
                             </div>
                         </div>
                     </label>
@@ -183,14 +185,6 @@
                 <div class="flex gap-3 mb-6">
                     <button id="btn-share" class="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3.5 rounded-2xl transition shadow-md shadow-indigo-500/30 text-sm">📸 Story Rapor</button>
                     <button id="btn-export" class="flex-1 bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 font-bold py-3.5 rounded-2xl transition border border-emerald-300 text-sm">📥 Unduh Rapor</button>
-                </div>
-
-                <div class="bg-amber-100 dark:bg-amber-900/40 p-5 rounded-2xl border border-amber-200 dark:border-amber-800">
-                    <h3 class="font-bold text-amber-800 dark:text-amber-400 text-sm mb-1 flex items-center gap-1">✨ Inspirasi Sedekah</h3>
-                    <p class="text-xs text-amber-700 dark:text-amber-500 mb-4 leading-relaxed">Lengkapi ibadah dengan berbagi takjil untuk Ojol & jalanan. Mini snack gift praktis mulai Rp3.000 aja!</p>
-                    <a href="https://shopee.co.id/kadosouvenir/50106297771" target="_blank" class="block w-full text-center bg-orange-500 text-white font-bold py-2.5 rounded-xl text-sm hover:bg-orange-600 transition shadow-md shadow-orange-500/20">
-                        Cek Paket Takjil di Shopee
-                    </a>
                 </div>
             </div>
         </div>
@@ -228,7 +222,7 @@
                 </div>
 
                 <h2 class="text-sm font-bold mb-3 text-gray-500 dark:text-gray-400 uppercase tracking-wider">Rak Trofi Badge</h2>
-                <div class="flex gap-3 overflow-x-auto pb-4 mb-2">
+                <div class="flex gap-3 overflow-x-auto pb-4 mb-4">
                     <div id="badge-tarawih" class="opacity-40 grayscale text-center min-w-[85px] transition-all duration-500">
                         <div class="text-3xl bg-white dark:bg-gray-800 rounded-2xl w-16 h-16 flex items-center justify-center mx-auto mb-2 shadow-sm border border-gray-100 dark:border-gray-700">🕌</div>
                         <p class="text-[10px] font-bold text-gray-600 dark:text-gray-300">Si Paling Tarawih</p>
@@ -241,6 +235,15 @@
                         <div class="text-3xl bg-white dark:bg-gray-800 rounded-2xl w-16 h-16 flex items-center justify-center mx-auto mb-2 shadow-sm border border-gray-100 dark:border-gray-700">📖</div>
                         <p class="text-[10px] font-bold text-gray-600 dark:text-gray-300">KhatamSkuy</p>
                     </div>
+                </div>
+
+                <div class="border-t-2 border-dashed border-gray-200 dark:border-gray-700 pt-5 mb-6">
+                    <div class="flex justify-between items-end mb-4">
+                        <h2 class="text-lg font-extrabold text-gray-800 dark:text-gray-100">Toko Kebaikan 🛒</h2>
+                        <span class="text-[10px] bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-400 px-2 py-1 rounded font-bold">Tukar Koinmu</span>
+                    </div>
+                    <div id="shop-container" class="grid grid-cols-2 gap-3">
+                        </div>
                 </div>
 
                 <div id="voucher-banner" class="hidden mt-4">
@@ -311,24 +314,18 @@
         btns.target.addEventListener('click', () => switchTab('target'));
         btns.profile.addEventListener('click', () => switchTab('profile'));
 
-        // --- Dark Mode ---
-        const darkToggle = document.getElementById('dark-toggle');
-        const htmlElement = document.documentElement;
-        if (localStorage.getItem('theme') === 'dark') { htmlElement.classList.add('dark'); darkToggle.innerText = '☀️'; }
-        darkToggle.addEventListener('click', () => {
-            htmlElement.classList.toggle('dark');
-            localStorage.setItem('theme', htmlElement.classList.contains('dark') ? 'dark' : 'light');
-            darkToggle.innerText = htmlElement.classList.contains('dark') ? '☀️' : '🌙';
-        });
-
         // --- Basic Profile Logic ---
         const nameInput = document.getElementById('user-name'); const bioInput = document.getElementById('user-bio');
         nameInput.value = localStorage.getItem('userName') || ''; bioInput.value = localStorage.getItem('userBio') || '';
         nameInput.addEventListener('input', () => { localStorage.setItem('userName', nameInput.value); });
         bioInput.addEventListener('input', () => localStorage.setItem('userBio', bioInput.value));
 
-        // --- RPG ENGINE: EXP, LEVEL & TITLE ---
+        // --- RPG ENGINE: EXP, LEVEL & KOIN ---
         let totalExp = parseInt(localStorage.getItem('totalExp') || 0);
+        let totalKoin = parseInt(localStorage.getItem('totalKoin') || 0);
+        
+        // Render UI Koin Pertama Kali
+        document.getElementById('koin-display').innerText = totalKoin;
         
         function calculateLevel(exp) {
             let lvl = Math.floor(exp / 100) + 1;
@@ -406,7 +403,7 @@
         document.getElementById('streak-display').innerText = `🔥 ${streakNum}`;
         if (streakNum >= 7) document.getElementById('voucher-banner').classList.remove('hidden');
 
-        // Logic Badge (Dipertahankan dari kode lama Anda)
+        // Logic Badge
         function updateBadges() {
             if (localStorage.getItem('quest-tarawih_total') >= 3) document.getElementById('badge-tarawih').classList.remove('opacity-40', 'grayscale');
             if (localStorage.getItem('quest-sedekah_total') >= 2) document.getElementById('badge-sedekah').classList.remove('opacity-40', 'grayscale');
@@ -425,18 +422,24 @@
                     let expVal = parseInt(this.getAttribute('data-exp') || 0);
                     if(this.checked) {
                         totalExp += expVal;
+                        totalKoin += expVal; // Koin bertambah sesuai EXP
                         confetti({ particleCount: 100, spread: 70, origin: { y: 0.5 } });
                         if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-                    } else { totalExp -= expVal; }
+                    } else { 
+                        totalExp -= expVal;
+                        totalKoin -= expVal;
+                    }
                     
+                    // Simpan Perubahan
                     localStorage.setItem('totalExp', totalExp);
+                    localStorage.setItem('totalKoin', totalKoin);
+                    document.getElementById('koin-display').innerText = totalKoin;
+                    
                     updateStatsUI();
 
-                    // Penambahan Total untuk Badge
                     let tKey = this.id + '_total'; localStorage.setItem(tKey, parseInt(localStorage.getItem(tKey) || 0) + (this.checked ? 1 : -1));
                     updateBadges();
 
-                    // Cek Streak
                     let anyChecked = document.querySelectorAll('.checklist-item:checked').length > 0;
                     if (anyChecked) {
                         localStorage.setItem('completedYesterday', 'true');
@@ -450,7 +453,71 @@
         attachChecklistListeners();
         updateBadges();
 
+        // --- SISTEM MARKETPLACE ---
+        const shopCatalog = [
+            { id: "theme_dark_pro", name: "Dark Mode Keren", price: 300, icon: "🌙" },
+            { id: "confetti_gold", name: "Confetti Emas", price: 500, icon: "✨" },
+            { id: "voucher_snack", name: "Voucher Snack", price: 5000, icon: "🎁" }
+        ];
+
+        let unlockedItems = JSON.parse(localStorage.getItem('unlockedItems') || '[]');
+
+        window.renderShop = function() {
+            const container = document.getElementById('shop-container');
+            if(!container) return;
+            container.innerHTML = ''; // bersihkan kontainer
+            
+            shopCatalog.forEach(item => {
+                const isOwned = unlockedItems.includes(item.id);
+                const card = document.createElement('div');
+                card.className = `p-3 rounded-2xl border-2 text-center transition ${isOwned ? 'border-emerald-400 bg-emerald-50 dark:bg-emerald-900/30' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'}`;
+                
+                card.innerHTML = `
+                    <div class="text-4xl mb-2 drop-shadow-sm">${item.icon}</div>
+                    <h3 class="font-bold text-xs text-gray-700 dark:text-gray-200 mb-2">${item.name}</h3>
+                    ${isOwned 
+                        ? `<span class="text-emerald-600 dark:text-emerald-400 font-bold text-[11px] block py-1.5">✓ Dimiliki</span>`
+                        : `<button onclick="buyItem('${item.id}', ${item.price})" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-1.5 rounded-xl text-xs font-bold active:scale-95 transition shadow-sm">🪙 ${item.price}</button>`
+                    }
+                `;
+                container.appendChild(card);
+            });
+            
+            // Terapkan efek dark mode dari toko jika dimiliki
+            if(unlockedItems.includes("theme_dark_pro") && localStorage.getItem('theme') !== 'light') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('dark-toggle').innerText = '☀️';
+            }
+        }
+        
+        // Panggil render saat pertama kali dibuka
+        renderShop();
+
+        window.buyItem = async function(id, price) {
+            if (totalKoin < price) {
+                alert("Yah, Koin kamu kurang. Selesaikan quest lagi ya!");
+                return;
+            }
+            if (!confirm(`Yakin tukar ${price} koin untuk item ini?`)) return;
+
+            // Potong Koin & Simpan Lokal
+            totalKoin -= price;
+            unlockedItems.push(id);
+            localStorage.setItem('totalKoin', totalKoin);
+            localStorage.setItem('unlockedItems', JSON.stringify(unlockedItems));
+            
+            document.getElementById('koin-display').innerText = totalKoin;
+            renderShop();
+            alert("Berhasil ditukar! Alhamdulillah.");
+
+            // Lempar ke Firebase (jika fungsi tersedia dari module JS di bawah)
+            if(window.syncPurchaseToFirebase) {
+                window.syncPurchaseToFirebase(id, price);
+            }
+        };
+
         // --- Export Rapor html2canvas ---
+        // (Tetap sama seperti kode asli Anda)
         function generateImage(filename) {
             const exportCard = document.getElementById('export-card');
             document.getElementById('export-name').innerText = nameInput.value || 'Anonymous';
@@ -464,7 +531,7 @@
             exportList.innerHTML = ''; 
             document.querySelectorAll('#view-target .checklist-item').forEach(box => {
                 let li = document.createElement('li'); li.className = "flex items-center gap-3 bg-white/5 p-3 rounded-2xl";
-                let textNode = box.nextElementSibling || box.parentElement.querySelector('span'); // Fix untuk struktur label gacha vs list biasa
+                let textNode = box.nextElementSibling || box.parentElement.querySelector('span'); 
                 let text = textNode.innerText.split('+')[0]; 
                 li.innerHTML = `<span class="text-2xl">${box.checked ? '✅' : '⏳'}</span> <span class="${box.checked ? 'text-white' : 'opacity-50 text-emerald-200 line-through'}">${text}</span>`;
                 exportList.appendChild(li);
@@ -484,8 +551,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // KUNCI FIREBASE ANDA
         const firebaseConfig = {
             apiKey: "AIzaSyDxabPizF0ShqaQSaJ142Rapxa9JcNq65o",
             authDomain: "amalin-app.firebaseapp.com",
@@ -497,12 +564,28 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
         const btnLogin = document.getElementById('btn-login');
         const btnLogout = document.getElementById('btn-logout');
         const nameInputFire = document.getElementById('user-name');
         const avatarInitialFire = document.getElementById('avatar-initial');
+
+        // FUNGSI SYNC UNTUK PEMBELIAN TOKO (Bisa dipanggil dari Vanilla JS atas)
+        window.syncPurchaseToFirebase = async (itemId, price) => {
+            const user = auth.currentUser;
+            if(!user) return; // Jika belum login, abaikan (sudah tersimpan di localStorage)
+            try {
+                const userRef = doc(db, "users", user.uid);
+                await updateDoc(userRef, {
+                    koin: increment(-price),
+                    unlocked_items: arrayUnion(itemId)
+                });
+            } catch (error) {
+                console.error("Gagal update Firebase:", error);
+            }
+        };
 
         btnLogin.addEventListener('click', async () => {
             try { await signInWithPopup(auth, provider); } 
@@ -513,14 +596,40 @@
             try { await signOut(auth); } catch (error) { console.error(error); }
         });
 
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 btnLogin.classList.add('hidden'); btnLogout.classList.remove('hidden');
                 nameInputFire.value = user.displayName; nameInputFire.readOnly = true;
                 localStorage.setItem('userName', user.displayName); 
                 avatarInitialFire.innerHTML = `<img src="${user.photoURL}" class="w-full h-full rounded-full object-cover border-4 border-white dark:border-gray-700" referrerpolicy="no-referrer">`;
-                // Panggil ulang Avatar agar inisial hilang
                 document.getElementById('user-name').dispatchEvent(new Event('input'));
+
+                // SINKRONISASI DATA KOIN & TOKO KE FIREBASE
+                const userRef = doc(db, "users", user.uid);
+                const docSnap = await getDoc(userRef);
+                
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    // Timpa data lokal dengan data server
+                    if(data.koin !== undefined) {
+                        localStorage.setItem('totalKoin', data.koin);
+                        document.getElementById('koin-display').innerText = data.koin;
+                        // Hacky way update variable totalKoin di window atas
+                        window.location.reload(); // (Opsional) Refresh page agar sync bersih
+                    }
+                    if(data.unlocked_items) {
+                        localStorage.setItem('unlockedItems', JSON.stringify(data.unlocked_items));
+                        window.renderShop(); // render ulang katalog
+                    }
+                } else {
+                    // Jika baru pertama kali login, buat dokumen baru & amankan data koin lokalnya
+                    await setDoc(userRef, {
+                        name: user.displayName,
+                        koin: parseInt(localStorage.getItem('totalKoin') || 0),
+                        unlocked_items: JSON.parse(localStorage.getItem('unlockedItems') || '[]')
+                    });
+                }
+
             } else {
                 btnLogin.classList.remove('hidden'); btnLogout.classList.add('hidden');
                 nameInputFire.readOnly = false;
