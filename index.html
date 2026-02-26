@@ -1286,20 +1286,7 @@ window.updateBadges = function() {
             } catch (e) { console.warn("Gagal simpan stats ke cloud"); }
         };
 
-        // --- AUTH & GATEKEEPER ---
-        btnLogin.addEventListener('click', async () => {
-            try {
-                if (auth.currentUser && auth.currentUser.isAnonymous) {
-                    await linkWithPopup(auth.currentUser, provider);
-                    alert("Mantap! Akun berhasil diamankan permanen ke Cloud Google!");
-                } else {
-                    await signInWithPopup(auth, provider);
-                }
-            } catch (e) { 
-                if(e.code === 'auth/credential-already-in-use') alert("Akun Google ini sudah terdaftar. Pakai akun lain ya bos.");
-                else alert(e.message); 
-            }
-        });
+        
         
         btnLogout.addEventListener('click', async () => { await signOut(auth); });
 
@@ -1705,8 +1692,14 @@ window.updateBadges = function() {
         btnEnableNotif.addEventListener('click', requestNotificationPermission);
         onMessage(messaging, (payload) => { alert(`Pesan Baru: ${payload.notification.title}\n${payload.notification.body}`); });
 
-        // --- AUTH & GATEKEEPER ---
+        // --- AUTH & GATEKEEPER (ANTI-SPAM & FILTER ERROR) ---
         btnLogin.addEventListener('click', async () => {
+            // 1. Simpan UI asli dan bekukan tombol agar tidak bisa di-spam klik 2x
+            const originalHTML = btnLogin.innerHTML;
+            btnLogin.disabled = true;
+            btnLogin.classList.add('opacity-50', 'cursor-not-allowed');
+            btnLogin.innerHTML = "⏳ Membuka Google...";
+
             try {
                 if (auth.currentUser && auth.currentUser.isAnonymous) {
                     await linkWithPopup(auth.currentUser, provider);
@@ -1715,8 +1708,23 @@ window.updateBadges = function() {
                     await signInWithPopup(auth, provider);
                 }
             } catch (e) { 
-                if(e.code === 'auth/credential-already-in-use') alert("Akun Google ini sudah terdaftar. Pakai akun lain ya bos.");
-                else alert(e.message); 
+                // 2. Filter Error: Abaikan jika user sengaja menutup pop-up/batal login
+                if (e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request') {
+                    console.log("Proses login dibatalkan oleh sistem/user.");
+                } 
+                // Filter Error: Email sudah terkait dengan akun lain
+                else if (e.code === 'auth/credential-already-in-use') {
+                    alert("Akun Google ini sudah terdaftar. Pakai akun email lain ya bos.");
+                } 
+                // Error lainnya
+                else {
+                    alert("Gagal menghubungkan: " + e.message); 
+                }
+            } finally {
+                // 3. Apapun hasilnya (sukses/batal/gagal), kembalikan tombol seperti semula
+                btnLogin.disabled = false;
+                btnLogin.classList.remove('opacity-50', 'cursor-not-allowed');
+                btnLogin.innerHTML = originalHTML;
             }
         });
         
@@ -1814,5 +1822,6 @@ window.updateBadges = function() {
     </script>
 </body>
 </html>
+
 
 
