@@ -1,19 +1,20 @@
 {
-  "name": "Amalin - Jurnal Ramadan",
-"short_name": "Amalin",
-  "description": "Aplikasi Checklist Ibadah Harian Ramadan",
+  "name": "AmalPad",
+  "short_name": "AmalPad",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#10B981",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/3213/3213309.png",
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ]
-
 }
-
