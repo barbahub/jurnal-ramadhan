@@ -8,8 +8,8 @@
     <link rel="icon" href="icon.png" type="image/png">
     <link rel="apple-touch-icon" href="icon.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="AmalPad">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AmalPad">
     <meta name="theme-color" content="#10B981">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -468,14 +468,13 @@
         ];
 
         function renderSholatWajib() {
-           function renderSholatWajib() {
             const container = document.getElementById('sholat-wajib-container');
             if(!container) return;
             let html = '';
             
             sholatWajib.forEach(q => {
                 const isDone = localStorage.getItem(q.id) === 'true'; 
-                const isPast = currentHour >= q.end; // Logika waktu sudah diketatkan
+                const isPast = currentHour >= q.end; 
                 const isActive = currentHour >= q.start && currentHour < q.end; 
                 
                 let statusText, statusClass, borderClass, disabledAttr = "disabled";
@@ -492,11 +491,10 @@
                     borderClass = "border-rose-200 bg-rose-50 dark:bg-rose-900/20 opacity-70 grayscale-[50%]";
                     checkIcon = "❌";
                     
-                    // --- SISTEM PENALTI INSTAN MEMUKUL ---
                     let penaltyKey = `penalty_done_${q.id}_${new Date().toDateString()}`;
                     if(localStorage.getItem(penaltyKey) !== 'true') {
                         localStorage.setItem(penaltyKey, 'true');
-                        totalExp = Math.max(0, totalExp - 50); // Eksekusi tebas poin
+                        totalExp = Math.max(0, totalExp - 50); 
                         localStorage.setItem('totalExp', totalExp);
                         updateStatsUI();
                         if(window.syncExpToFirebase) window.syncExpToFirebase(-50);
@@ -508,7 +506,7 @@
                     statusText = "🟢 SEDANG BERLANGSUNG!";
                     statusClass = "text-emerald-500 animate-pulse font-black";
                     borderClass = "border-emerald-400 shadow-emerald-500/20 shadow-md bg-white dark:bg-gray-800";
-                    disabledAttr = ""; // Buka gembok
+                    disabledAttr = ""; 
                     checkIcon = "";
                 } else {
                     statusText = `⏳ Nanti: ${q.start.toString().padStart(2, '0')}:00 - ${q.end.toString().padStart(2, '0')}:00`;
@@ -531,7 +529,6 @@
             });
             container.innerHTML = html;
             
-            // Re-attach listener khusus Sholat untuk mencegah bypass klik saat render ulang
             document.querySelectorAll('.sholat-item').forEach(box => {
                 box.addEventListener('change', function() {
                     if (!this.checked) { this.checked = true; return; }
@@ -548,11 +545,11 @@
                     if(window.syncExpToFirebase) window.syncExpToFirebase(finalExp);
                     if(typeof confetti === 'function') confetti({ particleCount: 100, spread: 70, origin: { y: 0.5 } });
                     
-                    renderSholatWajib(); // Render ulang agar status langsung jadi "Terselesaikan"
+                    renderSholatWajib(); 
                 });
             });
         }
-        renderSholatWajib()
+        renderSholatWajib(); // Dipanggil 1 kali di tempat yang benar
             
         // --- 5.5 API JADWAL SHOLAT DINAMIS ---
         async function fetchJadwalDinamis() {
@@ -567,21 +564,20 @@
                         const data = await response.json();
                         const timings = data.data.timings;
                         
-                        // Perbaikan Bug Waktu Sholat Wajib
                         sholatWajib[0].start = parseInt(timings.Fajr.substring(0, 2));
-                        sholatWajib[0].end = parseInt(timings.Sunrise.substring(0, 2)) + 1; // Subuh HARUS berakhir sesaat setelah Sunrise (Syuruq)
+                        sholatWajib[0].end = parseInt(timings.Sunrise.substring(0, 2)) + 1; 
                         
                         sholatWajib[1].start = parseInt(timings.Dhuhr.substring(0, 2));
-                        sholatWajib[1].end = parseInt(timings.Asr.substring(0, 2)); // Dhuhur berakhir saat Ashar
+                        sholatWajib[1].end = parseInt(timings.Asr.substring(0, 2)); 
                         
                         sholatWajib[2].start = parseInt(timings.Asr.substring(0, 2));
-                        sholatWajib[2].end = parseInt(timings.Maghrib.substring(0, 2)); // Ashar berakhir saat Maghrib
+                        sholatWajib[2].end = parseInt(timings.Maghrib.substring(0, 2)); 
                         
                         sholatWajib[3].start = parseInt(timings.Maghrib.substring(0, 2));
-                        sholatWajib[3].end = parseInt(timings.Isha.substring(0, 2)); // Maghrib berakhir saat Isya
+                        sholatWajib[3].end = parseInt(timings.Isha.substring(0, 2)); 
                         
                         sholatWajib[4].start = parseInt(timings.Isha.substring(0, 2));
-                        sholatWajib[4].end = 24; // Isya berakhir di tengah malam (Batas jam 24)
+                        sholatWajib[4].end = 24; 
                         
                         renderSholatWajib();
                     } catch (error) { console.warn("Gagal mengambil API AlAdhan. Menggunakan jadwal lokal."); }
@@ -1029,8 +1025,6 @@
                             alert("🔥 EPIC COMBO TERBUKA! Selesaikan tantangan kasta Suhu ini!");
                         }
                     }
-
-                    if(this.id.startsWith("sw-")) renderSholatWajib();
                 });
             });
         }
@@ -1616,5 +1610,3 @@
     </script>
 </body>
 </html>
-
-
