@@ -91,29 +91,39 @@
                     </div>
 
                     <div id="circle-joined" class="relative z-10 hidden animate-[fadeIn_0.4s_ease-out]">
-                        <div class="flex justify-between items-center mb-2">
-                            <div>
-                                <span class="bg-blue-500 text-white text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-wide shadow-sm">CIRCLE KITA</span>
-                                <h3 id="circle-name-display" class="font-black text-lg mt-1 truncate max-w-[150px]">Memuat...</h3>
-                            </div>
-                            <div class="text-right bg-white/10 p-2 rounded-xl backdrop-blur-sm border border-white/20">
-                                <span class="block text-[8px] text-blue-200 font-bold uppercase tracking-wider">Kode Invite</span>
-                                <span id="circle-code-display" class="block font-mono font-black text-yellow-300 text-sm tracking-widest">------</span>
+                        <div class="flex items-center gap-3 mb-4">
+                            <div id="circle-logo-display" class="w-16 h-16 bg-white/20 rounded-2xl border-2 border-white/40 flex items-center justify-center text-3xl shadow-lg overflow-hidden shrink-0">🛡️</div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start">
+                                    <span class="bg-blue-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-wide shadow-sm mb-1 inline-block">CIRCLE KITA</span>
+                                    <button id="btn-edit-circle" class="hidden text-[10px] bg-white/20 hover:bg-white/30 px-2 py-0.5 rounded text-blue-100 transition">⚙️ Edit</button>
+                                </div>
+                                <h3 id="circle-name-display" class="font-black text-lg leading-tight truncate max-w-[150px] shadow-sm">Memuat...</h3>
+                                <p id="circle-motto-display" class="text-[10px] text-blue-200 italic mt-0.5 line-clamp-1">"Solidaritas Jalur Langit"</p>
                             </div>
                         </div>
                         
-                        <div class="bg-black/20 rounded-xl p-3 mt-3 border border-white/10 shadow-inner">
+                        <div class="bg-black/20 rounded-xl p-3 mb-4 border border-white/10 shadow-inner">
                             <div class="flex justify-between text-xs font-bold text-blue-100 mb-1.5">
                                 <span id="circle-level-display">Lv. 1</span>
                                 <span id="circle-members-display" class="cursor-pointer underline decoration-dashed hover:text-white transition">0/10 Anggota (Lihat)</span>
                             </div>
-                            <div class="w-full bg-black/40 rounded-full h-2.5 shadow-inner overflow-hidden">
-                                <div class="bg-gradient-to-r from-yellow-400 to-orange-400 h-full transition-all duration-1000 ease-out" id="circle-exp-bar" style="width: 0%"></div>
+                            <div class="w-full bg-black/40 rounded-full h-2.5 shadow-inner overflow-hidden relative">
+                                <div class="bg-gradient-to-r from-yellow-400 to-orange-400 h-full transition-all duration-1000 ease-out relative" id="circle-exp-bar" style="width: 0%"></div>
                             </div>
                             <div class="flex justify-between items-end mt-2">
-                                <p class="text-[10px] text-blue-200 font-medium"><span id="circle-exp-text" class="font-bold text-white">0</span> EXP Terkumpul</p>
-                                <button id="btn-leave-circle" class="text-[9px] bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded">Keluar</button>
+                                <p class="text-[10px] text-blue-200 font-medium"><span id="circle-exp-text" class="font-bold text-white">0</span> / <span id="circle-exp-target">0</span> EXP</p>
+                                <div class="flex gap-2">
+                                    <span class="text-[9px] bg-white/10 px-1.5 py-0.5 rounded font-mono text-yellow-300" id="circle-code-display">---</span>
+                                    <button id="btn-leave-circle" class="text-[9px] bg-red-500 hover:bg-red-600 text-white px-2 py-0.5 rounded">Keluar</button>
+                                </div>
                             </div>
+                        </div>
+
+                        <div class="bg-blue-900/40 rounded-xl p-3 border border-blue-400/30">
+                            <h4 class="text-xs font-black text-white uppercase tracking-wider mb-2 flex items-center gap-1">⚔️ Misi Gotong Royong</h4>
+                            <div id="circle-quests-container" class="space-y-2">
+                                </div>
                         </div>
 
                         <div id="circle-members-modal" class="hidden mt-3 bg-white/10 rounded-xl p-3 backdrop-blur-md border border-white/20 h-32 overflow-y-auto">
@@ -258,24 +268,26 @@
                             🔄 Refresh
                         </button>
                     </div>
-                    <div class="bg-white dark:bg-gray-800 p-4 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm flex justify-center flex-col items-center">
-                        <div class="w-full max-w-[250px]">
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm grid grid-cols-5 gap-3 items-center">
+                        <div class="col-span-3 w-full relative">
                             <canvas id="radarChart"></canvas>
                         </div>
-                        <p id="aura-check-text" class="text-center text-xs font-black text-emerald-500 mt-3 animate-pulse">✨ Aura Check: +100 W Rizz!</p>
-                    </div>
-                    <p class="text-center text-[9px] text-gray-400 mt-2 italic">Grafik terbentuk otomatis dari jenis ibadah yang kamu selesaikan.</p>
-                </div>
-
-                <div class="mb-6">
-                    <h2 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Trend Langit Mingguan 📈</h2>
-                    <div class="bg-white dark:bg-gray-800 p-4 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm">
-                        <canvas id="trendChart" height="150"></canvas>
+                        <div class="col-span-2 flex flex-col gap-3">
+                            <div class="relative w-full h-24">
+                                <canvas id="polarChart"></canvas>
+                            </div>
+                            <div class="relative w-full h-24">
+                                <canvas id="donutChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-span-5 border-t border-gray-100 dark:border-gray-700 pt-3 mt-1">
+                            <p id="aura-check-text" class="text-center text-xs font-black text-emerald-500 animate-pulse">✨ Aura Check: +100 W Rizz!</p>
+                        </div>
                     </div>
                 </div>
 
                 <div class="flex gap-3 mb-6">
-                    <button id="btn-share" class="flex-1 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-black py-3.5 rounded-2xl transition shadow-lg shadow-orange-500/30 text-xs uppercase tracking-wide">🃏 Flex Player Card</button>
+                    <button id="btn-share" class="flex-1 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-black py-3.5 rounded-2xl transition shadow-lg shadow-orange-500/30 text-xs uppercase tracking-wide">🃏 Flex Prayer Card</button>
                     <button id="btn-export" class="flex-1 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 font-black py-3.5 rounded-2xl transition border border-indigo-300 dark:border-indigo-700 text-xs uppercase tracking-wide">📜 Cetak CV Akhirat</button>
                 </div>
 
@@ -355,39 +367,39 @@
             </button>
         </div>
 
-        <div id="export-card" class="absolute left-[-9999px] top-0 w-[400px] h-[600px] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-gradient-to-br from-yellow-300 via-yellow-500 to-orange-600 p-6 flex flex-col text-black font-sans shadow-2xl overflow-hidden rounded-3xl border-8 border-yellow-200">
+        <div id="export-card" class="absolute left-[-9999px] top-0 w-[400px] h-[620px] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-gradient-to-br from-yellow-300 via-yellow-500 to-orange-600 p-6 flex flex-col text-black font-sans shadow-2xl overflow-hidden rounded-3xl border-8 border-yellow-200">
             <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent transform -skew-x-12 translate-x-[-100%] animate-[shimmer_2s_infinite]"></div>
             
             <div class="relative z-10 flex flex-col h-full">
                 <div class="flex justify-between items-start">
                     <div class="text-center">
-                        <div id="card-ovr" class="text-6xl font-black tracking-tighter leading-none">99</div>
+                        <div id="card-ovr" class="text-6xl font-black tracking-tighter leading-none drop-shadow-md">99</div>
                         <div id="card-pos" class="text-xl font-bold uppercase tracking-widest mt-1">WALI</div>
                     </div>
-                    <div id="card-avatar" class="w-28 h-28 bg-white/20 rounded-full border-4 border-white flex items-center justify-center text-5xl font-black shadow-lg backdrop-blur-sm overflow-hidden">
-                        A
-                    </div>
+                    <div id="card-avatar" class="w-28 h-28 bg-white/30 rounded-full border-4 border-white flex items-center justify-center text-5xl font-black shadow-xl backdrop-blur-md overflow-hidden">
+                        </div>
                 </div>
 
-                <div class="text-center mt-6 border-b-2 border-black/20 pb-2">
-                    <h2 id="card-name" class="text-3xl font-black uppercase tracking-widest">PLAYER</h2>
+                <div class="text-center mt-5 border-b-2 border-black/20 pb-2">
+                    <h2 id="card-name" class="text-3xl font-black uppercase tracking-widest drop-shadow-sm">PLAYER</h2>
                     <p id="card-title" class="text-sm font-bold bg-black text-yellow-400 inline-block px-3 py-1 rounded-full mt-2 uppercase tracking-wider shadow-md">GELAR DISINI</p>
+                    <p id="card-circle" class="text-[10px] font-bold text-black/70 uppercase tracking-widest mt-1">🛡️ No Circle</p>
                 </div>
 
-                <div class="grid grid-cols-2 gap-x-6 gap-y-3 mt-6 px-4">
-                    <div class="flex justify-between font-black text-lg"><span id="stat-langit" class="text-black/80">99</span> <span class="uppercase tracking-wider">LGT</span></div>
-                    <div class="flex justify-between font-black text-lg"><span id="stat-sosial" class="text-black/80">99</span> <span class="uppercase tracking-wider">SOS</span></div>
-                    <div class="flex justify-between font-black text-lg"><span id="stat-sigma" class="text-black/80">99</span> <span class="uppercase tracking-wider">SGM</span></div>
-                    <div class="flex justify-between font-black text-lg"><span id="stat-peduli" class="text-black/80">99</span> <span class="uppercase tracking-wider">PDL</span></div>
-                    <div class="flex justify-between font-black text-lg"><span id="stat-disiplin" class="text-black/80">99</span> <span class="uppercase tracking-wider">DSP</span></div>
-                    <div class="flex justify-between font-black text-lg"><span id="stat-streak" class="text-black/80">99</span> <span class="uppercase tracking-wider">STR</span></div>
+                <div class="grid grid-cols-2 gap-x-6 gap-y-3 mt-5 px-4">
+                    <div class="flex justify-between font-black text-lg"><span id="stat-langit" class="text-black/80 drop-shadow-sm">99</span> <span class="uppercase tracking-wider">LGT</span></div>
+                    <div class="flex justify-between font-black text-lg"><span id="stat-sosial" class="text-black/80 drop-shadow-sm">99</span> <span class="uppercase tracking-wider">SOS</span></div>
+                    <div class="flex justify-between font-black text-lg"><span id="stat-sigma" class="text-black/80 drop-shadow-sm">99</span> <span class="uppercase tracking-wider">SGM</span></div>
+                    <div class="flex justify-between font-black text-lg"><span id="stat-peduli" class="text-black/80 drop-shadow-sm">99</span> <span class="uppercase tracking-wider">PDL</span></div>
+                    <div class="flex justify-between font-black text-lg"><span id="stat-disiplin" class="text-black/80 drop-shadow-sm">99</span> <span class="uppercase tracking-wider">DSP</span></div>
+                    <div class="flex justify-between font-black text-lg"><span id="stat-streak" class="text-black/80 drop-shadow-sm">99</span> <span class="uppercase tracking-wider">STR</span></div>
                 </div>
 
                 <div class="mt-auto flex justify-between items-end border-t-2 border-black/20 pt-3">
-                    <div class="text-xs font-bold uppercase tracking-widest">AmalPad Ultimate</div>
+                    <div class="text-xs font-black uppercase tracking-widest drop-shadow-sm">AmalPad Ultimate</div>
                     <div class="text-right">
                         <div class="text-[10px] font-bold">TOTAL EXP</div>
-                        <div id="card-exp" class="text-xl font-black">99,999</div>
+                        <div id="card-exp" class="text-xl font-black drop-shadow-sm">99,999</div>
                     </div>
                 </div>
             </div>
@@ -443,7 +455,7 @@
             <div class="bg-gradient-to-br from-blue-900 to-indigo-900 rounded-3xl p-1 w-full max-w-[300px] shadow-2xl border border-blue-400/30 relative overflow-hidden transform scale-95 transition-transform" onclick="event.stopPropagation()">
                 <div class="bg-white/10 backdrop-blur-md rounded-[1.3rem] p-5">
                     <div class="text-center mb-4">
-                        <div class="w-16 h-16 bg-blue-500/20 rounded-2xl mx-auto flex items-center justify-center text-3xl border border-blue-400/50 mb-2 shadow-inner">🛡️</div>
+                        <div id="popup-circle-logo" class="w-16 h-16 bg-blue-500/20 rounded-2xl mx-auto flex items-center justify-center text-3xl border border-blue-400/50 mb-2 shadow-inner overflow-hidden">🛡️</div>
                         <h3 id="popup-circle-name" class="font-black text-xl text-white tracking-wide">Nama Circle</h3>
                         <p id="popup-circle-lvl" class="text-[10px] text-blue-200 font-bold uppercase tracking-wider bg-blue-500/30 inline-block px-2 py-1 rounded-md mt-1">Lv. 1 Guild</p>
                     </div>
@@ -509,7 +521,6 @@
             localStorage.setItem('theme', htmlElement.classList.contains('dark') ? 'dark' : 'light');
             darkToggle.innerText = htmlElement.classList.contains('dark') ? '☀️' : '🌙';
             if(window.radarChartInstance) updateChartTheme();
-            if(window.renderTrendChart) window.renderTrendChart();
         });
 
         // --- 3. TAB NAVIGASI ---
@@ -524,7 +535,7 @@
         }
         btns.home.addEventListener('click', () => switchTab('home'));
         btns.target.addEventListener('click', () => switchTab('target'));
-        btns.profile.addEventListener('click', () => { switchTab('profile'); if(window.renderTrendChart) setTimeout(window.renderTrendChart, 100); });
+        btns.profile.addEventListener('click', () => { switchTab('profile'); setTimeout(window.renderCharts, 100); });
 
         // --- 4. PROFIL, KUTIPAN & LEVELING PROGRESIF ---
         const nameInput = document.getElementById('user-name');
@@ -1104,84 +1115,67 @@
         }, 15000);
 
         // --- 9. SISTEM RADAR CHART & HEATMAP (SAFE PARSE) ---
-        window.statsRadar = window.safeJSONParse('statsRadar', { ketuhanan: 10, gotong_royong: 10, disiplin: 10, tanggung_jawab: 10, peduli: 10 });
-        window.radarChartInstance = null;
+        // Setup statsRadar (tambah konsistensi fallback)
+        window.statsRadar = window.safeJSONParse('statsRadar', { ketuhanan: 10, gotong_royong: 10, disiplin: 10, tanggung_jawab: 10, peduli: 10, konsistensi: 10 });
+        window.statsRadar.konsistensi = window.statsRadar.konsistensi || (parseInt(localStorage.getItem('streak')||0) * 5) || 10;
 
-        window.renderRadarChart = function() {
-            const ctx = document.getElementById('radarChart').getContext('2d');
+        window.radarChartInstance = null;
+        window.polarChartInstance = null;
+        window.donutChartInstance = null;
+
+        window.renderCharts = function() {
+            const ctxR = document.getElementById('radarChart')?.getContext('2d');
+            const ctxP = document.getElementById('polarChart')?.getContext('2d');
+            const ctxD = document.getElementById('donutChart')?.getContext('2d');
+            if(!ctxR || !ctxP || !ctxD) return;
+
             const isDark = document.documentElement.classList.contains('dark');
             const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
             const fontColor = isDark ? '#9CA3AF' : '#6B7280';
+            
+            // Data 6 Atribut
+            const labels = ['Langit', 'Sosial', 'Healer', 'Sigma', 'Positif', 'Streak'];
+            const dataPts = [window.statsRadar.ketuhanan, window.statsRadar.gotong_royong, window.statsRadar.disiplin, window.statsRadar.tanggung_jawab, window.statsRadar.peduli, window.statsRadar.konsistensi];
+            const bgColors = ['#3B82F6', '#F43F5E', '#10B981', '#F59E0B', '#8B5CF6', '#6366F1'];
 
+            // 1. Radar Chart (Mini)
             if (window.radarChartInstance) window.radarChartInstance.destroy();
-            window.radarChartInstance = new Chart(ctx, {
+            window.radarChartInstance = new Chart(ctxR, {
                 type: 'radar',
                 data: {
-                    labels: ['Aura Positive', 'Sigma Mindset', 'Brainrot Healer', 'Social Vibes', 'Jalur Langit'],
+                    labels: labels,
                     datasets: [{
-                        label: 'Poin Karakter',
-                        data: [window.statsRadar.ketuhanan, window.statsRadar.gotong_royong, window.statsRadar.disiplin, window.statsRadar.tanggung_jawab, window.statsRadar.peduli],
-                        backgroundColor: 'rgba(16, 185, 129, 0.2)', borderColor: 'rgba(16, 185, 129, 1)', pointBackgroundColor: 'rgba(251, 191, 36, 1)', borderWidth: 2,
+                        data: dataPts, backgroundColor: 'rgba(16, 185, 129, 0.2)', borderColor: 'rgba(16, 185, 129, 1)', pointBackgroundColor: '#FBBC05', borderWidth: 1.5, pointRadius: 2
                     }]
                 },
-                options: { scales: { r: { angleLines: { color: gridColor }, grid: { color: gridColor }, pointLabels: { color: fontColor, font: { size: 10, family: "'Inter', sans-serif", weight: 'bold' } }, ticks: { display: false, beginAtZero: true } } }, plugins: { legend: { display: false } } }
+                options: { responsive: true, scales: { r: { angleLines: { color: gridColor }, grid: { color: gridColor }, pointLabels: { color: fontColor, font: { size: 9, weight: 'bold' } }, ticks: { display: false } } }, plugins: { legend: { display: false } } }
             });
-            const labels = ['Jalur Langit', 'Social Vibes', 'Brainrot Healer', 'Sigma Mindset', 'Aura Positive'];
-            const maxStatName = labels[ [window.statsRadar.ketuhanan, window.statsRadar.gotong_royong, window.statsRadar.disiplin, window.statsRadar.tanggung_jawab, window.statsRadar.peduli].indexOf(Math.max(...[window.statsRadar.ketuhanan, window.statsRadar.gotong_royong, window.statsRadar.disiplin, window.statsRadar.tanggung_jawab, window.statsRadar.peduli])) ];
+
+            // 2. Polar Area (Rose) Chart
+            if (window.polarChartInstance) window.polarChartInstance.destroy();
+            window.polarChartInstance = new Chart(ctxP, {
+                type: 'polarArea',
+                data: { labels: labels, datasets: [{ data: dataPts, backgroundColor: bgColors.map(c => c+'80'), borderColor: bgColors, borderWidth: 1 }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { r: { ticks: {display: false}, grid: {display: false} } }, plugins: { legend: { display: false } } }
+            });
+
+            // 3. Donut Chart (Target Harian)
+            let checkedBoxes = document.querySelectorAll('.checklist-item:checked, .sholat-item:checked').length;
+            let totalBoxes = document.querySelectorAll('.checklist-item, .sholat-item').length;
             
+            if (window.donutChartInstance) window.donutChartInstance.destroy();
+            window.donutChartInstance = new Chart(ctxD, {
+                type: 'doughnut',
+                data: { labels: ['Selesai', 'Sisa'], datasets: [{ data: [checkedBoxes, Math.max(0, totalBoxes - checkedBoxes)], backgroundColor: ['#10B981', gridColor], borderWidth: 0, cutout: '70%' }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+
+            const maxStatName = labels[ dataPts.indexOf(Math.max(...dataPts)) ];
             let auraEl = document.getElementById('aura-check-text');
-            if(auraEl) auraEl.innerText = `✨ Aura Check: +1000 W Rizz karena rajin ${maxStatName}!`;
+            if(auraEl) auraEl.innerText = `✨ Dominan Atribut: ${maxStatName} (+100 W Rizz!)`;
         }
-        function updateChartTheme() { window.renderRadarChart(); }
         
-        // Fungsi Update Trend Chart
-        window.trendChartInstance = null;
-        window.renderTrendChart = function() {
-            const ctx = document.getElementById('trendChart');
-            if(!ctx) return;
-            
-            const isDark = document.documentElement.classList.contains('dark');
-            const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-            const fontColor = isDark ? '#9CA3AF' : '#6B7280';
-
-            const last7Days = [];
-            const dataCounts = [];
-            for(let i = 6; i >= 0; i--) { 
-                const d = new Date(); d.setDate(d.getDate() - i); 
-                last7Days.push(d.toLocaleDateString('id-ID', {weekday: 'short'})); 
-                const count = window.activityHistory.find(r => r.date === d.toDateString())?.count || 0;
-                dataCounts.push(count * 50); // Estimasi EXP harian dari count
-            }
-
-            if (window.trendChartInstance) window.trendChartInstance.destroy();
-            window.trendChartInstance = new Chart(ctx.getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: last7Days,
-                    datasets: [{
-                        label: 'EXP Gained',
-                        data: dataCounts,
-                        borderColor: '#10B981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.2)',
-                        borderWidth: 3,
-                        tension: 0.4,
-                        fill: true,
-                        pointBackgroundColor: '#FBBC05',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    scales: { 
-                        x: { grid: { display: false }, ticks: { color: fontColor, font: {size: 10} } },
-                        y: { grid: { color: gridColor }, ticks: { color: fontColor, font: {size: 10} }, beginAtZero: true }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
-        }
+        function updateChartTheme() { window.renderCharts(); }
 
         window.activityHistory = window.safeJSONParse('activityHistory', []);
         
@@ -1214,7 +1208,6 @@
             if(window.activityHistory.length > 14) window.activityHistory.shift(); 
             localStorage.setItem('activityHistory', JSON.stringify(window.activityHistory));
             window.updateHeatmap();
-            if(window.renderTrendChart) window.renderTrendChart();
         }
 
         // --- 10. ATTACH LISTENERS & SANKSI PENALTI ---
@@ -1306,7 +1299,7 @@
                     
                     window.statsRadar[questType] += 5; 
                     localStorage.setItem('statsRadar', JSON.stringify(window.statsRadar));
-                    if(window.radarChartInstance) window.renderRadarChart();
+                    if(window.radarChartInstance) window.renderCharts();
                     window.logActivityForHeatmap(); 
                     window.pushToLiveFeed(nameInput.value || "Kamu", questTitle, finalExp);
 
@@ -1407,10 +1400,12 @@
         // Event Listener Tombol Generate Player Card
         document.getElementById('btn-share').addEventListener('click', () => {
             const btn = document.getElementById('btn-share');
-            btn.innerText = "⏳ Generating Card...";
+            btn.innerText = "⏳ Memanggil Khodam Card...";
             btn.disabled = true;
 
-            // Isi Data ke Card
+            // Pastikan konsistensi terupdate
+            window.statsRadar.konsistensi = (parseInt(localStorage.getItem('streak')||0) * 5);
+
             let info = calculateLevelInfo(window.totalExp);
             let overall = Math.min(99, Math.floor(info.level * 1.8) + 10); 
             
@@ -1419,31 +1414,40 @@
             document.getElementById('card-name').innerText = document.getElementById('user-name').value || 'PLAYER';
             document.getElementById('card-title').innerText = getTitle(info.level);
             document.getElementById('card-exp').innerText = window.totalExp.toLocaleString('id-ID');
-            document.getElementById('card-avatar').innerHTML = document.getElementById('avatar-initial').innerHTML; 
+            document.getElementById('card-circle').innerText = window.userCircleId ? `🛡️ ${document.getElementById('circle-name-display').innerText}` : '🛡️ Solo Player';
 
-            // Atribut (Normalisasi skala 1-99)
+            // Clone Avatar & Force CORS
+            const avatarSrcEl = document.getElementById('avatar-initial');
+            const cardAvatarDest = document.getElementById('card-avatar');
+            if(avatarSrcEl.querySelector('img')) {
+                // Buat tag img baru dengan crossOrigin anonymous agar html2canvas tidak di-block
+                cardAvatarDest.innerHTML = `<img src="${avatarSrcEl.querySelector('img').src}" crossorigin="anonymous" class="w-full h-full object-cover">`;
+            } else {
+                cardAvatarDest.innerHTML = avatarSrcEl.innerHTML;
+            }
+
             const getStat = (val) => Math.min(99, Math.floor(val / 2) + 20);
             document.getElementById('stat-langit').innerText = getStat(window.statsRadar.ketuhanan);
             document.getElementById('stat-sosial').innerText = getStat(window.statsRadar.gotong_royong);
             document.getElementById('stat-sigma').innerText = getStat(window.statsRadar.tanggung_jawab);
             document.getElementById('stat-peduli').innerText = getStat(window.statsRadar.peduli);
             document.getElementById('stat-disiplin').innerText = getStat(window.statsRadar.disiplin);
-            document.getElementById('stat-streak').innerText = Math.min(99, parseInt(localStorage.getItem('streak') || 0) * 5);
+            document.getElementById('stat-streak').innerText = Math.min(99, window.statsRadar.konsistensi);
 
             const card = document.getElementById('export-card');
             
-            // Render pakai html2canvas
+            // Tambahkan parameter useCORS dan allowTaint
             setTimeout(() => {
-                html2canvas(card, { backgroundColor: null, scale: 2 }).then(canvas => {
+                html2canvas(card, { backgroundColor: null, scale: 2, useCORS: true, allowTaint: true }).then(canvas => {
                     const link = document.createElement('a');
-                    link.download = `AmalPad_PlayerCard_${new Date().getTime()}.png`;
+                    link.download = `AmalPad_FlexingPrayerCard_${new Date().getTime()}.png`;
                     link.href = canvas.toDataURL('image/png');
                     link.click();
-                    btn.innerText = "🃏 Flex Player Card";
+                    btn.innerText = "🃏 Flex Prayer Card";
                     btn.disabled = false;
                 }).catch(err => {
-                    alert('Gagal render Card. Coba lagi.');
-                    btn.innerText = "🃏 Flex Player Card";
+                    alert('Gagal render Card. Mungkin karena limitasi browser.');
+                    btn.innerText = "🃏 Flex Prayer Card";
                     btn.disabled = false;
                 });
             }, 500);
@@ -1958,6 +1962,52 @@
             }
         });
 
+        // LOGIKA BARU CIRCLE EXP & MISI GOTONG ROYONG
+        function getGuildExpRequirement(lvl) {
+            return 1000 * lvl * (lvl + 1); // Lv1=0, Lv2=2000, Lv3=6000, Lv10=110000 (Susah!)
+        }
+
+        const circleCoopQuests = [
+            { id: "cq1", title: "Dzikir Smart Tasbih Massal", target: 50000, type: "tasbih" },
+            { id: "cq2", title: "Rakaat Sholat Berjamaah", target: 5000, type: "sholat" },
+            { id: "cq3", title: "Koin Sedekah Guild", target: 100000, type: "koin" }
+        ];
+
+        // Fungsi Push Misi Gotong Royong
+        window.contributeCircleQuest = async function(qId) {
+            let amount = parseInt(prompt("Berapa banyak jumlah yang mau disumbangkan dari usahamu hari ini? (Hati-hati, sumbangan palsu dosanya ditanggung sendiri 🗿):", "10"));
+            if(!amount || isNaN(amount) || amount <= 0) return;
+            
+            try {
+                // Update ke map di Firestore
+                const circleRef = doc(db, "circles", window.userCircleId);
+                await updateDoc(circleRef, {
+                    [`coop_progress.${qId}`]: increment(amount),
+                    total_exp: increment(amount * 2) // Bonus EXP Circle karena ngerjain misi bareng
+                });
+                alert("Sumbangan berhasil masuk ke Circle! (+Bonus EXP Guild)");
+                window.fetchCircleData(window.userCircleId);
+            } catch(e) { alert("Gagal menyumbang: " + e.message); }
+        }
+
+        // Fungsi Edit Circle (Owner Only)
+        document.getElementById('btn-edit-circle').addEventListener('click', async () => {
+            let newLogo = prompt("Masukkan URL Logo Circle (Kosongkan jika tak ingin ubah):");
+            let newMotto = prompt("Masukkan Motto Circle:");
+            
+            if(newLogo || newMotto) {
+                let updates = {};
+                if(newLogo) updates.logo = newLogo;
+                if(newMotto) updates.motto = newMotto;
+                
+                try {
+                    await updateDoc(doc(db, "circles", window.userCircleId), updates);
+                    window.fetchCircleData(window.userCircleId);
+                    alert("Berhasil mengupdate identitas Circle!");
+                } catch(e) { alert("Gagal: " + e.message); }
+            }
+        });
+
         // Notifications
         const btnEnableNotif = document.getElementById('btn-enable-notif');
         async function requestNotificationPermission() {
@@ -2059,14 +2109,13 @@
                     if(data.statsRadar) {
                         window.statsRadar = data.statsRadar;
                         localStorage.setItem('statsRadar', JSON.stringify(data.statsRadar));
-                        if(window.renderRadarChart) window.renderRadarChart();
+                        if(window.renderCharts) window.renderCharts();
                     }
                     
                     if(data.activityHistory) {
                         window.activityHistory = data.activityHistory;
                         localStorage.setItem('activityHistory', JSON.stringify(data.activityHistory));
                         if(window.updateHeatmap) window.updateHeatmap();
-                        if(window.renderTrendChart) window.renderTrendChart();
                     }
 
                     if(data.last_reset_month !== currentMonthStr) {
