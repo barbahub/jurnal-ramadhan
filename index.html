@@ -74,6 +74,22 @@
                     </div>
                 </div>
 
+                <div class="bg-gray-100/50 dark:bg-gray-800/40 rounded-3xl p-4 shadow-sm border border-gray-200 dark:border-gray-700 mb-6 backdrop-blur-sm">
+                    <div class="flex justify-between items-end mb-3 border-b border-gray-200 dark:border-gray-700 pb-2">
+                        <h2 class="text-base font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                            <span class="relative flex h-3 w-3">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                            </span>
+                            Live Feed 🌍
+                        </h2>
+                        <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-100 dark:bg-emerald-900/50 px-2 py-0.5 rounded-md">Real-time</span>
+                    </div>
+                    <div id="live-feed-container" class="space-y-2 h-36 overflow-y-auto pr-1 relative">
+                        <p class="text-xs font-bold text-gray-400 text-center mt-8 animate-pulse">Belum ada aktivitas. Jadi yang pertama!</p>
+                    </div>
+                </div>
+
                 <div class="bg-gradient-to-br from-blue-600 to-indigo-800 rounded-3xl p-5 shadow-lg text-white mb-6 relative overflow-hidden transform transition hover:scale-[1.01]">
                     <div class="absolute -right-4 -top-4 text-8xl opacity-10">🛡️</div>
                     <div class="flex justify-between items-end mb-4 relative z-10">
@@ -151,14 +167,6 @@
                     </div>
                 </div>
 
-                <div class="flex justify-between items-end mb-4">
-                    <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100">Live Feed 🌍</h2>
-                    <span class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-100 dark:bg-emerald-900/50 px-2 py-1 rounded-md">Real-time</span>
-                </div>
-                
-                <div id="live-feed-container" class="space-y-2 py-2 mt-2 mb-4 h-40 overflow-y-auto pr-2">
-                    <p class="text-sm font-bold text-gray-400 text-center mt-10">Belum ada aktivitas. Jadi yang pertama!</p>
-                </div>
             </div>
         </div>
 
@@ -264,34 +272,27 @@
                 <div class="mb-6">
                     <div class="flex justify-between items-center mb-2">
                         <h2 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Aura & Vibes Check ✨</h2>
-                        <button onclick="hardRefreshApp()" class="text-[10px] bg-gray-200 dark:bg-gray-700 hover:bg-emerald-100 dark:hover:bg-emerald-900 text-gray-600 dark:text-gray-300 px-2.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1 shadow-sm active:scale-95">
-                            🔄 Refresh
-                        </button>
+                        <span class="text-[9px] text-gray-400 italic">Tap grafik untuk info</span>
                     </div>
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm grid grid-cols-5 gap-3 items-center">
-                        <div class="col-span-3 w-full relative">
+                        <div class="col-span-3 w-full relative cursor-pointer" onclick="openInfoModal('Atribut Aura Radar', '<b>Pusat:</b> Ketaatan Ibadah Wajib (Sholat, Ngaji).<br><b>Aura:</b> Karisma, senyum, & adab harian.<br><b>Peka:</b> Empati & peduli pada sesama.<br><b>Sigma:</b> Kemandirian & tanggung jawab.<br><b>Derma:</b> Kedermawanan & sedekah.<br><b>Stoic:</b> Tahan emosi & puasa sosmed.')">
                             <canvas id="radarChart"></canvas>
                         </div>
                         <div class="col-span-2 flex flex-col gap-3 h-full">
-                            <div class="relative w-full flex-1 flex items-center justify-center min-h-[90px]">
+                            <div class="relative w-full flex-1 flex items-center justify-center min-h-[90px] cursor-pointer" onclick="openInfoModal('Daily Target (Donut Chart)', 'Persentase penyelesaian misimu hari ini. Semakin penuh lingkaran hijaunya, semakin produktif ibadah dan amal baikmu hari ini!')">
                                 <canvas id="donutChart"></canvas>
                                 <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                                     <span class="text-2xl font-black text-emerald-500 leading-none drop-shadow-sm" id="donut-percent">0%</span>
                                 </div>
                             </div>
-                            <div id="aura-badge-container" class="w-full flex-1">
+                            <div id="aura-badge-container" class="w-full flex-1 cursor-pointer" onclick="openInfoModal('Sistem Gelar Aura', 'Menunjukkan aura paling dominan di dalam dirimu saat ini. Desain badge akan berevolusi menjadi lebih <i>epic</i> setiap kamu mencapai kelipatan 10 Level (Lv 10, 20, 30, dst).')">
                                 </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="flex gap-3 mb-6">
-                    <button id="btn-share" class="flex-1 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-black py-3.5 rounded-2xl transition shadow-lg shadow-orange-500/30 text-xs uppercase tracking-wide">🃏 Flex Prayer Card</button>
-                    <button id="btn-export" class="flex-1 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 font-black py-3.5 rounded-2xl transition border border-indigo-300 dark:border-indigo-700 text-xs uppercase tracking-wide">📜 Cetak CV Akhirat</button>
-                </div>
-
                 <h2 class="text-sm font-bold mb-3 text-gray-500 dark:text-gray-400 uppercase tracking-wider">Rak Trofi Badge</h2>
-                <div class="flex gap-3 overflow-x-auto pb-4 mb-4">
+                <div class="flex gap-3 overflow-x-auto pb-4 mb-6">
                     <div id="badge-tarawih" class="opacity-40 grayscale text-center min-w-[85px] transition-all duration-500">
                         <div class="text-3xl bg-white dark:bg-gray-800 rounded-2xl w-16 h-16 flex items-center justify-center mx-auto mb-2 shadow-sm border border-gray-100 dark:border-gray-700">🕌</div>
                         <p class="text-[10px] font-bold text-gray-600 dark:text-gray-300">Si Paling Tarawih</p>
@@ -318,7 +319,12 @@
                     </div>
                 </div>
 
-                <div class="border-t-2 border-dashed border-gray-200 dark:border-gray-700 pt-5 mb-6">
+                <div class="flex gap-3 mb-6 border-b border-dashed border-gray-200 dark:border-gray-700 pb-6">
+                    <button id="btn-share" class="flex-1 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-black py-3.5 rounded-2xl transition shadow-lg shadow-orange-500/30 text-xs uppercase tracking-wide">🃏 Flex Prayer Card</button>
+                    <button id="btn-export" class="flex-1 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 font-black py-3.5 rounded-2xl transition border border-indigo-300 dark:border-indigo-700 text-xs uppercase tracking-wide">📜 Cetak CV Akhirat</button>
+                </div>
+
+                <div class="mb-6">
                     <div class="flex justify-between items-end mb-4">
                         <h2 class="text-lg font-extrabold text-gray-800 dark:text-gray-100">Toko Kebaikan 🛒</h2>
                         <span class="text-[10px] bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-400 px-2 py-1 rounded font-bold">Tukar Koinmu</span>
@@ -328,7 +334,7 @@
 
                 <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 pb-2">
                     <h2 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                        <span>⚙️</span> Pengaturan Akun
+                        <span>⚙️</span> Pengaturan Akun & Sistem
                     </h2>
                     
                     <button id="btn-login" class="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-100 font-bold py-3.5 rounded-2xl flex items-center justify-center gap-3 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 transition mb-3">
@@ -336,7 +342,7 @@
                         Hubungkan Akun Google
                     </button>
                     
-                    <div class="flex gap-2 w-full">
+                    <div class="flex gap-2 w-full mb-3">
                         <button id="btn-logout" class="hidden flex-1 bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-sm hover:bg-rose-200 transition">
                             Keluar Akun
                         </button>
@@ -349,6 +355,10 @@
                             ⚠️
                         </button>
                     </div>
+
+                    <button onclick="hardRefreshApp()" class="w-full bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-sm hover:bg-gray-200 dark:hover:bg-gray-600 transition text-sm">
+                        🔄 Segarkan Sistem (Anti Lag/Crash)
+                    </button>
                 </div>
             </div>
         </div>
@@ -467,6 +477,19 @@
             </div>
         </div>
 
+        <div id="info-modal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4 transition-opacity" onclick="closeInfoModal()">
+            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-[2rem] p-6 max-w-[300px] w-full shadow-2xl transform scale-95 transition-transform" id="info-modal-content" onclick="event.stopPropagation()">
+                <div class="text-center mb-4">
+                    <span class="text-4xl mb-2 block drop-shadow-md">💡</span>
+                    <h3 class="text-lg font-black text-gray-800 dark:text-gray-100" id="info-modal-title">Judul Info</h3>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4 mb-5 border border-gray-100 dark:border-gray-700 shadow-inner">
+                    <p class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed" id="info-modal-desc">Deskripsi info ada di sini.</p>
+                </div>
+                <button onclick="closeInfoModal()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl transition shadow-md shadow-emerald-500/30 text-sm">Paham Bos!</button>
+            </div>
+        </div>
+
     </div>
 
     <style>
@@ -480,7 +503,7 @@
     </style>
 
     <script>
-        // --- 0. UTILS ANTI-CRASH (SAFE JSON PARSE) ---
+        // --- 0. UTILS ANTI-CRASH & MODALS ---
         window.safeJSONParse = function(key, fallback) {
             try {
                 const data = localStorage.getItem(key);
@@ -497,6 +520,20 @@
                 localStorage.removeItem('activityHistory');
                 window.location.reload(true);
             }
+        }
+
+        window.openInfoModal = function(title, desc) {
+            document.getElementById('info-modal-title').innerHTML = title;
+            document.getElementById('info-modal-desc').innerHTML = desc;
+            const modal = document.getElementById('info-modal');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            setTimeout(() => document.getElementById('info-modal-content').classList.remove('scale-95'), 10);
+        }
+
+        window.closeInfoModal = function() {
+            const modal = document.getElementById('info-modal');
+            document.getElementById('info-modal-content').classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 200);
         }
 
         // --- 1. GLOBAL VARS & WAKTU ---
@@ -637,7 +674,6 @@
         updateStatsUI();
 
         // --- AUTO-MIGRASI DATA STATS LAMA KE BARU ---
-        // Mencegah crash bagi pengguna yang update dari versi lama ke versi baru
         window.statsRadar = window.safeJSONParse('statsRadar', { pusat: 10, aura: 10, peka: 10, sigma: 10, derma: 10, stoic: 10 });
         if (window.statsRadar.ketuhanan !== undefined) {
             window.statsRadar = {
@@ -774,12 +810,12 @@
         // --- 6. BANK DATA HABITS & EPIC COMBO ---
         const dailyEasy = [
             { id: "de1", title: "Senyum & sapa 3 orang hari ini", exp: 10, type: "aura" },
-            { id: "de2", title: "Minum air putih sambil duduk & Bismillah", exp: 10, type: "stoic" },
+            { id: "de2", title: "Minum air putih sambil duduk & Bismillah", exp: 10, type: "aura" },
             { id: "de3", title: "Rapikan tempat tidur pas baru bangun", exp: 10, type: "sigma" },
             { id: "de4", title: "Tahan jempol dari hate comment di sosmed", exp: 10, type: "stoic" },
             { id: "de5", title: "Ucapkan 'Terima Kasih' tulus ke pekerja jasa", exp: 10, type: "aura" },
             { id: "de6", title: "Matikan lampu/air yang tidak dipakai", exp: 10, type: "sigma" },
-            { id: "de7", title: "Rapikan sepatu/sandal di teras/masjid", exp: 10, type: "derma" }
+            { id: "de7", title: "Rapikan sepatu/sandal di teras/masjid", exp: 10, type: "sigma" }
         ];
         const dailyMed = [
             { id: "dm1", title: "Sholat Dhuha minimal 2 Rakaat", exp: 30, type: "pusat" },
@@ -804,15 +840,15 @@
             { id: "dx5", title: "Berdamai/Memaafkan musuh bebuyutan", exp: 100, type: "peka" }
         ];
         const epicCombos = [
-            { id: "ec1", title: "Puasa Sosmed (IG, TikTok, dll) 6 Jam di Siang Hari", exp: 150, type: "stoic" },
-            { id: "ec2", title: "Tidak mengeluh & tidak sambat sama sekali 24 Jam", exp: 150, type: "sigma" },
-            { id: "ec3", title: "Bantu 2 pekerjaan orang tua di rumah tanpa disuruh", exp: 150, type: "peka" },
-            { id: "ec4", title: "Rapikan sandal/sepatu berantakan di masjid", exp: 150, type: "derma" },
-            { id: "ec5", title: "Tahan jempol dari komentar negatif di internet seharian", exp: 150, type: "stoic" },
+            { id: "ec1", title: "Puasa Sosmed (IG, TikTok) 6 Jam Siang Hari", exp: 150, type: "stoic" },
+            { id: "ec2", title: "Tidak mengeluh & tidak sambat 24 Jam", exp: 150, type: "sigma" },
+            { id: "ec3", title: "Bantu 2 pekerjaan ortu di rumah tanpa disuruh", exp: 150, type: "peka" },
+            { id: "ec4", title: "Rapikan sandal/sepatu berantakan di masjid", exp: 150, type: "sigma" },
+            { id: "ec5", title: "Tahan jempol komentar negatif seharian", exp: 150, type: "stoic" },
             { id: "ec6", title: "Sholat Wajib 5 Waktu FULL Tepat Waktu", exp: 200, type: "pusat" },
-            { id: "ec7", title: "Baca Al-Kahfi di hari Jumat (Selesai 110 Ayat)", exp: 200, type: "pusat" },
-            { id: "ec8", title: "Berdamai & chat duluan teman yang sedang musuhan", exp: 200, type: "peka" },
-            { id: "ec9", title: "Sisihkan uang jajan/gaji khusus untuk disedekahkan", exp: 150, type: "derma" },
+            { id: "ec7", title: "Baca Al-Kahfi di hari Jumat (Selesai)", exp: 200, type: "pusat" },
+            { id: "ec8", title: "Berdamai & chat duluan teman yang musuhan", exp: 200, type: "peka" },
+            { id: "ec9", title: "Sisihkan uang khusus untuk disedekahkan", exp: 150, type: "derma" },
             { id: "ec10", title: "Khatam 1 Juz Al-Quran dalam satu hari", exp: 150, type: "pusat" }
         ];
 
@@ -916,23 +952,50 @@
         const gachaBtn = document.getElementById('gacha-container');
         const gachaRes = document.getElementById('gacha-result');
         const gachaSubtitle = document.getElementById('gacha-subtitle');
-        const gachaMissions25 = ["Traktir teman minuman hari ini", "Senyum tulus ke 3 orang asing", "Bantu ortu membereskan rumah", "Sedekah subuh Rp2.000", "Baca Al-Kahfi 10 ayat pertama", "Berbagi makanan ke tetangga", "Pungut 3 sampah di jalanan", "Beri rating bintang 5 ke kurir", "Maafkan kesalahan orang hari ini", "Baca istighfar 100x hari ini", "Telepon/chat keluarga yang jauh", "Tahan amarah saat sedang kesal", "Beri komentar positif di medsos", "Berdoa untuk kebaikan sahabat", "Rapikan sandal/sepatu di masjid", "Isi kotak amal terdekat", "Ucapkan terima kasih ke satpam", "Baca sholawat nabi 100x", "Niatkan puasa sunnah untuk besok"];
+        
+        // Pemetaan Array Object Gacha
+        const gachaMissions25 = [
+            { text: "Traktir teman minuman hari ini", type: "derma" },
+            { text: "Senyum tulus ke 3 orang asing", type: "aura" },
+            { text: "Bantu ortu membereskan rumah", type: "peka" },
+            { text: "Sedekah subuh Rp2.000", type: "derma" },
+            { text: "Baca Al-Kahfi 10 ayat pertama", type: "pusat" },
+            { text: "Berbagi makanan ke tetangga", type: "derma" },
+            { text: "Pungut 3 sampah di jalanan", type: "sigma" },
+            { text: "Beri rating bintang 5 ke kurir", type: "aura" },
+            { text: "Maafkan kesalahan orang hari ini", type: "peka" },
+            { text: "Baca istighfar 100x hari ini", type: "pusat" },
+            { text: "Telepon/chat keluarga yang jauh", type: "peka" },
+            { text: "Tahan amarah saat sedang kesal", type: "stoic" },
+            { text: "Beri komentar positif di medsos", type: "aura" },
+            { text: "Berdoa untuk kebaikan sahabat", type: "peka" },
+            { text: "Rapikan sandal/sepatu di masjid", type: "sigma" },
+            { text: "Isi kotak amal terdekat", type: "derma" },
+            { text: "Ucapkan terima kasih ke satpam", type: "aura" },
+            { text: "Baca sholawat nabi 100x", type: "pusat" },
+            { text: "Niatkan puasa sunnah untuk besok", type: "pusat" }
+        ];
         let hasGachaToday = localStorage.getItem('gachaDate') === new Date().toDateString();
         
-        function renderGachaResult(questText, isWajibFlag) {
+        function renderGachaResult(questObj, isWajibFlag) {
             let wajibUI = isWajibFlag ? 'bg-red-500/20 border-red-500 shadow-red-500/50' : 'bg-white/20 border-white/30';
             let wajibText = isWajibFlag ? '<span class="block text-[10px] bg-red-600 text-white px-2 rounded mb-1 animate-pulse">⚠️ MISI LANGIT WAJIB! (-500 EXP jika gagal)</span>' : '';
-            gachaRes.innerHTML = `<label class="flex items-center justify-between cursor-pointer group mt-2 p-3 ${wajibUI} rounded-xl border shadow-sm backdrop-blur-md transition"><div class="flex items-center gap-3"><input type="checkbox" id="quest-gacha" class="w-6 h-6 text-rose-500 rounded checklist-item" data-exp="${isWajibFlag ? '100' : '50'}" data-type="derma" data-title="${questText}"><div>${wajibText}<span class="font-bold text-sm text-white drop-shadow-md text-left leading-tight">${questText}</span></div></div></label>`;
+            gachaRes.innerHTML = `<label class="flex items-center justify-between cursor-pointer group mt-2 p-3 ${wajibUI} rounded-xl border shadow-sm backdrop-blur-md transition"><div class="flex items-center gap-3"><input type="checkbox" id="quest-gacha" class="w-6 h-6 text-rose-500 rounded checklist-item" data-exp="${isWajibFlag ? '100' : '50'}" data-type="${questObj.type}" data-title="${questObj.text}"><div>${wajibText}<span class="font-bold text-sm text-white drop-shadow-md text-left leading-tight">${questObj.text}</span></div></div></label>`;
             gachaRes.classList.remove('hidden'); gachaSubtitle.classList.add('hidden');
         }
 
-        if(hasGachaToday) renderGachaResult(localStorage.getItem('gachaMission'), localStorage.getItem('gachaIsWajib') === 'true');
+        if(hasGachaToday) {
+            let savedMission = localStorage.getItem('gachaMission');
+            let savedType = localStorage.getItem('gachaType') || 'derma';
+            renderGachaResult({text: savedMission, type: savedType}, localStorage.getItem('gachaIsWajib') === 'true');
+        }
         gachaBtn.addEventListener('click', () => {
             if(!hasGachaToday) {
                 let randomQuest = gachaMissions25[Math.floor(Math.random() * gachaMissions25.length)];
                 let isWajibRoll = Math.random() < 0.2; 
                 localStorage.setItem('gachaDate', new Date().toDateString()); 
-                localStorage.setItem('gachaMission', randomQuest);
+                localStorage.setItem('gachaMission', randomQuest.text);
+                localStorage.setItem('gachaType', randomQuest.type);
                 localStorage.setItem('gachaIsWajib', isWajibRoll ? 'true' : 'false');
                 renderGachaResult(randomQuest, isWajibRoll); 
                 
@@ -951,7 +1014,7 @@
             { id: "fq-1", title: "Pejuang Subuh Berjamaah", exp: 50, start: 4, end: 6, type: "pusat" },
             { id: "fq-2", title: "Sholat Dhuha 2 Rakaat", exp: 40, start: 7, end: 11, type: "pusat" },
             { id: "fq-3", title: "Sedekah Makan Siang", exp: 30, start: 11, end: 13, type: "derma" },
-            { id: "fq-4", title: "Sholat Ashar di Awal Waktu", exp: 40, start: 15, end: 16, type: "stoic" }
+            { id: "fq-4", title: "Sholat Ashar di Awal Waktu", exp: 40, start: 15, end: 16, type: "pusat" }
         ];
         const todayFlash = flashQuests25[dayOfYear % flashQuests25.length];
         const isFlashActive = currentHour >= todayFlash.start && currentHour <= todayFlash.end;
