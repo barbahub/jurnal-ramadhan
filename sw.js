@@ -1,11 +1,19 @@
 // GANTI ANGKA VERSI INI SETIAP KALI ANDA MENGUBAH INDEX.HTML
-const CACHE_NAME = 'amalpad-skena-v1.44'; 
+const CACHE_NAME = 'amalpad-skena-v1.45'; 
 
 const urlsToCache = [
-    './',
-    './index.html',
-    './manifest.json',
-    './icon.png'
+  '/',
+  '/index.html',
+  '/css/style.css',
+  '/js/ui-core.js',
+  '/js/player.js',
+  '/js/quests.js',
+  '/js/charts.js',
+  '/js/circle.js',
+  '/js/export-card.js',
+  // file js/firebase-db.js opsional untuk di cache karena dia modul eksternal (type="module") yang manggil firebase CDN
+  '/icon.png',
+  '/manifest.json'
 ];
 
 // 1. Install & Masukkan ke Cache
@@ -48,6 +56,7 @@ self.addEventListener('fetch', event => {
         })
     );
 });
+
 
 
 
