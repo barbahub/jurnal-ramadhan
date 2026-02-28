@@ -85,7 +85,7 @@
                         </h2>
                         <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-100 dark:bg-emerald-900/50 px-2 py-0.5 rounded-md">Real-time</span>
                     </div>
-                    <div id="live-feed-container" class="space-y-2 h-36 overflow-y-auto pr-1 relative">
+                    <div id="live-feed-container" class="space-y-2 h-44 overflow-y-auto pr-1 relative">
                         <p class="text-xs font-bold text-gray-400 text-center mt-8 animate-pulse">Belum ada aktivitas. Jadi yang pertama!</p>
                     </div>
                 </div>
@@ -474,18 +474,18 @@
         </div>
 
         <div id="circle-popup-modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4 transition-opacity" onclick="window.closeCirclePopup(event)">
-            <div id="circle-popup-content" class="bg-gradient-to-b from-blue-900 via-indigo-900 to-gray-900 rounded-[2rem] border-[4px] border-blue-500/30 w-full max-w-[320px] shadow-2xl relative overflow-hidden transform scale-95 transition-transform" onclick="event.stopPropagation()">
-                <div class="absolute top-[-20%] right-[-20%] w-[200px] h-[200px] bg-blue-500/20 rounded-full blur-3xl z-0"></div>
+            <div id="circle-popup-content" class="bg-gradient-to-br from-indigo-900 via-blue-900 to-black rounded-[2rem] border-[3px] border-blue-500/40 w-full max-w-[320px] shadow-2xl relative overflow-hidden transform scale-95 transition-transform" onclick="event.stopPropagation()">
+                <div class="absolute top-[-20%] right-[-20%] w-[200px] h-[200px] bg-blue-500/20 rounded-full blur-3xl z-0 pointer-events-none"></div>
                 <div class="relative z-10 p-6 text-center">
-                    <button onclick="window.closeCirclePopup()" class="absolute top-2 right-4 text-white/50 hover:text-white transition text-2xl font-bold">&times;</button>
+                    <button onclick="window.closeCirclePopup(event)" class="absolute top-3 right-4 text-white/50 hover:text-white transition text-3xl font-light leading-none">&times;</button>
                     
-                    <div id="popup-circle-logo" class="w-24 h-24 bg-gradient-to-tr from-blue-500 to-indigo-500 rounded-[1.5rem] mx-auto flex items-center justify-center text-5xl border-[3px] border-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.5)] mb-4 overflow-hidden relative z-10">🛡️</div>
+                    <div id="popup-circle-logo" class="w-24 h-24 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-[1.5rem] mx-auto flex items-center justify-center text-5xl border-[3px] border-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.4)] mb-4 overflow-hidden relative z-10">🛡️</div>
                     
                     <h3 id="popup-circle-name" class="font-black text-2xl text-white tracking-wide leading-tight truncate px-2 drop-shadow-md">Nama Circle</h3>
-                    <p id="popup-circle-motto-text" class="text-xs text-blue-200 italic mt-1 px-4 line-clamp-2">"Solidaritas Jalur Langit"</p>
+                    <p id="popup-circle-motto-text" class="text-xs text-blue-200 italic mt-1.5 px-4 line-clamp-2">"Solidaritas Jalur Langit"</p>
                     
                     <div class="mt-4 mb-5">
-                        <span id="popup-circle-lvl" class="text-[10px] text-blue-100 font-bold bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-1.5 rounded-full shadow-sm tracking-wider uppercase">Lv. 1 • Perintis Langit</span>
+                        <span id="popup-circle-lvl" class="text-[10px] text-blue-100 font-bold bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 px-4 py-1.5 rounded-full shadow-sm tracking-wider uppercase">Lv. 1 • Perintis Langit</span>
                     </div>
                     
                     <div class="grid grid-cols-2 gap-3 mb-5">
@@ -499,12 +499,12 @@
                         </div>
                     </div>
                     
-                    <div class="w-full bg-black/50 rounded-full h-2 shadow-inner overflow-hidden mb-1.5 relative">
-                        <div class="bg-gradient-to-r from-blue-400 to-indigo-400 h-full transition-all duration-1000 relative" id="popup-circle-progress" style="width: 0%"></div>
+                    <div class="w-full bg-black/50 rounded-full h-2.5 shadow-inner overflow-hidden mb-2 relative">
+                        <div class="bg-gradient-to-r from-blue-400 to-indigo-400 h-full transition-all duration-1000 relative rounded-full" id="popup-circle-progress" style="width: 0%"></div>
                     </div>
-                    <p class="text-[9px] text-blue-300/60 font-medium text-right mb-5">Progres Naik Level</p>
+                    <p class="text-[9px] text-blue-300/80 font-medium text-right mb-5 uppercase tracking-wider">Progres Level <span id="popup-circle-progress-text">0%</span></p>
 
-                    <button onclick="window.closeCirclePopup()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3 rounded-xl transition text-sm shadow-lg shadow-blue-500/30">Tutup Profil</button>
+                    <button onclick="window.closeCirclePopup(event)" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition text-sm shadow-lg shadow-blue-500/30 tracking-wide uppercase">Tutup Profil</button>
                 </div>
             </div>
         </div>
@@ -1074,22 +1074,58 @@
         }
 
         // --- LIVE FEED SYSTEM ---
-        window.pushToLiveFeed = function(playerName, questName, points) {
+        window.pushToLiveFeed = function(title, desc, type = 'task', extraValue = null) {
             const feedContainer = document.getElementById('live-feed-container');
             if(!feedContainer) return;
             if(feedContainer.querySelector('p.text-gray-400')) feedContainer.innerHTML = ''; 
             
-            const initial = playerName.charAt(0).toUpperCase();
             const item = document.createElement('div');
-            item.className = "bg-white dark:bg-gray-800 p-3 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex items-center gap-3 animate-[fadeIn_0.5s_ease-out]";
+            let iconHtml = '';
+            let bgClass = 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700';
+            let titleClass = 'text-gray-800 dark:text-gray-200';
+            let descClass = 'text-emerald-600 dark:text-emerald-400';
+            let rightBadge = '';
+            let onClickHtml = '';
+
+            // Handle string sanitization for onclick
+            let safeTitle = title.replace(/'/g, "\\'");
+            let safeDesc = desc.replace(/'/g, "\\'");
+
+            if (type === 'task') {
+                const initial = title.charAt(0).toUpperCase();
+                iconHtml = `<div class="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center text-emerald-600 text-xs font-bold uppercase shrink-0">${initial}</div>`;
+                rightBadge = `<span class="text-[10px] font-black text-yellow-500 bg-yellow-50 dark:bg-yellow-900/30 px-2 py-1 rounded-lg shrink-0">+${extraValue}</span>`;
+                onClickHtml = `onclick="window.showUserPopup('${safeTitle}', '${safeDesc}', '${initial}')"`;
+            } else if (type === 'user_level') {
+                const initial = title.charAt(0).toUpperCase();
+                iconHtml = `<div class="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-400 to-orange-500 flex items-center justify-center text-white text-sm font-bold shadow-md shrink-0">🌟</div>`;
+                bgClass = 'bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border-yellow-200 dark:border-yellow-700/50';
+                titleClass = 'text-yellow-700 dark:text-yellow-400';
+                descClass = 'text-orange-600 dark:text-orange-300';
+                onClickHtml = `onclick="window.showUserPopup('${safeTitle}', '${safeDesc}', '${initial}')"`;
+            } else if (type === 'circle_update') {
+                let exp = extraValue || Math.floor(Math.random() * 50000);
+                let randMembers = Math.floor(Math.random() * 10) + 1;
+                onClickHtml = `onclick="window.showCirclePopup('${safeTitle}', ${exp}, '', 'Solidaritas Jalur Langit', ${randMembers})"`;
+                
+                iconHtml = `<div class="w-8 h-8 rounded-2xl bg-gradient-to-tr from-blue-500 to-indigo-500 flex items-center justify-center text-white text-sm font-bold shadow-md shrink-0">🛡️</div>`;
+                bgClass = 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-700/50';
+                titleClass = 'text-blue-700 dark:text-blue-400';
+                descClass = 'text-indigo-600 dark:text-indigo-300';
+            }
+
+            item.className = `p-3 rounded-2xl border shadow-sm flex items-center gap-3 animate-[fadeIn_0.5s_ease-out] cursor-pointer hover:scale-[1.02] transition-transform ${bgClass}`;
+            item.setAttribute('onclick', onClickHtml.replace('onclick="', '').replace(/"$/, ''));
+
             item.innerHTML = `
-                <div onclick="window.showUserPopup('${playerName}', '${questName}', '${initial}')" class="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center text-emerald-600 text-xs font-bold uppercase cursor-pointer hover:scale-110 hover:ring-2 hover:ring-emerald-400 transition-all shadow-sm shrink-0">${initial}</div>
-                <div class="flex-1 cursor-pointer" onclick="window.showUserPopup('${playerName}', '${questName}', '${initial}')">
-                    <p class="text-[11px] text-gray-500"><span class="font-bold text-gray-800 dark:text-gray-200 hover:text-emerald-500 transition">${playerName}</span> menyelesaikan</p>
-                    <p class="text-xs font-bold text-emerald-600 dark:text-emerald-400 truncate max-w-[180px]">${questName}</p>
+                ${iconHtml}
+                <div class="flex-1">
+                    <p class="text-[11px] font-bold ${titleClass} transition">${title}</p>
+                    <p class="text-xs font-bold ${descClass} truncate max-w-[180px]">${desc}</p>
                 </div>
-                <span class="text-[10px] font-black text-yellow-500 bg-yellow-50 dark:bg-yellow-900/30 px-2 py-1 rounded-lg shrink-0">+${points}</span>
+                ${rightBadge}
             `;
+            
             feedContainer.prepend(item); 
             if (feedContainer.children.length > 15) feedContainer.lastElementChild.remove();
         }
@@ -1176,6 +1212,8 @@
 
                 let progressBar = document.getElementById('popup-circle-progress');
                 if(progressBar) progressBar.style.width = `${percent}%`;
+                let progressText = document.getElementById('popup-circle-progress-text');
+                if(progressText) progressText.innerText = `${Math.floor(percent)}%`;
 
                 // Set Gelar Circle
                 let circleTitle = getCircleTitle(lvl);
@@ -1209,22 +1247,40 @@
             }
         }
         
-        window.closeCirclePopup = function() {
+        window.closeCirclePopup = function(e) {
+            if(e) e.stopPropagation();
             document.getElementById('circle-popup-content').classList.add('scale-95');
             setTimeout(() => {
-                document.getElementById('circle-popup-modal').classList.add('hidden');
-                document.getElementById('circle-popup-modal').classList.remove('flex');
+                const modal = document.getElementById('circle-popup-modal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
             }, 200);
         }
 
         const dummyNames = ["Bima_Sigma", "Putri.Skuy", "Abdi_Pusat", "Rina_Chill", "Deni_Core"];
         setInterval(() => {
-            if(Math.random() > 0.5) {
-                let rName = dummyNames[Math.floor(Math.random() * dummyNames.length)];
+            let rand = Math.random();
+            let rName = dummyNames[Math.floor(Math.random() * dummyNames.length)];
+            
+            if(rand > 0.6) {
+                // Task Event (Penyelesaian Misi)
                 let rQuest = dailyQuests[Math.floor(Math.random() * dailyQuests.length)];
-                window.pushToLiveFeed(rName, rQuest.title, rQuest.exp);
+                window.pushToLiveFeed(rName, `Menyelesaikan ${rQuest.title}`, 'task', rQuest.exp);
+            } else if (rand > 0.3) {
+                // User Level Event (Naik Level)
+                let levels = [10, 20, 30, 40, 50];
+                let rLvl = levels[Math.floor(Math.random() * levels.length)];
+                window.pushToLiveFeed(rName, `Naik ke Level ${rLvl} (${getTitle(rLvl)})!`, 'user_level');
+            } else {
+                // Circle Update Event (Gelar Circle)
+                let circleNames = ["Pejuang Subuh", "Sirkel Akhirat", "Skena Hijrah", "Pasukan Langit"];
+                let cName = circleNames[Math.floor(Math.random() * circleNames.length)];
+                let cLvls = [2, 5, 10, 15, 20];
+                let cLvl = cLvls[Math.floor(Math.random() * cLvls.length)];
+                let dummyExp = getGuildExpRequirement(cLvl) + Math.floor(Math.random() * 500);
+                window.pushToLiveFeed(cName, `Mencapai Level ${cLvl} (${getCircleTitle(cLvl)})!`, 'circle_update', dummyExp);
             }
-        }, 15000);
+        }, 12000);
 
         // --- 9. SISTEM RADAR CHART & HEATMAP (6 ATRIBUT BARU) ---
         // (Ditangani oleh Auto-Migrator di awal script)
@@ -1405,7 +1461,7 @@
 
                     if(window.radarChartInstance) window.renderCharts();
                     window.logActivityForHeatmap(); 
-                    window.pushToLiveFeed(nameInput.value || "Kamu", questTitle, finalExp);
+                    window.pushToLiveFeed(nameInput.value || "Kamu", `Menyelesaikan ${questTitle}`, 'task', finalExp);
 
                     confetti({ particleCount: 150, spread: 80, origin: { y: 0.5 } });
                     if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
@@ -1487,6 +1543,7 @@
                 if(typeof confetti === 'function') confetti({ particleCount: 200, spread: 100, origin: { y: 0.3 } });
                 alert(`🎊 LULUS! Selamat, Limit Break berhasil! Kamu sekarang berhak naik ke Level ${target}. EXP yang tertahan kini terbuka kembali.`);
                 updateStatsUI();
+                window.pushToLiveFeed(document.getElementById('user-name').value || "Kamu", `Lulus Ujian & Naik ke Level ${target}!`, 'user_level');
             }
         }
 
@@ -2152,6 +2209,7 @@
                 window.userCircleId = newCircleId;
                 alert(`Berhasil! Circle "${circleName}" aktif. Saldo terpotong 500 Koin.\nKode Invite: ${inviteCode}\nBagikan kode ini ke temanmu!`);
                 window.fetchCircleData(newCircleId);
+                window.pushToLiveFeed(circleName, 'Markas baru telah didirikan!', 'circle_update');
             } catch(e) { alert("Gagal: " + e.message); }
         });
 
