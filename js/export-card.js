@@ -1,9 +1,18 @@
-// Event Listener Tombol Generate Player Card (AURA AURA CARD)
+// Event Listener Tombol Generate Player Card (AURA AURA CARD) - MODE POPUP SCREENSHOT
 const btnShare = document.getElementById('btn-share');
+const cardPreviewModal = document.getElementById('card-preview-modal');
+
+// Fungsi Global untuk menutup Modal
+window.closeCardPreview = function() {
+    if(cardPreviewModal) {
+        cardPreviewModal.classList.add('hidden');
+        cardPreviewModal.classList.remove('flex');
+    }
+}
 
 if(btnShare) {
     btnShare.addEventListener('click', async () => {
-        btnShare.innerText = "⏳ Menarik Aura...";
+        btnShare.innerText = "⏳ Membuka Panel...";
         btnShare.disabled = true;
  
         try {
@@ -31,7 +40,7 @@ if(btnShare) {
             if(window.userCircleId && circleNameDisp && circleNameDisp.innerText !== 'Memuat...') {
                 document.getElementById('card-circle-name').innerText = circleNameDisp.innerText;
                 if(circleLogoDisp.querySelector('img')) {
-                    document.getElementById('card-circle-logo').innerHTML = `<img src="${circleLogoDisp.querySelector('img').src}" crossorigin="anonymous" class="w-8 h-8 rounded-md object-cover inline-block shadow-sm">`;
+                    document.getElementById('card-circle-logo').innerHTML = `<img src="${circleLogoDisp.querySelector('img').src}" crossorigin="anonymous" class="w-full h-full object-cover rounded-lg">`;
                 } else {
                     document.getElementById('card-circle-logo').innerText = circleLogoDisp.innerText || "🛡️";
                 }
@@ -42,7 +51,7 @@ if(btnShare) {
                 if(cardCircleLogo) cardCircleLogo.innerText = "👤";
             }
  
-            // 2. Set Foto Profil (Layout 50% Top)
+            // 2. Set Foto Profil
             const avatarSrcEl = document.getElementById('avatar-initial');
             const cardAvatarDest = document.getElementById('card-avatar');
             if(avatarSrcEl && cardAvatarDest) {
@@ -80,13 +89,12 @@ if(btnShare) {
             if(cardDomIcon) cardDomIcon.innerText = statEmojis[domName];
             if(cardDomText) cardDomText.innerText = domName;
  
-            // 5. Cek Rank Global (Query ke Firebase untuk presisi)
+            // 5. Cek Rank Global
             const rankBanner = document.getElementById('card-rank-banner');
-            if(rankBanner) rankBanner.classList.add('hidden'); // Reset dulu
+            if(rankBanner) rankBanner.classList.add('hidden'); 
             
             if (window.auth && window.auth.currentUser && !window.auth.currentUser.isAnonymous) {
                 try {
-                    // Firebase di-load dari file module
                     if(window.getDocs && window.query && window.collection && window.db && window.where) {
                         const qRank = window.query(window.collection(window.db, "users"), window.where("monthly_exp", ">", window.totalExp));
                         const snapRank = await window.getDocs(qRank);
@@ -100,23 +108,15 @@ if(btnShare) {
                 } catch(e) { console.warn("Rank fetch failed", e); }
             }
  
-            // 6. Render Card
-            const card = document.getElementById('export-card');
-            if(card) {
-                setTimeout(() => {
-                    html2canvas(card, { backgroundColor: null, scale: 2, useCORS: true, allowTaint: true }).then(canvas => {
-                        const link = document.createElement('a');
-                        link.download = `AmalPad_AuraCard_${new Date().getTime()}.png`;
-                        link.href = canvas.toDataURL('image/png'); link.click();
-                        
-                        btnShare.innerText = "🃏 Flex Prayer Card"; btnShare.disabled = false;
-                        if(typeof confetti === 'function') confetti({ particleCount: 100, spread: 70, colors: ['#a855f7', '#eab308'] });
-                    }).catch(err => {
-                        alert('Gagal render Card. Mungkin karena limitasi browser/CORS gambar.');
-                        btnShare.innerText = "🃏 Flex Prayer Card"; btnShare.disabled = false;
-                    });
-                }, 800);
-            }
+            // 6. Buka Pop-Up Animasi Confetti (TIDAK LAGI DOWNLOAD html2canvas)
+            setTimeout(() => {
+                if(cardPreviewModal) {
+                    cardPreviewModal.classList.remove('hidden');
+                    cardPreviewModal.classList.add('flex');
+                }
+                btnShare.innerText = "🃏 Flex Prayer Card"; btnShare.disabled = false;
+                if(typeof confetti === 'function') confetti({ particleCount: 150, spread: 80, zIndex: 1000, colors: ['#a855f7', '#eab308'] });
+            }, 300);
  
         } catch (err) {
             console.error(err);
