@@ -1,4 +1,3 @@
-// --- 4. PROFIL, KUTIPAN & LEVELING PROGRESIF ---
 const nameInput = document.getElementById('user-name');
 const bioInput = document.getElementById('user-bio');
 const quoteInput = document.getElementById('user-quote');
@@ -114,7 +113,7 @@ window.openExamModal = function(targetLevel) {
     document.getElementById('exam-level-target').innerText = targetLevel;
     
     let html = ''; let isEligible = true;
-    let streak = parseInt(localStorage.getItem('streak') || 0);
+    let streak = parseInt(localStorage.getItem('streakNum') || 0);
     let totalDzikir = parseInt(localStorage.getItem('tasbih_subhanallah')||0) + parseInt(localStorage.getItem('tasbih_alhamdulillah')||0) + parseInt(localStorage.getItem('tasbih_allahuakbar')||0);
 
     if (targetLevel === 10) {
@@ -123,7 +122,7 @@ window.openExamModal = function(targetLevel) {
         html += `<li class="flex items-center gap-2 ${req2 ? 'text-emerald-400' : 'text-gray-400'}">${req2 ? '✅' : '❌'} Mengamalkan Dzikir Smart Tasbih 333x (Skor: ${totalDzikir}/333)</li>`;
         isEligible = req1 && req2;
     } else if (targetLevel === 20) {
-        let req1 = window.statsRadar.derma >= 100; let req2 = streak >= 7;
+        let req1 = window.statsRadar && window.statsRadar.derma >= 100; let req2 = streak >= 7;
         html += `<li class="flex items-center gap-2 ${req1 ? 'text-emerald-400' : 'text-gray-400'}">${req1 ? '✅' : '❌'} Poin Aura Sosial/Derma > 100</li>`;
         html += `<li class="flex items-center gap-2 ${req2 ? 'text-emerald-400' : 'text-gray-400'}">${req2 ? '✅' : '❌'} Konsisten Streak Ibadah 🔥 7 Hari</li>`;
         isEligible = req1 && req2;
@@ -180,10 +179,10 @@ window.updateBadges = function() {
     const container = document.getElementById('badge-rack-container');
     if(!container) return;
     let html = '';
-    let userStreak = parseInt(localStorage.getItem('streak') || 0);
+    let userStreak = parseInt(localStorage.getItem('streakNum') || 0);
 
     window.badgeData.forEach(b => {
-        let currentVal = b.type === 'streak' ? userStreak : (window.statsRadar[b.type] || 0);
+        let currentVal = b.type === 'streak' ? userStreak : (window.statsRadar && window.statsRadar[b.type] || 0);
         let isStatMet = currentVal >= b.reqStat;
         let isExamMet = localStorage.getItem(`exam_passed_${b.reqExam}`) === 'true';
         let isUnlocked = isStatMet && isExamMet;
@@ -202,7 +201,7 @@ window.updateBadges = function() {
         infoContent += `</div>`;
 
         html += `
-        <div onclick="openInfoModal('${isUnlocked ? '🎉 ' : '🔒 '}${b.name}', \`${infoContent}\`)" class="snap-center cursor-pointer flex-shrink-0 w-[95px] rounded-2xl p-3 border-2 text-center transition-all duration-300 ${stateClass}">
+        <div onclick="window.openInfoModal('${isUnlocked ? '🎉 ' : '🔒 '}${b.name}', \`${infoContent}\`)" class="snap-center cursor-pointer flex-shrink-0 w-[95px] rounded-2xl p-3 border-2 text-center transition-all duration-300 ${stateClass}">
             <div class="text-3xl mb-2 flex items-center justify-center h-10 ${iconClass}">${isUnlocked ? b.icon : '🔒'}</div>
             <p class="text-[10px] font-extrabold uppercase tracking-wide leading-tight ${titleColor}">${b.name}</p>
         </div>
@@ -226,7 +225,7 @@ window.shopCatalog = [
     { id: "guild_tiket", name: "Tiket Gacha Premium", price: 3000, icon: "🎫", type: "consumable" }
 ];
 
-window.unlockedItems = window.safeJSONParse('unlockedItems', []);
+window.unlockedItems = window.safeJSONParse ? window.safeJSONParse('unlockedItems', []) : [];
 window.renderShop = function() {
     const container = document.getElementById('shop-container');
     if(!container) return; container.innerHTML = ''; 
@@ -239,3 +238,75 @@ window.renderShop = function() {
     });
 }
 window.renderShop();
+
+// === SISTEM STREAK MANUAL (DAILY CHECK-IN) ===
+window.initStreakSystem = function() {
+    const btnStreak = document.getElementById('btn-claim-streak');
+    const displayStreak = document.getElementById('streak-display');
+    if(!btnStreak || !displayStreak) return;
+
+    let currentStreak = parseInt(localStorage.getItem('streakNum') || 0);
+    let lastClaimDate = localStorage.getItem('lastStreakClaim');
+    let todayStr = new Date().toDateString();
+
+    // Cek status hari ini
+    let isClaimedToday = (lastClaimDate === todayStr);
+
+    // Jika belum klaim hari ini, ubah UI tombol jadi menarik perhatian (Pulse & Glowing)
+    if (!isClaimedToday) {
+        btnStreak.className = "bg-gradient-to-r from-orange-500 to-rose-500 px-3 py-1.5 rounded-full text-xs font-black shadow-[0_0_15px_rgba(249,115,22,0.6)] border border-orange-300 transition-all cursor-pointer animate-pulse transform hover:scale-105 text-white flex items-center justify-center";
+        displayStreak.innerText = currentStreak > 0 ? "Klaim 🔥" : "Mulai 🔥";
+        btnStreak.disabled = false;
+    } else {
+        // Jika Sudah diklaim (Normal transparan)
+        btnStreak.className = "bg-white/20 px-2.5 py-1.5 rounded-full text-xs font-bold shadow-sm backdrop-blur-sm border border-white/30 transition-all cursor-not-allowed opacity-80 text-white flex items-center justify-center";
+        displayStreak.innerText = `🔥 ${currentStreak}`;
+        btnStreak.disabled = true;
+    }
+
+    // Event saat tombol diklik
+    btnStreak.onclick = function() {
+        if (isClaimedToday) return;
+
+        // Cek apakah streak lanjut atau terputus
+        let yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        let yesterdayStr = yesterday.toDateString();
+
+        if (lastClaimDate === yesterdayStr) {
+            // Streak Lanjut (karena diklik persis sehari setelahnya)
+            currentStreak += 1;
+        } else {
+            // Streak Terputus / Baru mulai (karena bolong sehari atau lebih)
+            currentStreak = 1;
+        }
+
+        // Simpan data ke memori lokal
+        localStorage.setItem('streakNum', currentStreak);
+        localStorage.setItem('lastStreakClaim', todayStr);
+        isClaimedToday = true;
+
+        // Update UI seketika menjadi normal kembali
+        btnStreak.className = "bg-white/20 px-2.5 py-1.5 rounded-full text-xs font-bold shadow-sm backdrop-blur-sm border border-white/30 transition-all cursor-not-allowed opacity-80 text-white flex items-center justify-center";
+        displayStreak.innerText = `🔥 ${currentStreak}`;
+        btnStreak.disabled = true;
+
+        // Beri sedikit hadiah EXP gratisan sebagai pancingan login
+        window.totalExp = (window.totalExp || 0) + 10;
+        localStorage.setItem('totalExp', window.totalExp);
+        if(window.updateStatsUI) window.updateStatsUI();
+
+        // Beri efek konfeti api keluar dari lokasi tombol
+        if(typeof confetti === 'function') {
+            confetti({ 
+                particleCount: 60, 
+                spread: 70, 
+                origin: { y: 0.1, x: 0.7 }, // Lokasi kira-kira di tombol atas kanan
+                colors: ['#f97316', '#ef4444', '#fbbf24'] 
+            });
+        }
+    };
+};
+
+// Jalankan sistem setiap kali tab / player di load
+window.initStreakSystem();
