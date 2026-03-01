@@ -75,5 +75,9 @@ if(btns.home) btns.home.addEventListener('click', () => window.switchTab('home')
 if(btns.target) btns.target.addEventListener('click', () => window.switchTab('target'));
 if(btns.profile) btns.profile.addEventListener('click', () => { 
     window.switchTab('profile'); 
-    setTimeout(() => { if(window.renderCharts) window.renderCharts(); }, 100); 
+    setTimeout(() => { 
+        if(typeof window.renderCharts === 'function') window.renderCharts();
+        // Tambahkan render toko untuk memastikan UI selalu up-to-date saat tab dibuka
+        if(typeof window.renderShop === 'function') window.renderShop(); 
+    }, 100); 
 });
