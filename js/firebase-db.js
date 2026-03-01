@@ -165,9 +165,16 @@ window.syncProfileToFirebase = async () => {
     } catch (e) { console.warn("Gagal simpan profil ke cloud"); }
 };
 
+// FIX: Tambahkan data Streak ke Cloud Firestore agar aman saat pindah device!
 window.syncStatsToFirebase = async () => {
     const user = auth.currentUser; if(!user || user.isAnonymous) return;
-    try { await updateDoc(doc(db, "users", user.uid), { statsRadar: window.statsRadar, activityHistory: window.activityHistory });
+    try { 
+        await updateDoc(doc(db, "users", user.uid), { 
+            statsRadar: window.statsRadar, 
+            activityHistory: window.activityHistory,
+            streakNum: parseInt(localStorage.getItem('streakNum') || 0),
+            lastStreakClaim: localStorage.getItem('lastStreakClaim') || ''
+        });
     } catch (e) { console.warn("Gagal simpan stats ke cloud"); }
 };
 
@@ -266,7 +273,6 @@ window.fetchCircleData = async (circleId) => {
             circleOwnerId = data.created_by; 
 
             let cExp = data.total_exp || 0; let cLvl = 1;
-            // Akses dari window agar aman
             while(cExp >= window.getGuildExpRequirement(cLvl)) { cLvl++; }
             let cExpCurrent = cExp - window.getGuildExpRequirement(cLvl - 1);
             let cExpNeed = window.getGuildExpRequirement(cLvl) - window.getGuildExpRequirement(cLvl - 1);
@@ -372,7 +378,8 @@ if(btnCreateCircle) {
     btnCreateCircle.addEventListener('click', async () => {
         if(!auth.currentUser || auth.currentUser.isAnonymous) return alert("⚠️ Tautkan akun Google-mu dulu di tab Stats untuk buat Circle!");
         let userLevel = Math.floor(window.totalExp / 100) + 1;
-        let userStreak = parseInt(localStorage.getItem('streak') || 0);
+        // FIX: Gunakan streakNum agar konsisten
+        let userStreak = parseInt(localStorage.getItem('streakNum') || 0);
         
         if (userLevel < 5) return alert("Sabar Bos! Minimal Level 5 buat jadi Ketua Circle. Grinding EXP dulu ya.");
         if (userStreak < 3) return alert("Imam harus istiqomah! Buktikan Streak 🔥 3 hari berturut-turut dulu.");
@@ -488,6 +495,8 @@ onAuthStateChanged(auth, async (user) => {
                 koin: window.totalKoin, total_exp: window.totalExp,
                 monthly_exp: window.totalExp, unlocked_items: window.unlockedItems,
                 statsRadar: window.statsRadar, activityHistory: window.activityHistory,
+                streakNum: parseInt(localStorage.getItem('streakNum') || 0), // FIX: Simpan streak user baru
+                lastStreakClaim: localStorage.getItem('lastStreakClaim') || '', // FIX: Simpan status klaim
                 circle_id: null, last_reset_month: currentMonthStr 
             }, { merge: true });
             if(nameInputFire) nameInputFire.value = defaultName; 
@@ -509,6 +518,17 @@ onAuthStateChanged(auth, async (user) => {
             const koinDisp = document.getElementById('koin-display');
             if(koinDisp) koinDisp.innerText = window.totalKoin;
             if(typeof window.updateStatsUI === 'function') window.updateStatsUI();
+
+            // FIX: Load Streak Data dari Cloud ke LocalStorage agar tersimpan saat ganti device
+            if (data.streakNum !== undefined) {
+                window.streakNum = data.streakNum;
+                localStorage.setItem('streakNum', data.streakNum);
+                if (data.lastStreakClaim) localStorage.setItem('lastStreakClaim', data.lastStreakClaim);
+                if (window.initStreakSystem) window.initStreakSystem(); // Render ulang tombol claim
+                
+                const streakDisplay = document.getElementById('streak-display');
+                if(streakDisplay && data.streakNum > 0) streakDisplay.innerText = `🔥 ${data.streakNum}`;
+            }
             
             if(data.statsRadar) {
                 let localTotal = Object.values(window.statsRadar).reduce((a, b) => a + b, 0);
