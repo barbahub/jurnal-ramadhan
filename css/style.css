@@ -12,3 +12,23 @@
     0% { transform: translateX(-150%) skewX(-12deg); }
     100% { transform: translateX(250%) skewX(-12deg); }
 }
+/* ... existing code ... */
+
+/* --- TAMBAHAN UNTUK TOKO FLEXING --- */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Menyembunyikan scrollbar di tab filter toko */
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
