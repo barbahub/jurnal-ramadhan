@@ -313,12 +313,50 @@
                     <button id="btn-export" class="flex-1 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 font-black py-3.5 rounded-2xl transition border border-indigo-300 dark:border-indigo-700 text-xs uppercase tracking-wide">📜 Cetak CV Akhirat</button>
                 </div>
 
-                <div class="mb-6">
-                    <div class="flex justify-between items-end mb-4">
-                        <h2 class="text-lg font-extrabold text-gray-800 dark:text-gray-100">Toko Kebaikan 🛒</h2>
-                        <span class="text-[10px] bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-400 px-2 py-1 rounded font-bold">Tukar Koinmu</span>
+                <!-- NEW UI: TOKO FLEXING (ACCORDION & TEASER) -->
+                <div class="mb-6 bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col transition-all duration-300">
+                    
+                    <!-- HEADER TOKO -->
+                    <div class="p-5 pb-3 flex justify-between items-end relative z-10">
+                        <div>
+                            <h2 class="text-lg font-extrabold flex items-center gap-2 text-gray-800 dark:text-gray-100">
+                                🛒 Toko Flexing
+                            </h2>
+                            <p class="text-[10px] text-gray-400 mt-0.5">Pamerkan kemewahan jalur langitmu.</p>
+                        </div>
+                        <div class="bg-yellow-100 dark:bg-yellow-900/40 border border-yellow-200 dark:border-yellow-700 text-yellow-700 dark:text-yellow-400 px-2 py-1 rounded-lg flex items-center gap-1 shadow-sm">
+                            <span class="text-xs">🪙</span> <span class="text-[11px] font-black" id="shop-koin-display">0</span>
+                        </div>
                     </div>
-                    <div id="shop-container" class="grid grid-cols-2 gap-3"></div>
+
+                    <!-- TEASER BAIT: SPESIAL MINGGU INI -->
+                    <div id="shop-teaser" class="px-5 pb-4 block animate-[fadeIn_0.3s_ease-out]">
+                        <div class="flex items-center justify-between mb-2 mt-1">
+                            <span class="text-[10px] font-bold text-emerald-500 dark:text-emerald-400 uppercase tracking-widest flex items-center gap-1.5"><span class="animate-pulse">🔥</span> Spesial Minggu Ini</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="featured-items-container">
+                            <!-- Di-render oleh JS -->
+                        </div>
+                    </div>
+
+                    <!-- ISI TOKO LENGKAP (Hidden Default) -->
+                    <div id="shop-content-wrapper" class="hidden px-5 pb-5 border-t border-gray-100 dark:border-gray-700 pt-4 bg-gray-50/50 dark:bg-gray-800/30">
+                        <!-- TAB FILTER KATEGORI -->
+                        <div class="flex gap-2 overflow-x-auto pb-2 mb-4 hide-scrollbar" id="shop-tabs">
+                            <button class="shop-tab active px-4 py-1.5 rounded-full text-[11px] font-bold bg-emerald-500 text-white shadow-sm whitespace-nowrap" data-type="all">Semua</button>
+                            <button class="shop-tab px-4 py-1.5 rounded-full text-[11px] font-bold bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 whitespace-nowrap hover:bg-gray-200 dark:hover:bg-gray-600 transition" data-type="tasbih_skin">Tasbih</button>
+                            <button class="shop-tab px-4 py-1.5 rounded-full text-[11px] font-bold bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 whitespace-nowrap hover:bg-gray-200 dark:hover:bg-gray-600 transition" data-type="name_fx">Gaya Nama</button>
+                            <button class="shop-tab px-4 py-1.5 rounded-full text-[11px] font-bold bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 whitespace-nowrap hover:bg-gray-200 dark:hover:bg-gray-600 transition" data-type="aura">Aura</button>
+                            <button class="shop-tab px-4 py-1.5 rounded-full text-[11px] font-bold bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 whitespace-nowrap hover:bg-gray-200 dark:hover:bg-gray-600 transition" data-type="item">Item</button>
+                        </div>
+                        <div id="shop-container" class="grid grid-cols-2 gap-3"></div>
+                    </div>
+
+                    <!-- TOMBOL TOGGLE ACCORDION -->
+                    <button id="btn-toggle-shop" class="w-full py-3.5 bg-gray-50 dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold uppercase tracking-widest hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition flex justify-center items-center gap-2 outline-none">
+                        <span id="text-toggle-shop">Buka Katalog Lengkap</span> 
+                        <span id="icon-toggle-shop" class="transform transition-transform duration-300 text-sm">▼</span>
+                    </button>
                 </div>
 
                 <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 pb-2">
@@ -573,6 +611,20 @@
             </div>
         </div>
 
+        <!-- MODAL PREVIEW ITEM TOKO -->
+        <div id="shop-preview-modal" class="fixed inset-0 z-[80] hidden items-center justify-center bg-black/80 backdrop-blur-md p-4 transition-opacity" onclick="closeShopPreview()">
+            <div class="bg-gray-900 border border-gray-700 rounded-[2rem] p-6 w-full max-w-[320px] text-center relative overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)]" onclick="event.stopPropagation()">
+                <button onclick="closeShopPreview()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition w-8 h-8 bg-white/10 rounded-full flex justify-center items-center text-sm">✕</button>
+                <p class="text-[10px] text-emerald-400 font-bold uppercase tracking-widest mb-4">Mode Pratinjau 👁️</p>
+                <div id="preview-canvas" class="w-full h-48 rounded-2xl flex flex-col items-center justify-center relative mb-5 shadow-inner border border-white/10 overflow-hidden bg-gray-800 transition-all duration-500">
+                    <!-- Dynamic Content Di-Render oleh JS -->
+                </div>
+                <h3 id="preview-title" class="text-xl font-black text-white">Nama Item</h3>
+                <p id="preview-desc" class="text-xs text-gray-400 mt-1.5">Deskripsi efek item</p>
+                <div id="preview-action" class="mt-5"></div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Panggilan External Script -->
@@ -582,6 +634,7 @@
     <script src="js/charts.js"></script>
     <script src="js/circle.js"></script>
     <script src="js/export-card.js"></script>
+    <script src="js/shop.js"></script>
     <script type="module" src="js/firebase-db.js"></script>
 
 </body>
