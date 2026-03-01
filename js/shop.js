@@ -16,10 +16,15 @@ window.shopCatalog = [
     { id: "name_api", name: "Teks Membara", price: 12000, icon: "🔥", type: "name_fx", desc: "Namamu menyala dengan efek api merah di leaderboard." },
     { id: "name_neon", name: "Cyberpunk Neon", price: 15000, icon: "🟣", type: "name_fx", desc: "Teks nama glow-in-the-dark bergaya neon futuristik." },
     { id: "name_gold", name: "Emas Sultan", price: 20000, icon: "✨", type: "name_fx", desc: "Nama berlapis emas berkilau ala sultan AmalPad." },
-    { id: "aura_koin", name: "Aura Sultan", price: 8000, icon: "🪙", type: "aura", desc: "Memancarkan aura koin emas di belakang avatarmu." },
+    { id: "aura_koin", name: "Aura Koin", price: 8000, icon: "🪙", type: "aura", desc: "Memancarkan aura koin emas di belakang avatarmu." },
     { id: "aura_sakura", name: "Aura Sakura", price: 10000, icon: "🌸", type: "aura", desc: "Efek daun sakura merah muda di sekeliling profil." },
-    { id: "aura_vip", name: "VIP Live Feed", price: 45000, icon: "👑", type: "aura", desc: "Namamu akan menyala Emas Sultan di Live Feed Global!" },
-    { id: "item_gacha", name: "Tiket Premium", price: 3000, icon: "🎫", type: "item", desc: "Mendapatkan ekstra 1x Gacha Misi Harian hari ini." },
+    
+    // ITEM GACHA EXCLUSIVE (TIDAK BISA DIBELI PAKAI KOIN)
+    { id: "aura_vip", name: "Aura VIP (SR)", price: 0, icon: "✨", type: "aura", desc: "Aura mistis VIP eksklusif! Hanya dari Gacha Premium.", gachaOnly: true },
+    { id: "aura_sss", name: "Aura Sultan (SSS)", price: 0, icon: "👑", type: "aura", desc: "Aura Solo & Circle Permanen! Hanya dari Gacha Premium.", gachaOnly: true },
+    
+    // ITEM CONSUMABLES
+    { id: "tiket_emas", name: "Tiket Emas Gacha", price: 1000, icon: "🎫", type: "item", desc: "Tiket premium untuk memutar Gacha Kebaikan. Peluang dapat Tier SSS!" }, // DIUBAH MENJADI 1000 KOIN
     { id: "item_buff", name: "Ramuan 2x EXP", price: 5000, icon: "🧪", type: "item", desc: "Menggandakan perolehan EXP selama 24 jam!" },
     { id: "item_guild", name: "Tiket Pendiri", price: 15000, icon: "📜", type: "item", desc: "Syarat wajib mendirikan Circle/Guild baru." },
     { id: "item_freeze", name: "Pelindung Streak", price: 8000, icon: "❄️", type: "item", desc: "Menyelamatkan api streak harianmu jika terlewat 1 hari." },
@@ -46,29 +51,37 @@ window.renderFeaturedItems = function() {
     if(!container) return;
     container.innerHTML = '';
     
-    // Kita pilih 2 item paling menarik sebagai bait (Tasbih Kristal & Aura Sultan)
-    const featuredIds = ['tasbih_kristal', 'aura_koin'];
+    // Kita pamerkan Aura SSS dan Tiket Emas sebagai bait!
+    const featuredIds = ['aura_sss', 'tiket_emas'];
     
     featuredIds.forEach(id => {
         const item = window.shopCatalog.find(i => i.id === id);
         if(!item) return;
         
         const isOwned = window.unlockedItems.includes(item.id);
+        const qty = window.inventory[item.id] || 0;
         
         const card = document.createElement('div');
         card.className = "bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 p-2.5 rounded-2xl border border-gray-200 dark:border-gray-600 flex items-center gap-3 cursor-pointer hover:shadow-md transition group";
         card.onclick = () => window.previewItem(item.id);
         
+        // Logika Label (Dimiliki, Gacha Only, atau Beli Koin)
+        let priceLabel = `<span class="text-[10px] font-black text-amber-500 dark:text-amber-400 flex items-center gap-1">🪙 ${item.price.toLocaleString('id-ID')}</span>`;
+        if (isOwned && item.type !== 'item') {
+            priceLabel = `<span class="text-[9px] font-bold text-emerald-500 dark:text-emerald-400 flex items-center gap-1">✓ Dimiliki</span>`;
+        } else if (item.gachaOnly) {
+            priceLabel = `<span class="text-[9px] font-bold text-yellow-500 flex items-center gap-1">✨ Via Gacha</span>`;
+        } else if (item.type === 'item' && qty > 0) {
+            priceLabel = `<span class="text-[9px] font-bold text-emerald-500 flex items-center gap-1">Punya: ${qty}</span>`;
+        }
+
         card.innerHTML = `
             <div class="w-12 h-12 rounded-[1rem] ${isOwned ? 'bg-gradient-to-tr from-emerald-200 to-teal-300 dark:from-emerald-700 dark:to-teal-800' : 'bg-white dark:bg-gray-900'} flex items-center justify-center text-2xl shadow-sm shrink-0 transition-transform group-hover:scale-105 group-hover:-rotate-3">
                 ${item.icon}
             </div>
             <div class="flex-1 min-w-0">
                 <h4 class="text-[11px] font-black text-gray-800 dark:text-gray-100 truncate">${item.name}</h4>
-                ${isOwned 
-                    ? `<span class="text-[9px] font-bold text-emerald-500 dark:text-emerald-400 flex items-center gap-1">✓ Dimiliki</span>` 
-                    : `<span class="text-[10px] font-black text-amber-500 dark:text-amber-400 flex items-center gap-1">🪙 ${item.price.toLocaleString('id-ID')}</span>`
-                }
+                ${priceLabel}
             </div>
             <div class="w-7 h-7 rounded-full bg-white dark:bg-gray-600 border border-gray-100 dark:border-gray-500 flex items-center justify-center text-gray-500 dark:text-gray-300 shadow-sm shrink-0 text-[10px] group-hover:bg-emerald-50 dark:group-hover:bg-emerald-900/50 group-hover:text-emerald-500 transition">
                 👁️
@@ -98,24 +111,31 @@ window.renderShop = function() {
             item: 'text-amber-600 bg-amber-100 dark:text-amber-300 dark:bg-amber-900/40 border-amber-200 dark:border-amber-800'
         };
         
-        const badgeColor = typeColors[item.type] || 'text-gray-500 bg-gray-100 border-gray-200';
+        let badgeColor = typeColors[item.type] || 'text-gray-500 bg-gray-100 border-gray-200';
+        if(item.gachaOnly) badgeColor = 'text-yellow-600 bg-yellow-100 border-yellow-300 dark:text-yellow-300 dark:bg-yellow-900/40 dark:border-yellow-700'; // Special Badge
         
         const card = document.createElement('div');
         card.className = `relative p-3.5 rounded-[1.5rem] border-2 flex flex-col items-center text-center transition-all duration-300 transform hover:-translate-y-1.5 hover:shadow-xl group overflow-hidden ${isOwned ? 'border-emerald-400 bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-emerald-900/40 dark:to-teal-900/30 shadow-[0_0_15px_rgba(16,185,129,0.2)]' : 'border-gray-100 dark:border-gray-700 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-md hover:border-emerald-300 dark:hover:border-emerald-600'}`;
         
         const previewBtn = `<button onclick="window.previewItem('${item.id}')" class="absolute top-2.5 right-2.5 w-7 h-7 bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20 rounded-full flex items-center justify-center backdrop-blur-md transition z-20" title="Coba (Preview)">👁️</button>`;
 
+        // LOGIKA TOMBOL AKSI DI DALAM CARD
         let actionHTML = '';
-        if (isConsumable) {
-            actionHTML = `<button onclick="window.buyItem('${item.id}', ${item.price})" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white py-1.5 rounded-xl text-[10px] font-black active:scale-95 transition shadow-md shadow-emerald-500/30 flex items-center justify-center gap-1">Beli 🪙 ${item.price.toLocaleString('id-ID')} ${qty > 0 ? `(Punya: ${qty})` : ''}</button>`;
-        } else if (isOwned) {
-            actionHTML = `<div class="w-full text-emerald-600 dark:text-emerald-400 py-1.5 rounded-xl text-[10px] font-black flex items-center justify-center gap-1.5 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800/50"><span>✓</span> Terpasang</div>`;
+        if (isOwned) {
+            actionHTML = `<div class="w-full text-emerald-600 dark:text-emerald-400 py-1.5 rounded-xl text-[10px] font-black flex items-center justify-center gap-1.5 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800/50"><span>✓</span> Dimiliki / Aktif</div>`;
+        } else if (item.gachaOnly) {
+            // Jika item ini Gacha Exclusive
+            actionHTML = `<button onclick="alert('Item ini sangat langka! Dapatkan lewat Gacha Kebaikan dengan menukarkan Tiket Emas.')" class="w-full bg-gray-800 border border-yellow-500/50 text-yellow-500 hover:bg-gray-700 py-1.5 rounded-xl text-[10px] font-black active:scale-95 transition shadow-md flex items-center justify-center gap-1">🔒 Eksklusif Gacha</button>`;
+        } else if (isConsumable) {
+            actionHTML = `<button onclick="window.buyItem('${item.id}', ${item.price})" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white py-1.5 rounded-xl text-[10px] font-black active:scale-95 transition shadow-md shadow-emerald-500/30 flex items-center justify-center gap-1">Beli 🪙 ${item.price.toLocaleString('id-ID')} ${qty > 0 ? `(${qty})` : ''}</button>`;
         } else {
             actionHTML = `<button onclick="window.buyItem('${item.id}', ${item.price})" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white py-1.5 rounded-xl text-[11px] font-black active:scale-95 transition shadow-md shadow-emerald-500/30 flex items-center justify-center gap-1.5">🪙 ${item.price.toLocaleString('id-ID')}</button>`;
         }
 
+        let badgeText = item.gachaOnly ? 'TIER SSS/SR' : item.type;
+
         card.innerHTML = `
-            <div class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-wider border ${badgeColor} backdrop-blur-sm z-10">${item.type}</div>
+            <div class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-wider border ${badgeColor} backdrop-blur-sm z-10">${badgeText}</div>
             ${previewBtn}
             
             <div class="mt-7 mb-3 w-16 h-16 rounded-[1.2rem] ${isOwned ? 'bg-gradient-to-tr from-emerald-200 to-teal-300 dark:from-emerald-700 dark:to-teal-800 shadow-[0_0_20px_rgba(16,185,129,0.3)]' : 'bg-gradient-to-tr from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800'} flex items-center justify-center text-4xl shadow-inner border border-white/50 dark:border-white/10 mx-auto transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 relative z-10 cursor-pointer" onclick="window.previewItem('${item.id}')">
@@ -153,23 +173,7 @@ window.previewItem = function(itemId) {
     canvas.className = 'w-full h-48 rounded-2xl flex flex-col items-center justify-center relative mb-5 shadow-inner border border-white/10 overflow-hidden bg-gray-800 transition-all duration-500';
 
     // RENDER CANVAS BERDASARKAN TIPE
-    if (item.id === 'aura_vip') {
-        canvas.className = 'w-full h-48 rounded-2xl flex flex-col items-center justify-center relative mb-5 shadow-inner border border-white/10 overflow-hidden bg-gray-900 transition-all duration-500';
-        canvas.innerHTML = `
-            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-yellow-900/40 via-gray-900 to-black z-0"></div>
-            <div class="w-full px-5 relative z-10 animate-float">
-                <div class="bg-gray-800/80 backdrop-blur-md p-3 rounded-xl border border-yellow-500/50 shadow-[0_0_25px_rgba(234,179,8,0.2)] flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-yellow-400 to-amber-600 flex items-center justify-center text-xl shadow-inner border-2 border-yellow-200 shrink-0">👑</div>
-                    <div class="text-left flex-1 min-w-0">
-                        <p class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500 font-black text-sm drop-shadow-md flex items-center gap-1.5 truncate">Player Name <span class="text-[9px] bg-yellow-500/20 text-yellow-400 px-1.5 py-0.5 rounded border border-yellow-500/30">VIP</span></p>
-                        <p class="text-[10px] text-gray-400 mt-0.5 truncate">Selesai Sholat Subuh 🕋</p>
-                    </div>
-                </div>
-            </div>
-            <p class="absolute bottom-3 text-[10px] text-gray-500 font-bold uppercase tracking-widest z-10">Contoh Tampilan Live Feed</p>
-        `;
-    }
-    else if (item.type === 'tasbih_skin') {
+    if (item.type === 'tasbih_skin') {
         let skinClass = "";
         let textColor = "";
         if(item.id === 'tasbih_kayu') {
@@ -188,9 +192,7 @@ window.previewItem = function(itemId) {
         canvas.innerHTML = `
             <div class="absolute inset-0 bg-gray-900 opacity-90 z-0"></div>
             <div class="relative z-10 flex flex-col items-center justify-center w-full h-full">
-                <div class="w-24 h-24 rounded-full flex items-center justify-center text-4xl font-black transition-transform active:scale-90 cursor-pointer ${skinClass} ${textColor}">
-                    33
-                </div>
+                <div class="w-24 h-24 rounded-full flex items-center justify-center text-4xl font-black transition-transform active:scale-90 cursor-pointer ${skinClass} ${textColor}">33</div>
                 <p class="mt-6 text-[10px] text-gray-400 font-bold uppercase tracking-widest text-center">Contoh Bentuk<br>Tombol Smart Tasbih</p>
             </div>
         `;
@@ -209,19 +211,32 @@ window.previewItem = function(itemId) {
         `;
     }
     else if (item.type === 'aura') {
-        const fxStyle = window.previewStyles[item.id] || '';
-        canvas.innerHTML = `
-            <div class="absolute inset-0 bg-gray-900 opacity-80 z-0"></div>
-            <div class="relative z-10 flex flex-col items-center justify-center w-full h-full">
-                <div class="relative flex items-center justify-center w-20 h-20">
-                    <div class="absolute inset-0 rounded-full ${fxStyle} z-0"></div>
-                    <div class="w-20 h-20 bg-emerald-600 rounded-full flex items-center justify-center text-3xl text-white font-black z-10">
-                        A
+        // Logika Untuk Animasi CSS Aura Gacha yang Baru
+        if (item.id === 'aura_sss' || item.id === 'aura_vip') {
+             let auraClass = item.id === 'aura_sss' ? 'avatar-aura-sss' : 'avatar-aura-vip';
+             let textClass = item.id === 'aura_sss' ? 'name-aura-sss' : 'name-aura-vip';
+             canvas.innerHTML = `
+                 <div class="absolute inset-0 bg-gray-900 opacity-90 z-0"></div>
+                 <div class="relative z-10 flex flex-col items-center justify-center w-full h-full">
+                     <div class="w-20 h-20 bg-emerald-600 rounded-full flex items-center justify-center text-3xl font-black text-white ${auraClass} border-transparent!">A</div>
+                     <h2 class="mt-6 font-black text-xl ${textClass}">Pemain Sultan</h2>
+                     <p class="mt-4 text-[10px] text-yellow-500 font-bold uppercase tracking-widest bg-yellow-900/40 px-3 py-1 rounded border border-yellow-500/50">Efek Live Feed & Profil</p>
+                 </div>
+             `;
+        } else {
+            // Aura Standar Koin / Sakura
+            const fxStyle = window.previewStyles[item.id] || '';
+            canvas.innerHTML = `
+                <div class="absolute inset-0 bg-gray-900 opacity-80 z-0"></div>
+                <div class="relative z-10 flex flex-col items-center justify-center w-full h-full">
+                    <div class="relative flex items-center justify-center w-20 h-20">
+                        <div class="absolute inset-0 rounded-full ${fxStyle} z-0"></div>
+                        <div class="w-20 h-20 bg-emerald-600 rounded-full flex items-center justify-center text-3xl text-white font-black z-10">A</div>
                     </div>
+                    <p class="mt-4 text-[10px] text-gray-400 font-bold uppercase tracking-widest">Contoh Avatar Profil</p>
                 </div>
-                <p class="mt-4 text-[10px] text-gray-400 font-bold uppercase tracking-widest">Contoh Avatar Profil</p>
-            </div>
-        `;
+            `;
+        }
     }
     else if (item.type === 'item') {
         canvas.innerHTML = `
@@ -232,13 +247,15 @@ window.previewItem = function(itemId) {
         `;
     }
 
-    // TOMBOL AKSI (Beli / Dimiliki)
+    // TOMBOL AKSI MODAL PREVIEW (Beli / Dimiliki / Gacha)
     const isConsumable = item.type === 'item';
     const isOwned = !isConsumable && window.unlockedItems.includes(item.id);
     const qty = window.inventory[item.id] || 0;
 
     if(isOwned) {
         actionBtn.innerHTML = `<button onclick="window.closeShopPreview()" class="w-full bg-gray-800 border border-gray-600 text-emerald-400 font-bold py-3 rounded-xl transition shadow-inner">Sudah Dimiliki / Terpasang</button>`;
+    } else if (item.gachaOnly) {
+        actionBtn.innerHTML = `<button onclick="window.closeShopPreview()" class="w-full bg-gray-800 border border-yellow-500/50 text-yellow-500 font-bold py-3 rounded-xl transition shadow-[0_0_20px_rgba(234,179,8,0.2)] text-sm">🔒 Dapatkan dari Gacha</button>`;
     } else if (isConsumable) {
         actionBtn.innerHTML = `<button onclick="window.buyItem('${item.id}', ${item.price}); window.closeShopPreview()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-black py-3 rounded-xl transition shadow-[0_0_20px_rgba(16,185,129,0.4)] text-lg">Beli 🪙 ${item.price.toLocaleString('id-ID')} ${qty > 0 ? `<span class="text-xs font-medium ml-1">(Punya: ${qty})</span>` : ''}</button>`;
     } else {
@@ -255,7 +272,7 @@ window.closeShopPreview = function() {
     modal.classList.remove('flex');
 };
 
-// --- SISTEM PEMBELIAN ---
+// --- SISTEM PEMBELIAN TOKO ---
 window.buyItem = function(id, price) {
     if (window.totalKoin < price) { 
         alert("Koin kamu kurang bos! Selesaikan misi ibadah dulu ya."); 
@@ -289,14 +306,9 @@ window.buyItem = function(id, price) {
     if(typeof confetti === 'function') {
         confetti({ particleCount: 150, spread: 80, zIndex: 9999, origin: { y: 0.6 } });
     }
-    
-    // CATATAN UNTUK FIREBASE:
-    // Jika integrasi firebase sudah berjalan, panggil fungsi updateDoc ke database Firestore di sini
-    // Contoh: updateDoc(doc(db, "users", userId), { koin: totalKoin, inventory: inventory, unlockedItems: unlockedItems });
 };
 
 // --- EVENT LISTENERS UI TOKO ---
-
 // 1. Accordion Toggle
 const btnToggleShop = document.getElementById('btn-toggle-shop');
 const contentShop = document.getElementById('shop-content-wrapper');
@@ -307,7 +319,6 @@ const textToggleShop = document.getElementById('text-toggle-shop');
 if (btnToggleShop && contentShop && teaserShop) {
     btnToggleShop.addEventListener('click', () => {
         const isClosed = contentShop.classList.contains('hidden');
-        
         if (isClosed) {
             contentShop.classList.remove('hidden');
             teaserShop.classList.add('hidden');
@@ -340,3 +351,95 @@ document.querySelectorAll('.shop-tab').forEach(btn => {
 // Inisialisasi awal saat script dimuat
 window.renderShop();
 window.renderFeaturedItems();
+
+// ============================================================
+// --- SISTEM GACHA PREMIUM (RNG DROP RATE) ---
+// ============================================================
+
+window.gachaPool = [
+    { id: 'aura_sss', name: 'Aura Sultan SSS', type: 'cosmetic', tier: 'sss', probability: 0.01 }, // Peluang 1%
+    { id: 'aura_vip', name: 'Aura VIP SR', type: 'cosmetic', tier: 'sr', probability: 0.10 },     // Peluang 10%
+    { id: 'rare_coins', name: 'Jackpot 1.000 Koin', type: 'currency', tier: 'rare', probability: 0.30, value: 1000 }, // Peluang 30%
+    { id: 'item_buff', name: 'Ramuan 2x EXP', type: 'consumable', tier: 'common', probability: 0.59 } // Peluang 59%
+];
+
+// Fungsi ini bisa dipanggil saat kotak Gacha di menu Quest diklik
+window.rollGachaPremium = function() {
+    // 1. Cek apakah player punya Tiket Emas di tasnya
+    let tiketCount = window.inventory['tiket_emas'] || 0;
+    
+    if (tiketCount < 1) {
+        alert("Bos, kamu tidak punya Tiket Emas 🎫!\nSilakan beli dulu di Toko Flexing harganya 1.000 Koin.");
+        return;
+    }
+    
+    // 2. Konfirmasi Gacha
+    if (!confirm("Gunakan 1 Tiket Emas untuk memutar Gacha Premium?")) return;
+    
+    // 3. Kurangi Tiket Emas
+    window.inventory['tiket_emas'] -= 1;
+    localStorage.setItem('inventory', JSON.stringify(window.inventory));
+    window.renderShop(); // Refresh UI tasbih/toko
+
+    // 4. RNG - Mesin Pengundi Acak (Math.random)
+    const rand = Math.random();
+    let cumulative = 0;
+    let wonItem = window.gachaPool[window.gachaPool.length - 1]; // Default fallback
+
+    for (const item of window.gachaPool) {
+        cumulative += item.probability;
+        if (rand <= cumulative) {
+            wonItem = item;
+            break;
+        }
+    }
+    
+    // 5. Proses Hadiah Berdasarkan Tipe
+    let msg = `🎉 GACHA BERHASIL! 🎉\n\nKamu mendapatkan [TIER ${wonItem.tier.toUpperCase()}] - ${wonItem.name}!\n\n`;
+
+    if (wonItem.type === 'currency') {
+        window.totalKoin += wonItem.value;
+        localStorage.setItem('totalKoin', window.totalKoin);
+        msg += `Selamat! Saldo Koin kamu langsung bertambah +${wonItem.value}.`;
+        
+    } else if (wonItem.type === 'cosmetic') {
+        // Sistem Penanganan Item Duplicate (Ganda)
+        if (window.unlockedItems.includes(wonItem.id)) {
+            window.totalKoin += 500;
+            localStorage.setItem('totalKoin', window.totalKoin);
+            msg += `Karena kamu sudah punya aura ini, hadiah dikonversi otomatis menjadi 500 Koin kompensasi!`;
+        } else {
+            window.unlockedItems.push(wonItem.id);
+            localStorage.setItem('unlockedItems', JSON.stringify(window.unlockedItems));
+            msg += `Wow! Aura eksklusif ini telah ditambahkan ke Rak Koleksimu dan bisa langsung dipakai.`;
+        }
+        
+    } else if (wonItem.type === 'consumable') {
+        window.inventory[wonItem.id] = (window.inventory[wonItem.id] || 0) + 1;
+        localStorage.setItem('inventory', JSON.stringify(window.inventory));
+        msg += `Item Consumable telah disimpan dengan aman di dalam tasmu!`;
+    }
+    
+    // 6. Update Seluruh UI (Koin Header & Koin Toko)
+    const mainKoinDisplay = document.getElementById('koin-display');
+    const shopKoinDisplay = document.getElementById('shop-koin-display');
+    if(mainKoinDisplay) mainKoinDisplay.innerText = window.totalKoin; 
+    if(shopKoinDisplay) shopKoinDisplay.innerText = window.totalKoin.toLocaleString('id-ID'); 
+    
+    window.renderShop();
+    window.renderFeaturedItems();
+
+    // 7. Ledakan Confetti Berdasarkan Tier
+    if(typeof confetti === 'function') {
+        if (wonItem.tier === 'sss') {
+            confetti({ particleCount: 200, spread: 100, colors: ['#FFD700', '#FFA500', '#FFFFFF'], zIndex: 9999, origin: { y: 0.6 } });
+        } else if (wonItem.tier === 'sr') {
+            confetti({ particleCount: 150, spread: 80, colors: ['#b026ff', '#00d4ff'], zIndex: 9999, origin: { y: 0.6 } });
+        } else {
+            confetti({ particleCount: 80, spread: 50, zIndex: 9999, origin: { y: 0.6 } });
+        }
+    }
+
+    // Tampilkan notifikasi modal kecil setelah animasi jalan
+    setTimeout(() => alert(msg), 300);
+};
