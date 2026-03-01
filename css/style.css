@@ -1,210 +1,148 @@
-<!DOCTYPE html>
-<html lang="id" class="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pratinjau Lengkap Aura AmalPad</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = { darkMode: 'class' }
-    </script>
-    <style>
-        body {
-            background-color: #111827; /* gray-900 */
-            min-height: 100vh;
-            margin: 0;
-            font-family: sans-serif;
-            color: #f3f4f6;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 3rem;
-            align-items: center;
-        }
+@keyframes fadeIn { 
+    from { opacity: 0; transform: translateY(15px); } 
+    to { opacity: 1; transform: translateY(0); } 
+}
 
-        /* =========================================
-           --- AURA PREMIUM (TIER SSS & VIP SR) --- 
-           ========================================= */
-        
-        /* --- TIER SSS (SOLO & CIRCLE) --- */
-        .name-aura-sss {
-            background: linear-gradient(90deg, #FFD700, #FFFFFF, #FF8C00, #FFD700) !important;
-            background-size: 200% auto !important;
-            color: transparent !important;
-            -webkit-background-clip: text !important;
-            background-clip: text !important;
-            animation: textShine 3s linear infinite !important;
-            text-shadow: 0px 0px 10px rgba(255, 215, 0, 0.4);
-        }
+::-webkit-scrollbar { 
+    width: 0px; 
+    background: transparent; 
+}
 
-        .avatar-aura-sss, .circle-logo-sss {
-            position: relative;
-            border: 2px solid transparent !important; 
-            z-index: 10;
-        }
+@keyframes shimmer {
+    0% { transform: translateX(-150%) skewX(-12deg); }
+    100% { transform: translateX(250%) skewX(-12deg); }
+}
 
-        /* 1. Efek Gradien Berputar (Dasar Aura) */
-        .avatar-aura-sss::after, .circle-logo-sss::after {
-            content: '';
-            position: absolute;
-            top: -5px; right: -5px; bottom: -5px; left: -5px; 
-            border-radius: inherit; /* Super Penting: Mengikuti bentuk asli (bulat/kotak) */
-            background: linear-gradient(45deg, #FFD700, #FF8C00, #FFFACD, #FFD700);
-            background-size: 300% 300%;
-            z-index: -1; 
-            animation: auraSpin 3s linear infinite, auraPulseSSS 2s ease-in-out infinite;
-        }
+/* --- TAMBAHAN UNTUK TOKO FLEXING --- */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
 
-        /* 2. EFEK ANIMASI BARU: Gelombang Memancar (Ripple/Burst) */
-        .avatar-aura-sss::before, .circle-logo-sss::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            border-radius: inherit;
-            border: 2px solid #FFD700; /* Warna gelombang */
-            z-index: -2;
-            animation: energyRippleSSS 2s cubic-bezier(0.0, 0.2, 0.8, 1) infinite;
-        }
+/* Menyembunyikan scrollbar di tab filter toko */
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
 
-        /* --- TIER VIP (SOLO & CIRCLE) --- */
-        .name-aura-vip {
-            background: linear-gradient(90deg, #b026ff, #e8b3ff, #00d4ff, #b026ff) !important;
-            background-size: 200% auto !important;
-            color: transparent !important;
-            -webkit-background-clip: text !important;
-            background-clip: text !important;
-            animation: textShine 3s linear infinite !important;
-            text-shadow: 0px 0px 10px rgba(176, 38, 255, 0.5);
-        }
+/* =========================================
+   --- AURA PREMIUM (TIER SSS & VIP SR) --- 
+   ========================================= */
 
-        .avatar-aura-vip, .circle-logo-vip {
-            position: relative;
-            border: 2px solid transparent !important; 
-            z-index: 10;
-        }
+/* --- TIER SSS (SOLO & CIRCLE) --- */
+.name-aura-sss {
+    background: linear-gradient(90deg, #FFD700, #FFFFFF, #FF8C00, #FFD700) !important;
+    background-size: 200% auto !important;
+    color: transparent !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    animation: textShine 3s linear infinite !important;
+    text-shadow: 0px 0px 10px rgba(255, 215, 0, 0.4);
+}
 
-        /* 1. Efek Gradien Berputar (Dasar Aura) */
-        .avatar-aura-vip::after, .circle-logo-vip::after {
-            content: '';
-            position: absolute;
-            top: -4px; right: -4px; bottom: -4px; left: -4px; 
-            border-radius: inherit; 
-            background: linear-gradient(45deg, #b026ff, #00d4ff, #ff26b9, #b026ff);
-            background-size: 300% 300%;
-            z-index: -1;
-            animation: auraSpin 3s linear infinite, auraPulseVIP 2s ease-in-out infinite;
-        }
+.avatar-aura-sss, .circle-logo-sss {
+    position: relative;
+    border: 2px solid transparent !important; 
+    z-index: 10;
+}
 
-        /* 2. EFEK ANIMASI BARU: Gelombang Memancar (Ripple/Burst) */
-        .avatar-aura-vip::before, .circle-logo-vip::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            border-radius: inherit;
-            border: 2px solid #b026ff;
-            z-index: -2;
-            animation: energyRippleVIP 2s cubic-bezier(0.0, 0.2, 0.8, 1) infinite;
-            animation-delay: 0.5s; /* Diberi delay agar ritmenya beda dengan SSS */
-        }
+/* 1. Efek Gradien Berputar (Dasar Aura) */
+.avatar-aura-sss::after, .circle-logo-sss::after {
+    content: '';
+    position: absolute;
+    top: -5px; right: -5px; bottom: -5px; left: -5px; 
+    border-radius: inherit; /* Super Penting: Mengikuti bentuk asli (bulat/kotak) */
+    background: linear-gradient(45deg, #FFD700, #FF8C00, #FFFACD, #FFD700);
+    background-size: 300% 300%;
+    z-index: -1; 
+    animation: auraSpin 3s linear infinite, auraPulseSSS 2s ease-in-out infinite;
+}
 
-        /* --- KEYFRAMES --- */
-        
-        /* Keyframe Gelombang Animasi */
-        @keyframes energyRippleSSS {
-            0% { transform: scale(1); opacity: 0.8; }
-            100% { transform: scale(1.6); opacity: 0; border-color: #FF8C00; border-width: 4px; }
-        }
+/* 2. EFEK ANIMASI BARU: Gelombang Memancar (Ripple/Burst) */
+.avatar-aura-sss::before, .circle-logo-sss::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: inherit;
+    border: 2px solid #FFD700; /* Warna gelombang */
+    z-index: -2;
+    animation: energyRippleSSS 2s cubic-bezier(0.0, 0.2, 0.8, 1) infinite;
+}
 
-        @keyframes energyRippleVIP {
-            0% { transform: scale(1); opacity: 0.8; }
-            100% { transform: scale(1.5); opacity: 0; border-color: #00d4ff; border-width: 4px; }
-        }
+/* --- TIER VIP (SOLO & CIRCLE) --- */
+.name-aura-vip {
+    background: linear-gradient(90deg, #b026ff, #e8b3ff, #00d4ff, #b026ff) !important;
+    background-size: 200% auto !important;
+    color: transparent !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    animation: textShine 3s linear infinite !important;
+    text-shadow: 0px 0px 10px rgba(176, 38, 255, 0.5);
+}
 
-        @keyframes auraPulseSSS {
-            0% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
-            50% { box-shadow: 0 0 30px rgba(255, 215, 0, 1); }
-            100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
-        }
-        @keyframes auraPulseVIP {
-            0% { box-shadow: 0 0 10px rgba(176, 38, 255, 0.5); }
-            50% { box-shadow: 0 0 25px rgba(0, 212, 255, 1); }
-            100% { box-shadow: 0 0 10px rgba(176, 38, 255, 0.5); }
-        }
-        @keyframes textShine {
-            to { background-position: 200% center; }
-        }
-        @keyframes auraSpin {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-    </style>
-</head>
-<body class="flex flex-col md:flex-row gap-8 justify-center items-start pt-10">
+.avatar-aura-vip, .circle-logo-vip {
+    position: relative;
+    border: 2px solid transparent !important; 
+    z-index: 10;
+}
 
-    <!-- KOLOM 1: TIER SSS (EMAS) -->
-    <div class="flex flex-col items-center gap-6 w-full max-w-sm">
-        <div class="text-center">
-            <h2 class="text-yellow-400 text-sm tracking-widest uppercase font-black drop-shadow-md">Tier SSS (Emas)</h2>
-            <p class="text-[10px] text-gray-500 mt-1">Sultan Jalur Langit</p>
-        </div>
+/* 1. Efek Gradien Berputar (Dasar Aura) */
+.avatar-aura-vip::after, .circle-logo-vip::after {
+    content: '';
+    position: absolute;
+    top: -4px; right: -4px; bottom: -4px; left: -4px; 
+    border-radius: inherit; 
+    background: linear-gradient(45deg, #b026ff, #00d4ff, #ff26b9, #b026ff);
+    background-size: 300% 300%;
+    z-index: -1;
+    animation: auraSpin 3s linear infinite, auraPulseVIP 2s ease-in-out infinite;
+}
 
-        <!-- Profil Solo Besar -->
-        <div class="bg-gray-800 p-8 rounded-[2rem] border border-gray-700 shadow-2xl relative w-full mb-6">
-            <div class="w-20 h-20 bg-gradient-to-tr from-emerald-500 to-teal-600 rounded-full mx-auto flex items-center justify-center mb-6 text-3xl text-white font-extrabold relative z-10 transition-all duration-700 avatar-aura-sss">A</div>
-            <h3 class="font-black text-2xl text-center transition relative z-10 name-aura-sss">Pemain Sultan</h3>
-        </div>
+/* 2. EFEK ANIMASI BARU: Gelombang Memancar (Ripple/Burst) */
+.avatar-aura-vip::before, .circle-logo-vip::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: inherit;
+    border: 2px solid #b026ff;
+    z-index: -2;
+    animation: energyRippleVIP 2s cubic-bezier(0.0, 0.2, 0.8, 1) infinite;
+    animation-delay: 0.5s; /* Diberi delay agar ritmenya beda dengan SSS */
+}
 
-        <!-- Modal Popup Circle SSS -->
-        <div class="bg-gradient-to-br from-indigo-900 via-blue-900 to-black p-8 rounded-[2rem] border-[3px] border-blue-500/40 shadow-2xl relative w-full text-center">
-            <div class="w-20 h-20 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-[1.5rem] mx-auto flex items-center justify-center text-4xl mb-4 circle-logo-sss">🛡️</div>
-            <h3 class="font-black text-2xl circle-name-sss">Solidaritas Langit</h3>
-        </div>
+/* --- KEYFRAMES --- */
+@keyframes energyRippleSSS {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(1.6); opacity: 0; border-color: #FF8C00; border-width: 4px; }
+}
 
-        <!-- Live Feed / Peringkat Kecil SSS -->
-        <div class="bg-gray-800 rounded-2xl p-4 w-full shadow-xl border border-gray-700 relative overflow-hidden mt-6">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-2xl"></div>
-            <div class="flex items-center gap-4 relative z-10">
-                <div class="w-12 h-12 bg-black/80 rounded-xl flex items-center justify-center text-2xl shadow-sm shrink-0 circle-logo-sss">🛡️</div>
-                <div class="text-left flex-1">
-                    <h3 class="font-black text-base leading-tight circle-name-sss">Solidaritas Langit</h3>
-                    <span class="text-[9px] font-bold bg-yellow-900/50 text-yellow-300 px-1.5 py-0.5 rounded uppercase tracking-wider">Rank 1 Global</span>
-                </div>
-            </div>
-        </div>
-    </div>
+@keyframes energyRippleVIP {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(1.5); opacity: 0; border-color: #00d4ff; border-width: 4px; }
+}
 
-    <!-- KOLOM 2: TIER VIP/SR (UNGU) -->
-    <div class="flex flex-col items-center gap-6 w-full max-w-sm">
-        <div class="text-center">
-            <h2 class="text-purple-400 text-sm tracking-widest uppercase font-black drop-shadow-md">Tier VIP / SR (Ungu)</h2>
-            <p class="text-[10px] text-gray-500 mt-1">Hamba Eksklusif</p>
-        </div>
-
-        <!-- Profil Solo Besar -->
-        <div class="bg-gray-800 p-8 rounded-[2rem] border border-gray-700 shadow-2xl relative w-full mb-6">
-            <div class="w-20 h-20 bg-gradient-to-tr from-purple-500 to-indigo-600 rounded-full mx-auto flex items-center justify-center mb-6 text-3xl text-white font-extrabold relative z-10 transition-all duration-700 avatar-aura-vip">B</div>
-            <h3 class="font-black text-2xl text-center transition relative z-10 name-aura-vip">Hamba VIP</h3>
-        </div>
-
-        <!-- Modal Popup Circle VIP -->
-        <div class="bg-gradient-to-br from-indigo-900 via-blue-900 to-black p-8 rounded-[2rem] border-[3px] border-blue-500/40 shadow-2xl relative w-full text-center">
-            <div class="w-20 h-20 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-[1.5rem] mx-auto flex items-center justify-center text-4xl mb-4 circle-logo-vip">🛡️</div>
-            <h3 class="font-black text-2xl circle-name-vip">Pejuang Subuh</h3>
-        </div>
-
-        <!-- Live Feed / Peringkat Kecil VIP -->
-        <div class="bg-gray-800 rounded-2xl p-4 w-full shadow-xl border border-gray-700 relative overflow-hidden mt-6">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl"></div>
-            <div class="flex items-center gap-4 relative z-10">
-                <div class="w-12 h-12 bg-black/80 rounded-xl flex items-center justify-center text-2xl shadow-sm shrink-0 circle-logo-vip">🛡️</div>
-                <div class="text-left flex-1">
-                    <h3 class="font-black text-base leading-tight circle-name-vip">Pejuang Subuh</h3>
-                    <span class="text-[9px] font-bold bg-purple-900/50 text-purple-300 px-1.5 py-0.5 rounded uppercase tracking-wider">Rank 2 Global</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-</body>
-</html>
+@keyframes auraPulseSSS {
+    0% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+    50% { box-shadow: 0 0 30px rgba(255, 215, 0, 1); }
+    100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+}
+@keyframes auraPulseVIP {
+    0% { box-shadow: 0 0 10px rgba(176, 38, 255, 0.5); }
+    50% { box-shadow: 0 0 25px rgba(0, 212, 255, 1); }
+    100% { box-shadow: 0 0 10px rgba(176, 38, 255, 0.5); }
+}
+@keyframes textShine {
+    to { background-position: 200% center; }
+}
+@keyframes auraSpin {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
