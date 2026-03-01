@@ -1,30 +1,53 @@
-const nameInput = document.getElementById('user-name');
-const bioInput = document.getElementById('user-bio');
-const quoteInput = document.getElementById('user-quote');
+// ==========================================
+// --- 1. INISIALISASI DATA PLAYER ---
+// ==========================================
 
-if(nameInput) nameInput.value = localStorage.getItem('userName') || ''; 
-if(bioInput) bioInput.value = localStorage.getItem('userBio') || '';
-if(quoteInput) quoteInput.value = localStorage.getItem('userQuote') || '';
+// Mengambil data player dari localStorage atau set nilai default
+window.playerData = JSON.parse(localStorage.getItem('playerData')) || {
+    name: localStorage.getItem('userName') || "",
+    bio: localStorage.getItem('userBio') || "",
+    quote: localStorage.getItem('userQuote') || "",
+    level: 1,
+    exp: 0,
+    title: "Fase Nyasar",
+    lastActive: new Date().toISOString()
+};
 
-if(nameInput) nameInput.addEventListener('change', () => { 
-    localStorage.setItem('userName', nameInput.value); 
-    if(window.syncProfileToFirebase) window.syncProfileToFirebase(); 
-});
-if(bioInput) bioInput.addEventListener('change', () => { 
-    localStorage.setItem('userBio', bioInput.value); 
-    if(window.syncProfileToFirebase) window.syncProfileToFirebase(); 
-});
-if(quoteInput) quoteInput.addEventListener('change', () => { 
-    localStorage.setItem('userQuote', quoteInput.value); 
-    if(window.syncProfileToFirebase) window.syncProfileToFirebase(); 
-});
-
-window.totalExp = parseInt(localStorage.getItem('totalExp') || 0);
+// Backward compatibility: Menyelaraskan dengan sistem EXP & Koin lama
+window.totalExp = parseInt(localStorage.getItem('totalExp') || window.playerData.exp || 0);
+window.playerData.exp = window.totalExp; // Sinkronkan ke objek utama
 window.totalKoin = parseInt(localStorage.getItem('totalKoin') || 0);
-const koinDisplay = document.getElementById('koin-display');
-if(koinDisplay) koinDisplay.innerText = window.totalKoin;
 
-window.getExpRequirement = function(level) { return 50 * level * (level + 1); }
+// Referensi Elemen DOM Player
+const inputName = document.getElementById('user-name');
+const inputBio = document.getElementById('user-bio');
+const inputQuote = document.getElementById('user-quote');
+const displayLevel = document.getElementById('display-level');
+const displayExp = document.getElementById('display-exp');
+const expBar = document.getElementById('exp-bar');
+const displayTitleBot = document.getElementById('display-title-bot');
+const avatarInitial = document.getElementById('avatar-initial');
+const headerLevel = document.getElementById('header-level');
+const headerTitle = document.getElementById('header-title');
+const koinDisplay = document.getElementById('koin-display');
+
+
+// ==========================================
+// --- 2. SISTEM LEVELING & GELAR (TITLES) ---
+// ==========================================
+
+window.getExpRequirement = function(level) { 
+    return 50 * level * (level + 1); 
+};
+
+window.getTitle = function(lvl) {
+    if(lvl < 10) return "NPC Duniawi";
+    if(lvl < 20) return "Skena Ibadah";
+    if(lvl < 30) return "Pendekar Subuh";
+    if(lvl < 40) return "Suhu Akhlaq";
+    if(lvl < 50) return "Bestie Hijrah";
+    return "Backingan Pusat";
+};
 
 window.calculateLevelInfo = function(totalExp) {
     let lvl = 1;
@@ -35,7 +58,9 @@ window.calculateLevelInfo = function(totalExp) {
         let targetLevel = lvl + 1;
         if (targetLevel % 10 === 0 && targetLevel <= 50) {
             if (localStorage.getItem(`exam_passed_${targetLevel}`) !== 'true') {
-                isCapped = true; nextExamLvl = targetLevel; break; 
+                isCapped = true; 
+                nextExamLvl = targetLevel; 
+                break; 
             }
         }
         lvl++;
@@ -48,87 +73,199 @@ window.calculateLevelInfo = function(totalExp) {
     let currentLevelExp = totalExp - expForCurrentLvl;
     
     if (isCapped && totalExp >= expForNextLvl) currentLevelExp = requiredExp; 
+    
+    // Update playerData level
+    window.playerData.level = lvl;
+    
     return { level: lvl, expCurrent: currentLevelExp, expRequired: requiredExp, isCapped, nextExamLvl };
-}
+};
 
-window.getTitle = function(lvl) {
-    if(lvl < 10) return "NPC Duniawi";
-    if(lvl < 20) return "Skena Ibadah";
-    if(lvl < 30) return "Pendekar Subuh";
-    if(lvl < 40) return "Suhu Akhlaq";
-    if(lvl < 50) return "Bestie Hijrah";
-    return "Backingan Pusat";
-}
+// ==========================================
+// --- 3. FUNGSI UPDATE UI KESELURUHAN ---
+// ==========================================
 
-window.updateAvatarBorder = function(level) {
-    const avatar = document.getElementById('avatar-initial');
-    if(!avatar) return;
-    avatar.classList.remove('ring-4', 'ring-gray-200', 'dark:ring-gray-600', 'ring-blue-400', 'ring-yellow-400', 'shadow-lg', 'shadow-yellow-400/50');
-    if (level >= 30) { avatar.classList.add('ring-4', 'ring-yellow-400', 'shadow-lg', 'shadow-yellow-400/50'); } 
-    else if (level >= 10) { avatar.classList.add('ring-4', 'ring-blue-400'); } 
-    else { avatar.classList.add('ring-4', 'ring-gray-200', 'dark:ring-gray-600'); }
-}
+window.updatePlayerUI = function() {
+    // 1. Update Input Fields
+    if(inputName) inputName.value = window.playerData.name;
+    if(inputBio) inputBio.value = window.playerData.bio;
+    if(inputQuote) inputQuote.value = window.playerData.quote;
+    if(koinDisplay) koinDisplay.innerText = window.totalKoin.toLocaleString('id-ID');
 
-window.updateStatsUI = function() {
+    // 2. Update Avatar Inisial
+    if (window.playerData.name && avatarInitial) {
+        avatarInitial.innerText = window.playerData.name.charAt(0).toUpperCase();
+    } else if (avatarInitial) {
+         avatarInitial.innerText = "A";
+    }
+
+    // 3. Kalkulasi Info Level Terbaru (Berdasarkan Limit Break)
     let info = window.calculateLevelInfo(window.totalExp);
     let currentTitle = window.getTitle(info.level);
+    window.playerData.title = currentTitle; // Simpan ke state
+    
     let percent = (info.expCurrent / info.expRequired) * 100;
     if (percent > 100) percent = 100;
 
-    const headerLevel = document.getElementById('header-level');
-    const headerTitle = document.getElementById('header-title');
-    const displayLevel = document.getElementById('display-level');
-    
-    if(headerLevel) headerLevel.innerText = `Lv.${info.level}`;
+    // 4. Update Header Utama
+    if(headerLevel) headerLevel.innerText = `Lv. ${info.level}`;
     if(headerTitle) headerTitle.innerText = currentTitle;
     if(displayLevel) displayLevel.innerText = `Level ${info.level}`;
     
-    const expBar = document.getElementById('exp-bar');
-    const displayExp = document.getElementById('display-exp');
-    const displayTitleBot = document.getElementById('display-title-bot');
-    
+    // 5. Update Progress Bar & Kondisi Limit Break (Ujian)
     if(expBar && displayExp && displayTitleBot) {
         if (info.isCapped && info.expCurrent >= info.expRequired) {
-            displayExp.innerHTML = `<span class="text-rose-500 animate-pulse">🔒 MAX (Butuh Ujian)</span>`;
+            displayExp.innerHTML = `<span class="text-rose-500 animate-pulse font-black">🔒 MAX (Butuh Ujian)</span>`;
             expBar.style.width = '100%';
             expBar.className = "bg-gradient-to-r from-rose-500 to-orange-500 h-3.5 rounded-full transition-all duration-1000 shadow-md cursor-pointer animate-pulse";
             expBar.onclick = () => window.openExamModal(info.nextExamLvl);
-            displayTitleBot.innerHTML = `⚠️ <span class="underline text-rose-400 cursor-pointer" onclick="window.openExamModal(${info.nextExamLvl})">KLIK UNTUK UJIAN NAIK KE LV.${info.nextExamLvl}</span>`;
+            displayTitleBot.innerHTML = `⚠️ <span class="underline text-rose-500 cursor-pointer font-bold" onclick="window.openExamModal(${info.nextExamLvl})">KLIK UNTUK UJIAN NAIK KE LV.${info.nextExamLvl}</span>`;
         } else {
-            displayExp.innerText = `${info.expCurrent} / ${info.expRequired} EXP`;
+            displayExp.innerText = `${info.expCurrent.toLocaleString('id-ID')} / ${info.expRequired.toLocaleString('id-ID')} EXP`;
             expBar.style.width = `${percent}%`;
             expBar.className = "bg-gradient-to-r from-emerald-400 to-teal-500 h-3.5 rounded-full transition-all duration-1000 ease-out shadow-md";
             expBar.onclick = null;
             displayTitleBot.innerText = `🏆 Gelar: ${currentTitle}`;
         }
     }
-    window.updateAvatarBorder(info.level);
-}
-window.updateStatsUI();
 
-// --- 10.5 SISTEM UJIAN KENAIKAN RANK ---
+    // 6. Terapkan Kosmetik (Aura Gacha / Default Border)
+    applyCosmetics(info.level);
+};
+
+// ==========================================
+// --- 4. SISTEM KOSMETIK & AURA ---
+// ==========================================
+
+function applyCosmetics(level) {
+    if(!avatarInitial) return;
+    
+    // Reset Class Kosmetik (Aura) dan Default Border
+    avatarInitial.classList.remove('avatar-aura-sss', 'avatar-aura-vip', 'ring-4', 'ring-gray-200', 'dark:ring-gray-600', 'ring-blue-400', 'ring-yellow-400', 'shadow-lg', 'shadow-yellow-400/50');
+    if(inputName) inputName.classList.remove('name-aura-sss', 'name-aura-vip');
+
+    // Cek inventory dari Toko Flexing
+    const unlockedItems = window.unlockedItems || JSON.parse(localStorage.getItem('unlockedItems')) || [];
+
+    // Prioritas 1: Aura SSS (Paling Tinggi)
+    if (unlockedItems.includes('aura_sss')) {
+        avatarInitial.classList.add('avatar-aura-sss');
+        if(inputName) inputName.classList.add('name-aura-sss');
+    } 
+    // Prioritas 2: Aura VIP (SR)
+    else if (unlockedItems.includes('aura_vip')) {
+        avatarInitial.classList.add('avatar-aura-vip');
+        if(inputName) inputName.classList.add('name-aura-vip');
+    }
+    // Prioritas 3: Default Border Berdasarkan Level (Sistem Lama)
+    else {
+        if (level >= 30) { 
+            avatarInitial.classList.add('ring-4', 'ring-yellow-400', 'shadow-lg', 'shadow-yellow-400/50'); 
+        } 
+        else if (level >= 10) { 
+            avatarInitial.classList.add('ring-4', 'ring-blue-400'); 
+        } 
+        else { 
+            avatarInitial.classList.add('ring-4', 'ring-gray-200', 'dark:ring-gray-600'); 
+        }
+    }
+}
+
+// ==========================================
+// --- 5. FUNGSI SAVE & AUTO-SAVE ---
+// ==========================================
+
+function savePlayerData() {
+    if(inputName) {
+        window.playerData.name = inputName.value;
+        localStorage.setItem('userName', inputName.value); // Backward comp
+    }
+    if(inputBio) {
+        window.playerData.bio = inputBio.value;
+        localStorage.setItem('userBio', inputBio.value);
+    }
+    if(inputQuote) {
+        window.playerData.quote = inputQuote.value;
+        localStorage.setItem('userQuote', inputQuote.value);
+    }
+    
+    // Update Inisial Avatar saat ngetik real-time
+    if (window.playerData.name && avatarInitial) {
+        avatarInitial.innerText = window.playerData.name.charAt(0).toUpperCase();
+    }
+    
+    localStorage.setItem('playerData', JSON.stringify(window.playerData));
+    if(window.syncProfileToFirebase) window.syncProfileToFirebase(); 
+}
+
+// Event Listeners untuk Input (Auto Save)
+if (inputName) inputName.addEventListener('change', savePlayerData);
+if (inputBio) inputBio.addEventListener('change', savePlayerData);
+if (inputQuote) inputQuote.addEventListener('change', savePlayerData);
+
+// ==========================================
+// --- 6. FUNGSI TAMBAH EXP KESELURUHAN ---
+// ==========================================
+
+window.addExp = function(amount) {
+    // Cek Buff EXP (Gacha Consumable)
+    const inventory = window.inventory || JSON.parse(localStorage.getItem('inventory')) || {};
+    if (inventory['item_buff'] > 0) {
+        amount *= 2; // EXP Double jika ada buff
+    }
+
+    // Ambil info sebelum tambah EXP untuk cek level up
+    let oldInfo = window.calculateLevelInfo(window.totalExp);
+    
+    window.totalExp += amount;
+    window.playerData.exp = window.totalExp;
+    
+    localStorage.setItem('totalExp', window.totalExp);
+    localStorage.setItem('playerData', JSON.stringify(window.playerData));
+    
+    // Ambil info setelah tambah EXP
+    let newInfo = window.calculateLevelInfo(window.totalExp);
+
+    window.updatePlayerUI();
+
+    // Trigger perayaan jika naik level
+    if (newInfo.level > oldInfo.level && !newInfo.isCapped) {
+        if(typeof confetti === 'function') {
+             confetti({ particleCount: 150, spread: 80, origin: { y: 0.5 }, zIndex: 100 });
+        }
+        alert(`Selamat! Kamu naik ke Level ${newInfo.level} 🎉\nGelar barumu: ${window.getTitle(newInfo.level)}`);
+        if(window.pushToLiveFeed) window.pushToLiveFeed(window.playerData.name || "Pemain", `Naik ke Level ${newInfo.level}!`, 'user_level');
+    }
+};
+
+// ==========================================
+// --- 7. SISTEM UJIAN LIMIT BREAK (RANK) ---
+// ==========================================
+
 window.openExamModal = function(targetLevel) {
     const modal = document.getElementById('exam-modal');
     const list = document.getElementById('exam-requirements-list');
+    if(!modal || !list) return;
+
     document.getElementById('exam-level-target').innerText = targetLevel;
     
-    let html = ''; let isEligible = true;
+    let html = ''; 
+    let isEligible = true;
     let streak = parseInt(localStorage.getItem('streakNum') || 0);
     let totalDzikir = parseInt(localStorage.getItem('tasbih_subhanallah')||0) + parseInt(localStorage.getItem('tasbih_alhamdulillah')||0) + parseInt(localStorage.getItem('tasbih_allahuakbar')||0);
 
     if (targetLevel === 10) {
         let req1 = streak >= 3; let req2 = totalDzikir >= 333;
-        html += `<li class="flex items-center gap-2 ${req1 ? 'text-emerald-400' : 'text-gray-400'}">${req1 ? '✅' : '❌'} Punya Streak Ibadah minimal 🔥 3 Hari (Skor: ${streak}/3)</li>`;
-        html += `<li class="flex items-center gap-2 ${req2 ? 'text-emerald-400' : 'text-gray-400'}">${req2 ? '✅' : '❌'} Mengamalkan Dzikir Smart Tasbih 333x (Skor: ${totalDzikir}/333)</li>`;
+        html += `<li class="flex items-center gap-2 ${req1 ? 'text-emerald-400' : 'text-gray-400'}">${req1 ? '✅' : '❌'} Streak Ibadah min. 🔥 3 Hari (Skor: ${streak}/3)</li>`;
+        html += `<li class="flex items-center gap-2 ${req2 ? 'text-emerald-400' : 'text-gray-400'}">${req2 ? '✅' : '❌'} Total Dzikir Tasbih 333x (Skor: ${totalDzikir}/333)</li>`;
         isEligible = req1 && req2;
     } else if (targetLevel === 20) {
         let req1 = window.statsRadar && window.statsRadar.derma >= 100; let req2 = streak >= 7;
-        html += `<li class="flex items-center gap-2 ${req1 ? 'text-emerald-400' : 'text-gray-400'}">${req1 ? '✅' : '❌'} Poin Aura Sosial/Derma > 100</li>`;
-        html += `<li class="flex items-center gap-2 ${req2 ? 'text-emerald-400' : 'text-gray-400'}">${req2 ? '✅' : '❌'} Konsisten Streak Ibadah 🔥 7 Hari</li>`;
+        html += `<li class="flex items-center gap-2 ${req1 ? 'text-emerald-400' : 'text-gray-400'}">${req1 ? '✅' : '❌'} Poin Aura Derma > 100</li>`;
+        html += `<li class="flex items-center gap-2 ${req2 ? 'text-emerald-400' : 'text-gray-400'}">${req2 ? '✅' : '❌'} Konsisten Streak 🔥 7 Hari</li>`;
         isEligible = req1 && req2;
     } else {
         let req1 = streak >= 10;
-        html += `<li class="flex items-center gap-2 ${req1 ? 'text-emerald-400' : 'text-gray-400'}">${req1 ? '✅' : '❌'} Konsisten Streak Ibadah 🔥 10 Hari</li>`;
+        html += `<li class="flex items-center gap-2 ${req1 ? 'text-emerald-400' : 'text-gray-400'}">${req1 ? '✅' : '❌'} Konsisten Streak 🔥 10 Hari</li>`;
         isEligible = req1;
     }
 
@@ -138,33 +275,43 @@ window.openExamModal = function(targetLevel) {
     if(isEligible) {
         btnSubmit.disabled = false;
         btnSubmit.className = "flex-1 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-black py-3 rounded-xl transition shadow-lg shadow-emerald-500/30 text-sm";
-        btnSubmit.innerText = "Selesaikan Ujian!"; btnSubmit.setAttribute('data-target', targetLevel);
+        btnSubmit.innerText = "Selesaikan Ujian!"; 
+        btnSubmit.setAttribute('data-target', targetLevel);
     } else {
         btnSubmit.disabled = true;
         btnSubmit.className = "flex-1 bg-gray-600 text-gray-400 font-bold py-3 rounded-xl cursor-not-allowed text-sm";
-        btnSubmit.innerText = "Syarat Belum Cukup"; btnSubmit.removeAttribute('data-target');
+        btnSubmit.innerText = "Syarat Belum Cukup"; 
+        btnSubmit.removeAttribute('data-target');
     }
-    modal.classList.remove('hidden'); modal.classList.add('flex');
-}
+    modal.classList.remove('hidden'); 
+    modal.classList.add('flex');
+};
 
 window.closeExamModal = function() {
-    document.getElementById('exam-modal').classList.add('hidden');
-    document.getElementById('exam-modal').classList.remove('flex');
-}
+    const modal = document.getElementById('exam-modal');
+    if(modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+};
 
 window.submitExam = function() {
     const btn = document.getElementById('btn-submit-exam');
     const target = btn.getAttribute('data-target');
     if(target) {
-        localStorage.setItem(`exam_passed_${target}`, 'true'); window.closeExamModal();
-        if(typeof confetti === 'function') confetti({ particleCount: 200, spread: 100, origin: { y: 0.3 } });
-        alert(`🎊 LULUS! Selamat, Limit Break berhasil! Kamu sekarang berhak naik ke Level ${target}. EXP yang tertahan kini terbuka kembali.`);
-        window.updateStatsUI();
-        if(window.pushToLiveFeed) window.pushToLiveFeed(document.getElementById('user-name').value || "Kamu", `Lulus Ujian & Naik ke Level ${target}!`, 'user_level');
+        localStorage.setItem(`exam_passed_${target}`, 'true'); 
+        window.closeExamModal();
+        if(typeof confetti === 'function') confetti({ particleCount: 200, spread: 100, origin: { y: 0.3 }, zIndex: 100 });
+        alert(`🎊 LULUS! Selamat, Limit Break berhasil!\nKamu sekarang berhak naik ke Level ${target}. EXP yang tertahan kini terbuka kembali.`);
+        window.updatePlayerUI();
+        if(window.pushToLiveFeed) window.pushToLiveFeed(window.playerData.name || "Pemain", `Lulus Ujian Limit Break Lv.${target}!`, 'user_level');
     }
-}
+};
 
-// --- RAK BADGE ---
+// ==========================================
+// --- 8. RAK TROFI BADGE ---
+// ==========================================
+
 window.badgeData = [
     { id: 'bdg_pusat', icon: '🕋', name: 'Admin Pusat', type: 'pusat', reqStat: 50, reqExam: 10, desc: 'Pancaran ibadah wajib yang tiada tara.' },
     { id: 'bdg_aura', icon: '✨', name: 'Aura Memikat', type: 'aura', reqStat: 50, reqExam: 10, desc: 'Karisma dan adab yang menyejukkan hati.' },
@@ -178,6 +325,7 @@ window.badgeData = [
 window.updateBadges = function() {
     const container = document.getElementById('badge-rack-container');
     if(!container) return;
+    
     let html = '';
     let userStreak = parseInt(localStorage.getItem('streakNum') || 0);
 
@@ -208,38 +356,12 @@ window.updateBadges = function() {
         `;
     });
     container.innerHTML = html;
-}
-setTimeout(window.updateBadges, 500);
+};
 
-// --- TOKO KEBAIKAN ---
-window.shopCatalog = [
-    { id: "title_valid", name: "Gelar: Si Paling Valid", price: 5000, icon: "🔥", type: "title" }, 
-    { id: "title_core", name: "Gelar: Amalin Core", price: 8000, icon: "✨", type: "title" },
-    { id: "title_pusat", name: "Gelar: Backingan Pusat 📿", price: 15000, icon: "📿", type: "title" },
-    { id: "title_sigma", name: "Gelar: Sigma Akhlaq 🗿", price: 20000, icon: "🗿", type: "title" },
-    { id: "frame_api", name: "Frame: Api Biru", price: 12000, icon: "🟦", type: "frame" },
-    { id: "frame_neon", name: "Frame: Cyberpunk Neon", price: 15000, icon: "🟣", type: "frame" },
-    { id: "frame_sage", name: "Frame: Sage Green Estetik", price: 10000, icon: "🌿", type: "frame" },
-    { id: "efek_koin", name: "Efek: Hujan Koin", price: 8000, icon: "🪙", type: "effect" },
-    { id: "efek_sakura", name: "Efek: Bunga Sakura", price: 10000, icon: "🌸", type: "effect" },
-    { id: "guild_tiket", name: "Tiket Gacha Premium", price: 3000, icon: "🎫", type: "consumable" }
-];
+// ==========================================
+// --- 9. SISTEM STREAK HARIAN (API APIAN) ---
+// ==========================================
 
-window.unlockedItems = window.safeJSONParse ? window.safeJSONParse('unlockedItems', []) : [];
-window.renderShop = function() {
-    const container = document.getElementById('shop-container');
-    if(!container) return; container.innerHTML = ''; 
-    window.shopCatalog.forEach(item => {
-        const isOwned = window.unlockedItems.includes(item.id);
-        const card = document.createElement('div');
-        card.className = `p-3 rounded-2xl border-2 text-center transition ${isOwned ? 'border-emerald-400 bg-emerald-50 dark:bg-emerald-900/30' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'}`;
-        card.innerHTML = `<div class="text-4xl mb-2 drop-shadow-sm">${item.icon}</div><h3 class="font-bold text-xs text-gray-700 dark:text-gray-200 mb-2">${item.name}</h3>${isOwned ? `<span class="text-emerald-600 dark:text-emerald-400 font-bold text-[11px] block py-1.5">✓ Dimiliki</span>` : `<button onclick="window.buyItem('${item.id}', ${item.price})" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-1.5 rounded-xl text-xs font-bold active:scale-95 transition shadow-sm">🪙 ${item.price}</button>`}`;
-        container.appendChild(card);
-    });
-}
-window.renderShop();
-
-// === SISTEM STREAK MANUAL (DAILY CHECK-IN) ===
 window.initStreakSystem = function() {
     const btnStreak = document.getElementById('btn-claim-streak');
     const displayStreak = document.getElementById('streak-display');
@@ -249,68 +371,63 @@ window.initStreakSystem = function() {
     let lastClaimDate = localStorage.getItem('lastStreakClaim');
     let todayStr = new Date().toDateString();
 
-    // Cek status hari ini
     let isClaimedToday = (lastClaimDate === todayStr);
 
-    // Jika belum klaim hari ini, ubah UI tombol jadi menarik perhatian (Pulse & Glowing)
     if (!isClaimedToday) {
         btnStreak.className = "bg-gradient-to-r from-orange-500 to-rose-500 px-3 py-1.5 rounded-full text-xs font-black shadow-[0_0_15px_rgba(249,115,22,0.6)] border border-orange-300 transition-all cursor-pointer animate-pulse transform hover:scale-105 text-white flex items-center justify-center";
         displayStreak.innerText = currentStreak > 0 ? "Klaim 🔥" : "Mulai 🔥";
         btnStreak.disabled = false;
     } else {
-        // Jika Sudah diklaim (Normal transparan)
         btnStreak.className = "bg-white/20 px-2.5 py-1.5 rounded-full text-xs font-bold shadow-sm backdrop-blur-sm border border-white/30 transition-all cursor-not-allowed opacity-80 text-white flex items-center justify-center";
         displayStreak.innerText = `🔥 ${currentStreak}`;
         btnStreak.disabled = true;
     }
 
-    // Event saat tombol diklik
     btnStreak.onclick = function() {
         if (isClaimedToday) return;
 
-        // Cek apakah streak lanjut atau terputus
         let yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
         let yesterdayStr = yesterday.toDateString();
 
         if (lastClaimDate === yesterdayStr) {
-            // Streak Lanjut (karena diklik persis sehari setelahnya)
             currentStreak += 1;
         } else {
-            // Streak Terputus / Baru mulai (karena bolong sehari atau lebih)
             currentStreak = 1;
         }
 
-        // FIX: Simpan data ke memori lokal dengan variabel yang terpadu
         localStorage.setItem('streakNum', currentStreak);
         localStorage.setItem('lastStreakClaim', todayStr);
-        window.streakNum = currentStreak; // Jadikan global
+        window.streakNum = currentStreak; 
         isClaimedToday = true;
 
-        // FIX: Langsung Trigger Sinkronisasi Cloud Agar Aman
         if(window.syncStatsToFirebase) window.syncStatsToFirebase();
 
-        // Update UI seketika menjadi normal kembali
         btnStreak.className = "bg-white/20 px-2.5 py-1.5 rounded-full text-xs font-bold shadow-sm backdrop-blur-sm border border-white/30 transition-all cursor-not-allowed opacity-80 text-white flex items-center justify-center";
         displayStreak.innerText = `🔥 ${currentStreak}`;
         btnStreak.disabled = true;
 
-        // Beri sedikit hadiah EXP gratisan sebagai pancingan login
-        window.totalExp = (window.totalExp || 0) + 10;
-        localStorage.setItem('totalExp', window.totalExp);
-        if(window.updateStatsUI) window.updateStatsUI();
+        // EXP Gratisan karena login harian
+        window.addExp(10);
 
-        // Beri efek konfeti api keluar dari lokasi tombol
         if(typeof confetti === 'function') {
             confetti({ 
                 particleCount: 60, 
                 spread: 70, 
-                origin: { y: 0.1, x: 0.7 }, // Lokasi kira-kira di tombol atas kanan
+                origin: { y: 0.1, x: 0.7 }, 
                 colors: ['#f97316', '#ef4444', '#fbbf24'] 
             });
         }
     };
 };
 
-// Jalankan sistem setiap kali tab / player di load
+// ==========================================
+// --- 10. BOOTSTRAP INITIALIZATION ---
+// ==========================================
+
+// Panggil fungsi-fungsi ini saat script dimuat pertama kali
+window.updatePlayerUI();
+setTimeout(window.updateBadges, 500); // Beri jeda agar radar chart siap dulu
 window.initStreakSystem();
+
+// (Catatan: Render shop dibuang dari sini karena sudah ditangani oleh shop.js)
