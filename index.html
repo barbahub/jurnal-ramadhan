@@ -619,6 +619,40 @@
             </div>
         </div>
 
+        <!-- MODAL REKAP CIRCLE WRAPPED -->
+        <div id="rekap-circle-modal" class="fixed inset-0 z-[90] hidden items-center justify-center bg-black/90 backdrop-blur-xl p-4 transition-opacity">
+            <div id="rekap-circle-content" class="bg-gradient-to-br from-indigo-950 via-blue-900 to-black border-2 border-blue-500/50 rounded-[2rem] p-6 max-w-sm w-full shadow-[0_0_40px_rgba(59,130,246,0.4)] transform scale-95 transition-transform text-center relative overflow-hidden">
+                <!-- Hiasan Background -->
+                <div class="absolute top-[-20%] left-[-20%] w-[200px] h-[200px] bg-blue-500/20 rounded-full blur-3xl z-0 pointer-events-none"></div>
+                <div class="absolute bottom-[-10%] right-[-10%] w-[150px] h-[150px] bg-indigo-500/20 rounded-full blur-3xl z-0 pointer-events-none"></div>
+                
+                <div class="relative z-10">
+                    <p class="text-[10px] text-blue-300 font-bold tracking-[0.2em] uppercase mb-4">Laporan Akhir Bulan Circle</p>
+                    
+                    <div id="rekap-emoji" class="text-7xl mb-2 drop-shadow-[0_0_15px_rgba(59,130,246,0.8)] animate-bounce">👑</div>
+                    
+                    <h3 id="rekap-circle-name" class="text-xl font-black text-white tracking-wide uppercase mb-1 drop-shadow-md">Nama Circle</h3>
+                    <div class="bg-blue-500/20 border border-blue-400/30 rounded-full px-4 py-1.5 inline-block mb-4 shadow-inner backdrop-blur-sm">
+                        <span id="rekap-gelar" class="text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500 uppercase tracking-wider">Tulang Punggung</span>
+                    </div>
+
+                    <div class="bg-black/50 rounded-2xl p-4 border border-white/10 shadow-inner mb-4 flex flex-col items-center">
+                        <span class="text-[9px] text-blue-200 font-bold uppercase tracking-widest mb-1">Kontribusi EXP Kamu</span>
+                        <span id="rekap-pct" class="text-5xl font-black text-white drop-shadow-md">45%</span>
+                        <div class="w-full bg-black/60 rounded-full h-1.5 mt-3 overflow-hidden">
+                            <div id="rekap-bar" class="bg-gradient-to-r from-blue-400 to-indigo-500 h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <p id="rekap-desc" class="text-xs text-blue-100/90 italic mb-6 leading-relaxed px-2">"Tanpamu, circle ini cuma remahan rengginang. Kamu bener-bener carry tim bulan ini!"</p>
+
+                    <div class="flex gap-3">
+                        <button onclick="window.closeRekapModal()" class="flex-1 bg-gray-800 text-white font-bold py-3.5 rounded-xl border border-gray-600 hover:bg-gray-700 transition shadow-lg text-xs uppercase tracking-wider">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script src="js/ui-core.js"></script>
