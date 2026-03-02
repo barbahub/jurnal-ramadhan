@@ -81,6 +81,9 @@ window.toggleEquipItem = function(id, type) {
     window.renderFeaturedItems();
     if(typeof window.updatePlayerUI === 'function') window.updatePlayerUI();
     
+    // TRIGGER UPDATE SKIN TASBIH INSTAN DI SINI
+    if(typeof window.applyTasbihSkin === 'function') window.applyTasbihSkin(); 
+    
     // 👇 SINKRONISASI KE FIREBASE 👇
     if (typeof window.saveShopDataToFirebase === 'function') window.saveShopDataToFirebase();
 };
@@ -126,6 +129,7 @@ window.buyItem = function(id, price) {
         window.equippedItems[itemDef.type] = id;
         localStorage.setItem('equippedItems', JSON.stringify(window.equippedItems));
         if(typeof window.updatePlayerUI === 'function') window.updatePlayerUI();
+        if(typeof window.applyTasbihSkin === 'function') window.applyTasbihSkin(); // Auto-apply jika tipe tasbih
     }
     
     // Refresh UI
