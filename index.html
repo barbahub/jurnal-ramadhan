@@ -185,12 +185,22 @@
         <div id="view-target" class="hidden animate-[fadeIn_0.4s_ease-out] flex-1">
             <div class="p-5">
               
-                <!-- KOTAK GACHA: Ditambahkan onclick pemicu gacha -->
-                <div id="gacha-container" onclick="window.rollGachaPremium()" class="bg-gradient-to-r from-rose-500 to-pink-600 p-6 rounded-3xl shadow-lg text-white mb-6 relative overflow-hidden text-center cursor-pointer transform hover:scale-[1.02] transition shadow-rose-500/30">
-                    <div class="absolute -left-4 -bottom-4 text-7xl opacity-20 transform -rotate-12">🎁</div>
-                    <h3 class="font-black text-lg mb-1 drop-shadow-md relative z-10">Gacha Premium</h3>
-                    <p class="text-xs text-rose-100 font-medium mb-3 relative z-10" id="gacha-subtitle">Tap kotak ini untuk memutar undian! (Butuh 1 Tiket Emas)</p>
-                    <div id="gacha-result" class="hidden relative z-10"></div>
+                <!-- PISAHKAN GACHA KEBAIKAN DAN GACHA PREMIUM -->
+                <div class="grid grid-cols-2 gap-3 mb-6">
+                    <!-- GACHA KEBAIKAN (MISI HARIAN) -->
+                    <div id="gacha-kebaikan-container" class="bg-gradient-to-br from-indigo-500 to-purple-600 p-4 rounded-3xl shadow-lg text-white relative overflow-hidden text-center cursor-pointer transform hover:scale-[1.02] transition shadow-indigo-500/30">
+                        <div class="absolute -left-2 -bottom-2 text-5xl opacity-20 transform -rotate-12">🎲</div>
+                        <h3 class="font-black text-sm mb-1 drop-shadow-md relative z-10">Misi Gacha</h3>
+                        <p class="text-[9px] text-indigo-100 font-medium relative z-10" id="gacha-kebaikan-subtitle">Undi misi langit harianmu!</p>
+                        <div id="gacha-kebaikan-result" class="hidden relative z-10 w-full mt-2"></div>
+                    </div>
+
+                    <!-- GACHA PREMIUM (ITEM/KOSMETIK) -->
+                    <div id="gacha-premium-container" onclick="window.rollGachaPremium()" class="bg-gradient-to-br from-rose-500 to-pink-600 p-4 rounded-3xl shadow-lg text-white relative overflow-hidden text-center cursor-pointer transform hover:scale-[1.02] transition shadow-rose-500/30 flex flex-col justify-center items-center">
+                        <div class="absolute -right-2 -bottom-2 text-5xl opacity-20 transform rotate-12">🎁</div>
+                        <h3 class="font-black text-sm mb-1 drop-shadow-md relative z-10">Gacha Premium</h3>
+                        <p class="text-[9px] text-rose-100 font-medium relative z-10">Pakai 1 Tiket Emas 🎫</p>
+                    </div>
                 </div>
 
                 <div id="epic-quest-container"></div>
@@ -326,8 +336,11 @@
                             </h2>
                             <p class="text-[10px] text-gray-400 mt-0.5">Pamerkan kemewahan jalur langitmu.</p>
                         </div>
-                        <div class="bg-yellow-100 dark:bg-yellow-900/40 border border-yellow-200 dark:border-yellow-700 text-yellow-700 dark:text-yellow-400 px-2 py-1 rounded-lg flex items-center gap-1 shadow-sm">
-                            <span class="text-xs">🪙</span> <span class="text-[11px] font-black" id="shop-koin-display">0</span>
+                        <div class="flex flex-col gap-1.5 items-end">
+                            <div class="bg-yellow-100 dark:bg-yellow-900/40 border border-yellow-200 dark:border-yellow-700 text-yellow-700 dark:text-yellow-400 px-2 py-1 rounded-lg flex items-center gap-1 shadow-sm">
+                                <span class="text-xs">🪙</span> <span class="text-[11px] font-black" id="shop-koin-display">0</span>
+                            </div>
+                            <button onclick="window.openInfoModal('Top Up Koin', 'Fitur Top Up Koin via Payment Gateway sedang dalam tahap integrasi! Nantikan update AmalPad berikutnya ya bos.')" class="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[9px] font-bold px-2.5 py-1 rounded-md shadow-sm hover:scale-105 active:scale-95 transition flex items-center gap-1">➕ Beli Koin</button>
                         </div>
                     </div>
 
