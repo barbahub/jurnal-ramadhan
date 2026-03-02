@@ -1,9 +1,24 @@
 // ==========================================
+// --- 0. UTILITAS KEAMANAN (ANTI-CRASH) ---
+// ==========================================
+
+// Mengambil data dengan fallback aman untuk mencegah error JSON.parse(null/undefined)
+const getSafeJSON = (key, fallback) => {
+    try {
+        const item = localStorage.getItem(key);
+        return (item && item !== "undefined") ? JSON.parse(item) : fallback;
+    } catch (e) {
+        console.error(`Error parsing ${key} from localStorage`, e);
+        return fallback;
+    }
+};
+
+// ==========================================
 // --- 1. INISIALISASI DATA PLAYER ---
 // ==========================================
 
 // Mengambil data player dari localStorage atau set nilai default
-window.playerData = JSON.parse(localStorage.getItem('playerData')) || {
+window.playerData = getSafeJSON('playerData', {
     name: localStorage.getItem('userName') || "",
     bio: localStorage.getItem('userBio') || "",
     quote: localStorage.getItem('userQuote') || "",
@@ -11,14 +26,14 @@ window.playerData = JSON.parse(localStorage.getItem('playerData')) || {
     exp: 0,
     title: "Fase Nyasar",
     lastActive: new Date().toISOString()
-};
+});
 
 // Backward compatibility: Menyelaraskan dengan sistem EXP & Koin lama
-window.totalExp = parseInt(localStorage.getItem('totalExp') || window.playerData.exp || 0);
+window.totalExp = parseInt(localStorage.getItem('totalExp')) || window.playerData.exp || 0;
 window.playerData.exp = window.totalExp; // Sinkronkan ke objek utama
-window.totalKoin = parseInt(localStorage.getItem('totalKoin') || 0);
+window.totalKoin = parseInt(localStorage.getItem('totalKoin')) || 0;
 
-// Referensi Elemen DOM Player
+// Referensi Elemen DOM Player (Anti-Bug: Aman jika elemen tidak ada di halaman tertentu)
 const inputName = document.getElementById('user-name');
 const inputBio = document.getElementById('user-bio');
 const inputQuote = document.getElementById('user-quote');
@@ -139,25 +154,26 @@ window.updatePlayerUI = function() {
 function applyCosmetics(level) {
     if(!avatarInitial) return;
     
-    // Reset Class Kosmetik (Aura) dan Default Border
-    avatarInitial.classList.remove('avatar-aura-sss', 'avatar-aura-vip', 'ring-4', 'ring-gray-200', 'dark:ring-gray-600', 'ring-blue-400', 'ring-yellow-400', 'shadow-lg', 'shadow-yellow-400/50');
-    if(inputName) inputName.classList.remove('name-aura-sss', 'name-aura-vip');
+    // Reset Class Kosmetik (Aura) dan Text Style secara bersih
+    avatarInitial.className = "w-24 h-24 bg-gradient-to-tr from-emerald-500 to-teal-600 rounded-full mx-auto flex items-center justify-center mb-4 text-4xl text-white font-extrabold relative z-10 transition-all duration-700";
+    if(inputName) inputName.className = "w-full bg-transparent outline-none py-1 mb-1 font-black text-2xl text-center transition relative z-10 placeholder-gray-300";
 
-    // Cek inventory dari Toko Flexing
-    const unlockedItems = window.unlockedItems || JSON.parse(localStorage.getItem('unlockedItems')) || [];
+    // Cek inventory & item yang sedang dipakai (equipped) dengan fallback aman
+    const equipped = window.equippedItems || getSafeJSON('equippedItems', {});
 
-    // Prioritas 1: Aura SSS (Paling Tinggi)
-    if (unlockedItems.includes('aura_sss')) {
+    // 1. Terapkan Aura yang Sedang Dipakai
+    if (equipped.aura === 'aura_sss') {
         avatarInitial.classList.add('avatar-aura-sss');
         if(inputName) inputName.classList.add('name-aura-sss');
-    } 
-    // Prioritas 2: Aura VIP (SR)
-    else if (unlockedItems.includes('aura_vip')) {
+    } else if (equipped.aura === 'aura_vip') {
         avatarInitial.classList.add('avatar-aura-vip');
         if(inputName) inputName.classList.add('name-aura-vip');
-    }
-    // Prioritas 3: Default Border Berdasarkan Level (Sistem Lama)
-    else {
+    } else if (equipped.aura === 'aura_koin') {
+        avatarInitial.classList.add('shadow-[0_0_30px_rgba(250,204,21,0.8)]', 'ring-4', 'ring-yellow-400');
+    } else if (equipped.aura === 'aura_sakura') {
+        avatarInitial.classList.add('shadow-[0_0_30px_rgba(244,114,182,0.8)]', 'ring-4', 'ring-pink-400');
+    } else {
+        // Default Border Berdasarkan Level jika tidak pakai aura
         if (level >= 30) { 
             avatarInitial.classList.add('ring-4', 'ring-yellow-400', 'shadow-lg', 'shadow-yellow-400/50'); 
         } 
@@ -167,6 +183,19 @@ function applyCosmetics(level) {
         else { 
             avatarInitial.classList.add('ring-4', 'ring-gray-200', 'dark:ring-gray-600'); 
         }
+    }
+
+    // 2. Terapkan Gaya Nama (Name FX) jika dipakai
+    if (equipped.name_fx && window.previewStyles && inputName) {
+        const styles = window.previewStyles[equipped.name_fx];
+        if (styles) {
+            // Mencegah error jika styles string kosong
+            const classArray = styles.split(' ').filter(c => c.trim() !== '');
+            if(classArray.length > 0) inputName.classList.add(...classArray);
+        }
+    } else if (inputName && equipped.aura !== 'aura_sss' && equipped.aura !== 'aura_vip') {
+        // Default warna jika tidak pakai Name FX atau Aura khusus
+        inputName.classList.add('text-gray-800', 'dark:text-gray-100');
     }
 }
 
@@ -207,8 +236,8 @@ if (inputQuote) inputQuote.addEventListener('change', savePlayerData);
 // ==========================================
 
 window.addExp = function(amount) {
-    // Cek Buff EXP (Gacha Consumable)
-    const inventory = window.inventory || JSON.parse(localStorage.getItem('inventory')) || {};
+    // Cek Buff EXP (Gacha Consumable) - Gunakan fallback aman
+    const inventory = window.inventory || getSafeJSON('inventory', {});
     if (inventory['item_buff'] > 0) {
         amount *= 2; // EXP Double jika ada buff
     }
@@ -426,8 +455,8 @@ window.initStreakSystem = function() {
 // ==========================================
 
 // Panggil fungsi-fungsi ini saat script dimuat pertama kali
-window.updatePlayerUI();
-setTimeout(window.updateBadges, 500); // Beri jeda agar radar chart siap dulu
-window.initStreakSystem();
-
-// (Catatan: Render shop dibuang dari sini karena sudah ditangani oleh shop.js)
+document.addEventListener('DOMContentLoaded', () => {
+    window.updatePlayerUI();
+    setTimeout(window.updateBadges, 500); // Beri jeda agar radar chart siap dulu
+    window.initStreakSystem();
+});
