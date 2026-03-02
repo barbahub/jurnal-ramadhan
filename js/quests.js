@@ -393,6 +393,35 @@ const tasbihResetBtn = document.getElementById('tasbih-reset');
 const tasbihCustomInput = document.getElementById('tasbih-custom-input');
 const tasbihTargetText = document.getElementById('tasbih-target-text');
 
+// --- FUNGSI APPLY SKIN TASBIH ---
+window.applyTasbihSkin = function() {
+    if(!tasbihBtn) return;
+    
+    // Ambil data equip yang paling fresh
+    let equipped = {};
+    try { equipped = JSON.parse(localStorage.getItem('equippedItems')) || {}; } catch(e) {}
+    let skinId = equipped.tasbih_skin || 'tasbih_kayu';
+    
+    // Reset class bawaan (hapus warna/border lama, sisakan layout dasar)
+    tasbihBtn.className = "w-32 h-32 rounded-full flex items-center justify-center text-5xl font-black shadow-inner active:scale-90 transition-all backdrop-blur-md border-[6px]";
+    
+    // Inject gaya sesuai Skin
+    if(skinId === 'tasbih_kayu') {
+        tasbihBtn.classList.add("bg-amber-800", "border-amber-900", "text-amber-100", "shadow-[inset_0_-8px_15px_rgba(0,0,0,0.5)]");
+    } else if(skinId === 'tasbih_kristal') {
+        tasbihBtn.classList.add("bg-gradient-to-br", "from-cyan-200", "to-blue-400", "border-cyan-100", "text-white", "shadow-[0_0_20px_rgba(34,211,238,0.6),inset_0_-8px_20px_rgba(255,255,255,0.8)]");
+    } else if(skinId === 'tasbih_cyber') {
+        tasbihBtn.classList.add("bg-gray-900", "border-emerald-500", "text-emerald-400", "font-mono", "shadow-[0_0_15px_rgba(16,185,129,0.5),inset_0_0_10px_rgba(16,185,129,0.5)]");
+    } else if(skinId === 'tasbih_sss') {
+        tasbihBtn.classList.add("bg-gradient-to-br", "from-yellow-600", "via-amber-500", "to-red-600", "border-yellow-300", "text-yellow-100", "shadow-[0_0_25px_rgba(250,204,21,0.8),inset_0_-8px_15px_rgba(0,0,0,0.6)]", "animate-pulse");
+    } else {
+        tasbihBtn.classList.add("bg-white/10", "border-white/30", "text-white"); // Default
+    }
+};
+
+// Panggil saat load & listen kalau ada perubahan
+window.applyTasbihSkin();
+
 if(tasbihCustomInput) {
     tasbihCustomInput.value = localStorage.getItem('tasbih_custom_text') || '';
     tasbihCustomInput.addEventListener('input', (e) => { localStorage.setItem('tasbih_custom_text', e.target.value); });
