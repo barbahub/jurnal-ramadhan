@@ -1,8 +1,8 @@
 // --- 5. RENDER SHOLAT WAJIB ---
 window.sholatWajib = [
-    { id: "sw-subuh", title: "Sholat Subuh", start: 4, end: 6, exp: 50, type: "pusat" },
-    { id: "sw-dhuhur", title: "Sholat Dhuhur", start: 11, end: 15, exp: 50, type: "pusat" },
-    { id: "sw-ashar", title: "Sholat Ashar", start: 15, end: 18, exp: 50, type: "pusat" },
+    { id: "sw-subuh", title: "Sholat Subuh", start: 4, end: 5, exp: 50, type: "pusat" },
+    { id: "sw-dhuhur", title: "Sholat Dhuhur", start: 11, end: 14, exp: 50, type: "pusat" },
+    { id: "sw-ashar", title: "Sholat Ashar", start: 15, end: 17, exp: 50, type: "pusat" },
     { id: "sw-maghrib", title: "Sholat Maghrib", start: 18, end: 19, exp: 50, type: "pusat" },
     { id: "sw-isya", title: "Sholat Isya", start: 19, end: 23, exp: 50, type: "pusat" }
 ];
@@ -259,9 +259,9 @@ window.dailyQuests.forEach(q => {
 if(chkContainer) chkContainer.innerHTML = dailyHtml;
 
 // --- 7. GACHA KEBAIKAN DENGAN SISTEM WAJIB ---
-const gachaBtn = document.getElementById('gacha-container');
-const gachaRes = document.getElementById('gacha-result');
-const gachaSubtitle = document.getElementById('gacha-subtitle');
+const gachaBtn = document.getElementById('gacha-kebaikan-container');
+const gachaRes = document.getElementById('gacha-kebaikan-result');
+const gachaSubtitle = document.getElementById('gacha-kebaikan-subtitle');
 
 window.gachaMissions25 = [
     { text: "Traktir teman minuman hari ini", type: "derma" },
@@ -289,9 +289,10 @@ window.hasGachaToday = localStorage.getItem('gachaDate') === new Date().toDateSt
 window.renderGachaResult = function(questObj, isWajibFlag) {
     let wajibUI = isWajibFlag ? 'bg-red-500/20 border-red-500 shadow-red-500/50' : 'bg-white/20 border-white/30';
     let wajibText = isWajibFlag ? '<span class="block text-[10px] bg-red-600 text-white px-2 rounded mb-1 animate-pulse">⚠️ MISI LANGIT WAJIB! (-500 EXP jika gagal)</span>' : '';
-    if(gachaRes) gachaRes.innerHTML = `<label class="flex items-center justify-between cursor-pointer group mt-2 p-3 ${wajibUI} rounded-xl border shadow-sm backdrop-blur-md transition"><div class="flex items-center gap-3"><input type="checkbox" id="quest-gacha" class="w-6 h-6 text-rose-500 rounded checklist-item" data-exp="${isWajibFlag ? '100' : '50'}" data-type="${questObj.type}" data-title="${questObj.text}"><div>${wajibText}<span class="font-bold text-sm text-white drop-shadow-md text-left leading-tight">${questObj.text}</span></div></div></label>`;
+    if(gachaRes) gachaRes.innerHTML = `<label class="flex items-center justify-between cursor-pointer group mt-2 p-3 ${wajibUI} rounded-xl border shadow-sm backdrop-blur-md transition"><div class="flex items-center gap-3"><input type="checkbox" id="quest-gacha" class="w-6 h-6 text-rose-500 rounded checklist-item" data-exp="${isWajibFlag ? '100' : '50'}" data-type="${questObj.type}" data-title="${questObj.text}"><div>${wajibText}<span class="font-bold text-[11px] text-white drop-shadow-md text-left leading-tight break-words">${questObj.text}</span></div></div></label>`;
     if(gachaRes) gachaRes.classList.remove('hidden'); 
     if(gachaSubtitle) gachaSubtitle.classList.add('hidden');
+    if(gachaBtn) gachaBtn.classList.add('col-span-2');
 }
 
 if(window.hasGachaToday) {
@@ -324,10 +325,36 @@ if(gachaBtn) {
 
 // --- 8. RENDER FLASH QUEST ---
 window.flashQuests25 = [
-    { id: "fq-1", title: "Pejuang Subuh Berjamaah", exp: 50, start: 4, end: 6, type: "pusat" },
-    { id: "fq-2", title: "Sholat Dhuha 2 Rakaat", exp: 40, start: 7, end: 11, type: "pusat" },
-    { id: "fq-3", title: "Sedekah Makan Siang", exp: 30, start: 11, end: 13, type: "derma" },
-    { id: "fq-4", title: "Sholat Ashar di Awal Waktu", exp: 40, start: 15, end: 16, type: "pusat" }
+    // === TINGKAT MUDAH (EXP: 15 - 25) ===
+    { id: "fq-1", title: "Minum Air Putih Pas Bangun", exp: 15, start: 4, end: 7, type: "sigma" },
+    { id: "fq-2", title: "Rapikan Kasur Sendiri", exp: 20, start: 5, end: 8, type: "sigma" },
+    { id: "fq-3", title: "Berdoa Sebelum Makan Siang", exp: 15, start: 11, end: 14, type: "pusat" },
+    { id: "fq-4", title: "Tidur Siang Sejenak (Qailulah)", exp: 20, start: 12, end: 14, type: "sigma" },
+    { id: "fq-5", title: "Senyum & Sapa 2 Orang", exp: 20, start: 15, end: 18, type: "aura" },
+    { id: "fq-6", title: "Bersihkan Meja Belajar/Kerja", exp: 25, start: 16, end: 18, type: "sigma" },
+    { id: "fq-7", title: "Cuci Piring Habis Makan Malam", exp: 25, start: 18, end: 22, type: "sigma" },
+    { id: "fq-8", title: "Doa & Ayat Kursi Sebelum Tidur", exp: 20, start: 21, end: 23, type: "pusat" },
+
+    // === TINGKAT MENENGAH (EXP: 40 - 50) ===
+    { id: "fq-9", title: "Sholat Dhuha minimal 2 Rakaat", exp: 40, start: 7, end: 11, type: "pusat" },
+    { id: "fq-10", title: "Sedekah Pagi (Qris/Kotak Amal)", exp: 40, start: 5, end: 9, type: "derma" },
+    { id: "fq-11", title: "Sholat Dhuhur Tepat Waktu", exp: 50, start: 11, end: 13, type: "pusat" },
+    { id: "fq-12", title: "Sedekah Makan Siang/Cemilan", exp: 40, start: 11, end: 14, type: "derma" },
+    { id: "fq-13", title: "Sholat Ashar di Awal Waktu", exp: 50, start: 15, end: 16, type: "pusat" },
+    { id: "fq-14", title: "Bantu Pekerjaan Rumah Ortu", exp: 50, start: 15, end: 18, type: "peka" },
+    { id: "fq-15", title: "Sholat Maghrib Berjamaah/Tepat", exp: 50, start: 18, end: 19, type: "pusat" },
+    { id: "fq-16", title: "Ngaji / Baca Quran Habis Maghrib", exp: 50, start: 18, end: 20, type: "pusat" },
+    { id: "fq-17", title: "Sholat Isya Tepat Waktu", exp: 50, start: 19, end: 20, type: "pusat" },
+    { id: "fq-18", title: "Muhasabah (Evaluasi Diri) Hari Ini", exp: 40, start: 21, end: 23, type: "stoic" },
+
+    // === TINGKAT SULIT (EXP: 70 - 90) ===
+    { id: "fq-19", title: "Subuh Berjamaah di Masjid", exp: 80, start: 4, end: 6, type: "pusat" },
+    { id: "fq-20", title: "Olahraga Pagi 15 Menit", exp: 70, start: 5, end: 8, type: "sigma" },
+    { id: "fq-21", title: "Traktir Makan Teman/Orang Lain", exp: 80, start: 11, end: 14, type: "derma" },
+    { id: "fq-22", title: "Tidak Sambat Sama Sekali 3 Jam", exp: 75, start: 12, end: 15, type: "stoic" },
+    { id: "fq-23", title: "Jenguk/Tanya Kabar Orang Sakit", exp: 75, start: 15, end: 18, type: "peka" },
+    { id: "fq-24", title: "Puasa Sosmed (Maghrib - Tidur)", exp: 90, start: 18, end: 23, type: "stoic" },
+    { id: "fq-25", title: "Maafkan Kesalahan Orang Hari Ini", exp: 80, start: 21, end: 23, type: "peka" }
 ];
 window.todayFlash = window.flashQuests25[window.dayOfYear % window.flashQuests25.length];
 window.isFlashActive = window.currentHour >= window.todayFlash.start && window.currentHour <= window.todayFlash.end;
