@@ -65,7 +65,7 @@ window.fetchLeaderboard = async function() {
                     let safeExp = userL.monthly_exp || 0;
                     
                     let photoHTML = userL.photo 
-                        ? `<img src="${userL.photo}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.parentNode.innerText='${safeInitial}'">` 
+                        ? `<img src="${userL.photo}" class="w-full h-full rounded-full object-cover" onerror="this.style.display='none'; this.parentNode.innerText='${safeInitial}'">` 
                         : safeInitial;
                     
                     el.innerHTML = `
@@ -179,7 +179,7 @@ if(btnEditProfile) {
                 if(nameInputFire) nameInputFire.value = newName; 
                 localStorage.setItem('userName', newName);
                 
-                if(updateData.photo) { document.getElementById('avatar-initial').innerHTML = `<img src="${updateData.photo}" class="w-full h-full object-cover">`; } 
+                if(updateData.photo) { document.getElementById('avatar-initial').innerHTML = `<img src="${updateData.photo}" class="w-full h-full rounded-full object-cover">`; } 
                 else { document.getElementById('avatar-initial').innerText = newName.charAt(0).toUpperCase(); }
                 alert("Profil berhasil di-update bos!");
             } catch (e) { alert("Gagal update profil: " + e.message); }
@@ -503,7 +503,7 @@ onAuthStateChanged(auth, async (user) => {
             
             if(nameInputFire) nameInputFire.value = defaultName; 
             localStorage.setItem('userName', defaultName);
-            if(user.photoURL) { document.getElementById('avatar-initial').innerHTML = `<img src="${user.photoURL}" class="w-full h-full object-cover">`; }
+            if(user.photoURL) { document.getElementById('avatar-initial').innerHTML = `<img src="${user.photoURL}" class="w-full h-full rounded-full object-cover">`; }
         } else {
             const data = docSnap.data();
             
@@ -516,7 +516,7 @@ onAuthStateChanged(auth, async (user) => {
             if(quoteInputFire) quoteInputFire.value = data.quote || "";
             
             if (data.photo && data.photo.trim() !== "") {
-                document.getElementById('avatar-initial').innerHTML = `<img src="${data.photo}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.parentNode.innerText='${customName.charAt(0).toUpperCase()}'">`;
+                document.getElementById('avatar-initial').innerHTML = `<img src="${data.photo}" class="w-full h-full rounded-full object-cover" onerror="this.style.display='none'; this.parentNode.innerText='${customName.charAt(0).toUpperCase()}'">`;
             } else { document.getElementById('avatar-initial').innerText = customName.charAt(0).toUpperCase(); }
             
             // 2. Tarik Data Toko dan Koin
