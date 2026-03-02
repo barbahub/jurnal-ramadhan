@@ -79,5 +79,8 @@ if(btns.profile) btns.profile.addEventListener('click', () => {
         if(typeof window.renderCharts === 'function') window.renderCharts();
         // Tambahkan render toko untuk memastikan UI selalu up-to-date saat tab dibuka
         if(typeof window.renderShop === 'function') window.renderShop(); 
+        
+        // Memastikan Spesial Minggu Ini tidak kosong saat pindah tab
+        if(typeof window.renderFeaturedItems === 'function') window.renderFeaturedItems();
     }, 100); 
 });
