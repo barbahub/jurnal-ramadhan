@@ -11,6 +11,7 @@ const firebaseConfig = {
     messagingSenderId: "745183481034",
     appId: "1:745183481034:web:23b7ba95bf02c355c8f833"
 };
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -486,7 +487,7 @@ onAuthStateChanged(auth, async (user) => {
 
         const userRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(userRef);
-        const currentMonthStr = `${window.today.getMonth() + 1}-${window.today.getFullYear()}`;
+        const currentMonthStr = `${window.today ? window.today.getMonth() + 1 : new Date().getMonth() + 1}-${window.today ? window.today.getFullYear() : new Date().getFullYear()}`;
      
         const gmt = document.getElementById('global-mission-title');
         if(gmt) gmt.innerText = misiSaatIni.title;
@@ -497,6 +498,7 @@ onAuthStateChanged(auth, async (user) => {
                 name: defaultName, photo: user.photoURL || "", bio: "", quote: "",
                 koin: window.totalKoin, totalKoin: window.totalKoin, total_exp: window.totalExp,
                 monthly_exp: window.totalExp, unlockedItems: window.unlockedItems, inventory: window.inventory,
+                equippedItems: window.equippedItems || { tasbih_skin: 'tasbih_kayu', name_fx: null, aura: null }, // <--- DI SINI
                 statsRadar: window.statsRadar, activityHistory: window.activityHistory,
                 streakNum: parseInt(localStorage.getItem('streakNum') || 0), 
                 lastStreakClaim: localStorage.getItem('lastStreakClaim') || '', 
@@ -521,16 +523,20 @@ onAuthStateChanged(auth, async (user) => {
                 document.getElementById('avatar-initial').innerHTML = `<img src="${data.photo}" class="w-full h-full rounded-full object-cover" onerror="this.style.display='none'; this.parentNode.innerText='${customName.charAt(0).toUpperCase()}'">`;
             } else { document.getElementById('avatar-initial').innerText = customName.charAt(0).toUpperCase(); }
             
-            // 2. Tarik Data Toko dan Koin
+            // 2. Tarik Data Toko dan Koin (DIUBAH DI SINI)
             window.totalExp = data.total_exp || window.totalExp; 
             window.totalKoin = data.totalKoin !== undefined ? data.totalKoin : (data.koin || window.totalKoin);
             window.unlockedItems = data.unlockedItems || data.unlocked_items || window.unlockedItems || [];
             window.inventory = data.inventory || window.inventory || {};
+            // 👇 MENARIK BARANG YANG DIPAKAI
+            window.equippedItems = data.equippedItems || window.equippedItems || { tasbih_skin: 'tasbih_kayu', name_fx: null, aura: null };
 
             localStorage.setItem('totalExp', window.totalExp); 
             localStorage.setItem('totalKoin', window.totalKoin);
             localStorage.setItem('unlockedItems', JSON.stringify(window.unlockedItems));
             localStorage.setItem('inventory', JSON.stringify(window.inventory));
+            // 👇 MENYIMPAN EQUIPPED ITEMS KE LOKAL
+            localStorage.setItem('equippedItems', JSON.stringify(window.equippedItems));
             
             const koinDisp = document.getElementById('koin-display');
             if(koinDisp) koinDisp.innerText = window.totalKoin;
@@ -624,21 +630,21 @@ if(tabLbIndividu && tabLbCircle) {
 }
 
 // --- FUNGSI SIMPAN TOKO KE FIREBASE ---
-window.saveShopDataToFirebase = async function(sisaKoin, itemTerbuka, inventori) {
+window.saveShopDataToFirebase = async function() {
     if (!auth || !auth.currentUser || auth.currentUser.isAnonymous) {
-        console.warn("User belum login (Anonymous). Data toko hanya tersimpan di LocalStorage.");
+        console.warn("User belum login. Data toko hanya tersimpan di LocalStorage.");
         return;
     }
-    
     try {
         const userRef = doc(db, "users", auth.currentUser.uid);
         await updateDoc(userRef, {
-            totalKoin: sisaKoin,
-            koin: sisaKoin, // backup format lama
-            unlockedItems: itemTerbuka,
-            inventory: inventori
+            totalKoin: window.totalKoin,
+            koin: window.totalKoin, // backup format lama
+            unlockedItems: window.unlockedItems,
+            inventory: window.inventory,
+            equippedItems: window.equippedItems // Menyimpan status barang yang dipakai
         });
-        console.log("Transaksi toko berhasil disimpan ke database!");
+        console.log("Transaksi toko & perlengkapan berhasil diamankan ke Cloud!");
     } catch (error) {
         console.error("Gagal menyimpan transaksi ke database:", error);
     }
