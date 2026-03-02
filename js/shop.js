@@ -80,6 +80,9 @@ window.toggleEquipItem = function(id, type) {
     window.renderShop();
     window.renderFeaturedItems();
     if(typeof window.updatePlayerUI === 'function') window.updatePlayerUI();
+    
+    // 👇 SINKRONISASI KE FIREBASE 👇
+    if (typeof window.saveShopDataToFirebase === 'function') window.saveShopDataToFirebase();
 };
 
 window.buyItem = function(id, price) {
@@ -133,6 +136,9 @@ window.buyItem = function(id, price) {
     if(typeof confetti === 'function') {
         confetti({ particleCount: 150, spread: 80, zIndex: 9999, origin: { y: 0.6 } });
     }
+    
+    // 👇 SINKRONISASI KE FIREBASE 👇
+    if (typeof window.saveShopDataToFirebase === 'function') window.saveShopDataToFirebase();
 };
 
 // ============================================================
@@ -414,7 +420,7 @@ window.closeShopPreview = function() {
 window.gachaPool = [
     { id: 'aura_sss', name: 'Aura Sultan SSS', type: 'cosmetic', tier: 'sss', probability: 0.01 }, 
     { id: 'tasbih_sss', name: 'Tasbih Naga Emas (SSS)', type: 'cosmetic', tier: 'sss', probability: 0.02 }, 
-    { id: 'aura_vip', name: 'Aura VIP SR', type: 'cosmetic', tier: 'sr', probability: 0.08 },       
+    { id: 'aura_vip', name: 'Aura VIP SR', type: 'cosmetic', tier: 'sr', probability: 0.08 },        
     { id: 'rare_coins', name: 'Jackpot 1.000 Koin', type: 'currency', tier: 'rare', probability: 0.30, value: 1000 }, 
     { id: 'item_buff', name: 'Ramuan 2x EXP', type: 'consumable', tier: 'common', probability: 0.59 } 
 ];
@@ -485,6 +491,9 @@ window.rollGachaPremium = function() {
     }
 
     setTimeout(() => alert(msg), 300);
+    
+    // 👇 SINKRONISASI KE FIREBASE 👇
+    if (typeof window.saveShopDataToFirebase === 'function') window.saveShopDataToFirebase();
 };
 
 // ============================================================
