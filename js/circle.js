@@ -219,43 +219,123 @@ if(btnToggleCoop && containerCoop) {
     });
 }
 
-// --- LOGIKA REKAP CIRCLE ---
+// --- AMALPAD WRAPPED: LAPORAN TULANG PUNGGUNG CIRCLE ---
+window.closeRekapModal = function() {
+    const modal = document.getElementById('rekap-circle-modal');
+    document.getElementById('rekap-circle-content').classList.add('scale-95');
+    setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 200);
+}
+
 const btnRekap = document.getElementById('btn-rekap-circle');
 
-// Cek setiap kali halaman dimuat
+// 1. Cek status aktif/terkunci saat halaman dimuat
 function checkRekapStatus() {
-    if (!btnRekap) return; // Memastikan elemen ada agar tidak crash
-    
+    if(!btnRekap) return;
     const today = new Date();
-    const isEndOfMonth = today.getDate() >= 28;
+    // Jika ingin ngetes hari ini juga, kamu bisa ubah ">= 28" jadi ">= 1"
+    const isEndOfMonth = today.getDate() >= 28; 
     
     if (isEndOfMonth) {
-        // Ubah tombol jadi aktif & menyala
         btnRekap.className = "flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-black py-3.5 rounded-2xl transition shadow-lg shadow-blue-500/30 text-xs uppercase tracking-wide animate-pulse";
         btnRekap.innerHTML = "🛡️ Buka Rekap Circle!";
     }
 }
 
-// Jalankan saat di-load
-if (btnRekap) {
-    checkRekapStatus();
+// Jalankan saat script dimuat
+setTimeout(checkRekapStatus, 1000); 
 
-    // Logika saat tombol diklik
-    btnRekap.addEventListener('click', () => {
+// 2. Logika ketika ditekan
+if (btnRekap) {
+    btnRekap.addEventListener('click', async () => {
         const today = new Date();
-        const isEndOfMonth = today.getDate() >= 28;
+        const isEndOfMonth = today.getDate() >= 28; // Jika ngetes ubah >= 1
         
         if (!window.userCircleId) {
-            alert("Kamu harus bergabung atau membuat Circle terlebih dahulu untuk melihat Laporan Tulang Punggung Circle!");
+            alert("Kamu harus bergabung atau membuat Circle terlebih dahulu untuk melihat Laporan Rekap!");
             return;
         }
 
         if (!isEndOfMonth) {
-            alert("Sabar bos! Laporan Tulang Punggung Circle hanya bisa dibuka setiap tanggal 28-31 di akhir bulan. Terus kumpulkan EXP untuk Circle-mu!");
+            alert("Sabar bos! Laporan Rekap Circle hanya bisa dibuka setiap tanggal 28-31 di akhir bulan. Terus push EXP Circle-mu!");
             return;
         }
 
-        // TODO: Buka Modal/Popup UI Konsep 4 di sini
-        alert("Membuka Data Rahasia Circle..."); 
+        // Tampilkan loading state
+        const originalText = btnRekap.innerHTML;
+        btnRekap.innerHTML = "⏳ Menghitung Data...";
+        btnRekap.disabled = true;
+
+        try {
+            // Kita pakai objek Firebase yang sudah di-export di firebase-db.js
+            const circleRef = window.doc(window.db, "circles", window.userCircleId);
+            const circleSnap = await window.getDoc(circleRef);
+
+            if (circleSnap.exists()) {
+                const circleData = circleSnap.data();
+                const circleTotalExp = circleData.total_exp || 1; // hindari pembagian nol
+                const userExp = window.totalExp || 0;
+
+                // Kalkulasi kontribusi %
+                let contributionPct = (userExp / circleTotalExp) * 100;
+                // Cap di 100% jika user main solo tapi belum ada yang join
+                if (contributionPct > 100) contributionPct = 100; 
+
+                let gelar = "", deskripsi = "", emoji = "";
+
+                // Tentukan Kasta berdasarkan kontribusi
+                if (contributionPct >= 40) {
+                    gelar = "Tulang Punggung";
+                    deskripsi = `"Tanpamu, circle ini cuma remahan rengginang. Kamu bener-bener carry tim bulan ini!"`;
+                    emoji = "💪";
+                } else if (contributionPct >= 20) {
+                    gelar = "Pilar Penting";
+                    deskripsi = `"Kontribusimu sangat terasa. Kamu adalah alasan circle ini tetap solid dan terus naik rank!"`;
+                    emoji = "🔥";
+                } else if (contributionPct >= 5) {
+                    gelar = "Warga Taat";
+                    deskripsi = `"Rajin login dan sesekali bantu misi gotong royong. Lumayan lah, bulan depan lebih gaspol lagi bos!"`;
+                    emoji = "👨‍🌾";
+                } else {
+                    gelar = "Beban Sirkel";
+                    deskripsi = `"Wah parah, kamu lebih sering AFK daripada bantu circle. Pantes rank circle stuck, ayo berubah bulan depan!"`;
+                    emoji = "🗿";
+                }
+
+                // Render ke UI Modal
+                document.getElementById('rekap-circle-name').innerText = circleData.name;
+                document.getElementById('rekap-pct').innerText = contributionPct.toFixed(1) + "%";
+                document.getElementById('rekap-gelar').innerText = gelar;
+                document.getElementById('rekap-desc').innerText = deskripsi;
+                document.getElementById('rekap-emoji').innerText = emoji;
+                
+                // Animasi Progress Bar
+                document.getElementById('rekap-bar').style.width = '0%';
+                setTimeout(() => {
+                    document.getElementById('rekap-bar').style.width = contributionPct + '%';
+                }, 500);
+
+                // Tampilkan Modal
+                const modal = document.getElementById('rekap-circle-modal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                setTimeout(() => document.getElementById('rekap-circle-content').classList.remove('scale-95'), 10);
+
+                // Ledakan Confetti sesuai gelar
+                if (typeof confetti === 'function') {
+                    if (contributionPct >= 40) {
+                        confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 }, colors: ['#fbbf24', '#f59e0b'] }); // Confetti emas
+                    } else if (contributionPct >= 20) {
+                        confetti({ particleCount: 100, spread: 70, origin: { y: 0.5 } }); // Standard
+                    }
+                }
+            }
+        } catch (error) {
+            console.error("Gagal ambil rekap:", error);
+            alert("Sistem gagal mengambil data rahasia Circle. Coba lagi nanti.");
+        } finally {
+            // Kembalikan status tombol
+            btnRekap.innerHTML = originalText;
+            btnRekap.disabled = false;
+        }
     });
 }
