@@ -41,15 +41,65 @@ export function calculateLevelInfo(totalExp) {
     return { level: lvl, expCurrent: currentLevelExp, expRequired: requiredExp };
 }
 
-// --- 3. FUNGSI UPDATE UI KESELURUHAN ---
+// --- 3. FUNGSI KOSMETIK (AURA & NAMA) ---
+function applyCosmetics(level) {
+    if(!avatarInitial) return;
+    
+    // Reset Class Kosmetik (Aura) dan Text Style secara bersih
+    avatarInitial.className = "w-24 h-24 bg-gradient-to-tr from-emerald-500 to-teal-600 rounded-full mx-auto flex items-center justify-center mb-4 text-4xl text-white font-extrabold relative z-10 transition-all duration-700";
+    if(inputName) inputName.className = "w-full bg-transparent outline-none py-1 mb-1 font-black text-2xl text-center transition relative z-10 placeholder-gray-300";
+
+    // Ambil data kosmetik terbaru (sinkronisasi dengan state/shop)
+    let equipped = playerState.equippedItems || {};
+
+    // A. Terapkan Aura di Avatar Profil
+    if (equipped.aura === 'aura_sss') {
+        avatarInitial.classList.add('avatar-aura-sss');
+        if(inputName) inputName.classList.add('name-aura-sss');
+    } else if (equipped.aura === 'aura_vip') {
+        avatarInitial.classList.add('avatar-aura-vip');
+        if(inputName) inputName.classList.add('name-aura-vip');
+    } else if (equipped.aura === 'aura_koin') {
+        avatarInitial.classList.add('shadow-[0_0_30px_rgba(250,204,21,0.8)]', 'ring-4', 'ring-yellow-400');
+    } else if (equipped.aura === 'aura_sakura') {
+        avatarInitial.classList.add('shadow-[0_0_30px_rgba(244,114,182,0.8)]', 'ring-4', 'ring-pink-400');
+    } else {
+        // Default Border Berdasarkan Level jika tidak memakai item Aura
+        if (level >= 30) { 
+            avatarInitial.classList.add('ring-4', 'ring-yellow-400', 'shadow-lg', 'shadow-yellow-400/50'); 
+        } else if (level >= 10) { 
+            avatarInitial.classList.add('ring-4', 'ring-blue-400'); 
+        } else { 
+            avatarInitial.classList.add('ring-4', 'ring-gray-200', 'dark:ring-gray-600'); 
+        }
+    }
+
+    // B. Terapkan Gaya Nama (Name FX)
+    if (equipped.name_fx && window.previewStyles && inputName) {
+        const styles = window.previewStyles[equipped.name_fx];
+        if (styles) {
+            const classArray = styles.split(' ').filter(c => c.trim() !== '');
+            if(classArray.length > 0) inputName.classList.add(...classArray);
+        }
+    } else if (inputName && equipped.aura !== 'aura_sss' && equipped.aura !== 'aura_vip') {
+        inputName.classList.add('text-gray-800', 'dark:text-gray-100'); // Warna default
+    }
+}
+
+// --- 4. FUNGSI UPDATE UI KESELURUHAN ---
 export function updatePlayerUI() {
     let info = calculateLevelInfo(playerState.exp);
     let currentTitle = getTitle(info.level);
 
-    // Update Input & Avatar
-    if (inputName && playerState.name) inputName.value = playerState.name;
+    // Update Input
+    if (inputName && playerState.name !== undefined) inputName.value = playerState.name;
+    
+    // Mencegah overwrite foto profil dari Firebase jika sudah ada gambar (img tag)
     if (avatarInitial) {
-        avatarInitial.innerText = playerState.name ? playerState.name.charAt(0).toUpperCase() : "A";
+        const hasImage = avatarInitial.querySelector('img');
+        if (!hasImage) {
+            avatarInitial.innerText = playerState.name ? playerState.name.charAt(0).toUpperCase() : "A";
+        }
     }
 
     // Update Text Header & Profil
@@ -64,9 +114,12 @@ export function updatePlayerUI() {
         expBar.style.width = `${Math.min(percent, 100)}%`;
         displayTitleBot.innerText = `🏆 Gelar: ${currentTitle}`;
     }
+
+    // PANGGIL FUNGSI KOSMETIK SETIAP KALI UI DIPERBARUI!
+    applyCosmetics(info.level);
 }
 
-// --- 4. EVENT LISTENER AUTO-SAVE NAMA ---
+// --- 5. EVENT LISTENER AUTO-SAVE NAMA ---
 if (inputName) {
     inputName.addEventListener('change', (e) => {
         playerState.name = e.target.value;
@@ -75,6 +128,6 @@ if (inputName) {
     });
 }
 
-// --- 5. LISTENER OTOMATIS DARI BRANKAS DATA ---
+// --- 6. LISTENER OTOMATIS DARI BRANKAS DATA ---
 // Jika EXP bertambah di state.js, otomatis perbarui UI Profil tanpa lag!
 document.addEventListener('stateUpdated', updatePlayerUI);
