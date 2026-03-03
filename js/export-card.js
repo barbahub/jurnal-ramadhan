@@ -144,3 +144,10 @@ if(btnShare) {
         }
     });
 }
+
+// ==========================================
+// JEMBATAN KE HTML (Agar tombol bisa diklik)
+// ==========================================
+
+// Sesuaikan nama di sisi kanan dengan nama fungsi asli yang ada di file Anda
+window.closeCardPreview = closeCardPreview;
