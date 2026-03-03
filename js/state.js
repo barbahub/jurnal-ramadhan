@@ -49,3 +49,36 @@ export function addRadarStat(type, amount) {
         document.dispatchEvent(new CustomEvent('stateUpdated', { detail: playerState }));
     }
 }
+
+// ==========================================
+// --- FITUR KASIR TOKO ---
+// ==========================================
+
+export function spendKoin(amount) {
+    if (playerState.koin >= amount) {
+        playerState.koin -= amount;
+        localStorage.setItem('totalKoin', playerState.koin);
+        document.dispatchEvent(new CustomEvent('stateUpdated', { detail: playerState }));
+        return true; // Transaksi sukses
+    }
+    return false; // Koin tidak cukup
+}
+
+export function updateInventory(itemId, quantity = 1) {
+    // Tambah ke daftar unlock jika belum ada
+    if (!playerState.unlockedItems.includes(itemId)) {
+        playerState.unlockedItems.push(itemId);
+        localStorage.setItem('unlockedItems', JSON.stringify(playerState.unlockedItems));
+    }
+    // Tambah jumlah item di inventory
+    playerState.inventory[itemId] = (playerState.inventory[itemId] || 0) + quantity;
+    localStorage.setItem('inventory', JSON.stringify(playerState.inventory));
+    
+    document.dispatchEvent(new CustomEvent('stateUpdated', { detail: playerState }));
+}
+
+export function updateEquipped(category, itemId) {
+    playerState.equippedItems[category] = itemId;
+    localStorage.setItem('equippedItems', JSON.stringify(playerState.equippedItems));
+    document.dispatchEvent(new CustomEvent('stateUpdated', { detail: playerState }));
+}
