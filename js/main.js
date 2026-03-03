@@ -3,9 +3,11 @@
 
 import { playerState, addExp, addKoin, addRadarStat } from './state.js';
 import { updatePlayerUI } from './player.js';
+import './ui-core.js'; // 👈 Mengurus Tab, Tema, & Helper Global
 import './quests.js'; 
 import './charts.js';
-import './shop.js'; // 👈 TAMBAHAN BARU: Mengaktifkan Toko & Gacha
+import './shop.js'; 
+import './circle.js';  // 👈 Mengurus Guild & Live Feed
 
 console.log("🚀 AmalPad Modular V2 Berhasil Booting!");
 
@@ -15,14 +17,14 @@ updatePlayerUI();
 // =======================================================
 // 🌉 JEMBATAN TRANSISI (LEGACY BRIDGE)
 // =======================================================
-// Memberi akses sistem baru ke file lama (quests.js, shop.js dll) 
+// Memberi akses sistem baru ke file lama (seperti export-card.js) 
 // agar game tidak crash saat kita refactor bertahap.
 window.addExp = addExp;
 window.addKoin = addKoin;
 window.addRadarStat = addRadarStat;
 window.updatePlayerUI = updatePlayerUI;
 
-// Sinkronkan variabel window lama yang masih dicari oleh file quests.js dan lainnya
+// Sinkronkan variabel window lama yang masih dicari oleh file lainnya
 window.totalExp = playerState.exp;
 window.totalKoin = playerState.koin;
 window.unlockedItems = playerState.unlockedItems;
