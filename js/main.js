@@ -3,6 +3,7 @@
 
 import { playerState, addExp, addKoin, addRadarStat } from './state.js';
 import { updatePlayerUI } from './player.js';
+import './quests.js'; // 👈 TAMBAHKAN BARIS INI!
 
 console.log("🚀 AmalPad Modular V2 Berhasil Booting!");
 
