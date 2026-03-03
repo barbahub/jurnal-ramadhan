@@ -4,7 +4,8 @@
 import { playerState, addExp, addKoin, addRadarStat } from './state.js';
 import { updatePlayerUI } from './player.js';
 import './quests.js'; 
-import './charts.js'; // 👈 TAMBAHAN BARU: Mengaktifkan Rak Trofi & Radar
+import './charts.js';
+import './shop.js'; // 👈 TAMBAHAN BARU: Mengaktifkan Toko & Gacha
 
 console.log("🚀 AmalPad Modular V2 Berhasil Booting!");
 
