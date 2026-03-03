@@ -1,18 +1,79 @@
+// File: js/charts.js
+// Fungsi: Mengatur Radar Skena, Heatmap, dan Rak Trofi (Badges)
+
+import { playerState } from './state.js';
+import { calculateLevelInfo } from './player.js'; // 👈 Mengambil perhitungan level yang akurat
+
 // --- AUTO-MIGRASI DATA STATS LAMA KE BARU ---
-window.statsRadar = window.safeJSONParse('statsRadar', { pusat: 10, aura: 10, peka: 10, sigma: 10, derma: 10, stoic: 10 });
-if (window.statsRadar.ketuhanan !== undefined) {
-    window.statsRadar = {
-        pusat: window.statsRadar.ketuhanan || 10,
-        derma: window.statsRadar.gotong_royong || 10,
-        stoic: window.statsRadar.disiplin || 10,
-        sigma: window.statsRadar.tanggung_jawab || 10,
-        peka: window.statsRadar.peduli || 10,
-        aura: 10
-    };
-    localStorage.setItem('statsRadar', JSON.stringify(window.statsRadar));
+function migrateOldStats() {
+    if (!playerState.statsRadar) {
+        playerState.statsRadar = { pusat: 10, aura: 10, peka: 10, sigma: 10, derma: 10, stoic: 10 };
+    }
+    let radar = playerState.statsRadar;
+    if (radar.ketuhanan !== undefined) {
+        playerState.statsRadar = {
+            pusat: radar.ketuhanan || 10,
+            derma: radar.gotong_royong || 10,
+            stoic: radar.disiplin || 10,
+            sigma: radar.tanggung_jawab || 10,
+            peka: radar.peduli || 10,
+            aura: 10
+        };
+        localStorage.setItem('statsRadar', JSON.stringify(playerState.statsRadar));
+    }
+}
+migrateOldStats();
+
+// --- 1. RENDER RAK TROFI (BADGES) ---
+export function updateBadges() {
+    const badgeContainer = document.getElementById('badge-rack-container');
+    if (!badgeContainer) return;
+
+    let badgesHTML = '';
+    
+    // AMBIL LEVEL DARI KALKULASI EXP, BUKAN DARI STATE!
+    const levelInfo = calculateLevelInfo(playerState.exp || 0);
+    const currentLevel = levelInfo.level || 1;
+    
+    const streak = parseInt(localStorage.getItem('streakNum')) || 0;
+    const totalKoin = playerState.koin || 0;
+    const radar = playerState.statsRadar || { pusat:0, aura:0, derma:0, stoic:0, peka:0, sigma:0 };
+
+    const badges = [
+        { id: 'b1', icon: '🌱', name: 'Newbie', desc: 'Mencapai Level 5', unlocked: currentLevel >= 5 },
+        { id: 'b2', icon: '🔥', name: 'Istiqomah', desc: 'Streak 7 Hari', unlocked: streak >= 7 },
+        { id: 'b3', icon: '💎', name: 'Sultan', desc: 'Kumpulkan 1.000 Koin', unlocked: totalKoin >= 1000 },
+        { id: 'b4', icon: '👑', name: 'Sepuh', desc: 'Mencapai Level 30', unlocked: currentLevel >= 30 },
+        { id: 'b5', icon: '⚡', name: 'Backingan Pusat', desc: 'Stat Sholat > 50', unlocked: radar.pusat >= 50 },
+        { id: 'b6', icon: '💰', name: 'Crazy Rich', desc: 'Stat Sedekah > 50', unlocked: radar.derma >= 50 }
+    ];
+
+    badges.forEach(b => {
+        if (b.unlocked) {
+            badgesHTML += `
+            <div class="flex flex-col items-center p-3 bg-gradient-to-br from-yellow-50 to-yellow-200 dark:from-yellow-900/40 dark:to-yellow-800/40 rounded-2xl border border-yellow-300 dark:border-yellow-700 shadow-sm transform hover:-translate-y-1 transition duration-300 relative group cursor-pointer min-w-[80px] shrink-0 snap-center">
+                <span class="text-3xl mb-1 filter drop-shadow-md">${b.icon}</span>
+                <span class="text-[10px] font-black text-yellow-800 dark:text-yellow-400 text-center leading-tight">${b.name}</span>
+                <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-[10px] font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition pointer-events-none whitespace-nowrap z-50">
+                    ${b.desc}
+                </div>
+            </div>`;
+        } else {
+            badgesHTML += `
+            <div class="flex flex-col items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 opacity-60 grayscale relative group cursor-help min-w-[80px] shrink-0 snap-center">
+                <span class="text-3xl mb-1">🔒</span>
+                <span class="text-[10px] font-bold text-gray-500 text-center leading-tight">Terkunci</span>
+                <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-[10px] font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition pointer-events-none whitespace-nowrap z-50">
+                    ${b.desc}
+                </div>
+            </div>`;
+        }
+    });
+
+    badgeContainer.innerHTML = badgesHTML;
 }
 
-// --- 9. SISTEM RADAR CHART & HEATMAP ---
+// --- 2. SISTEM AURA BADGE UI ---
 window.getAuraBadgeUI = function(level, dominantStatName) {
     const statEmojis = { 'Pusat': '🕋', 'Aura': '✨', 'Peka': '👼', 'Sigma': '🗿', 'Derma': '🤝', 'Stoic': '🧊' };
     let baseEmoji = statEmojis[dominantStatName] || '🔥';
@@ -32,23 +93,25 @@ window.getAuraBadgeUI = function(level, dominantStatName) {
     </div>`;
 }
 
+// --- 3. RENDER RADAR & DONUT CHART ---
 window.radarChartInstance = null;
 window.donutChartInstance = null;
 
-window.renderCharts = function() {
-    const ctxR = document.getElementById('radarChart')?.getContext('2d');
-    const ctxD = document.getElementById('donutChart')?.getContext('2d');
-    if(!ctxR || !ctxD) return;
+export function renderCharts() {
+    const ctxR = document.getElementById('radarChart');
+    const ctxD = document.getElementById('donutChart');
+    if(!ctxR || !ctxD || typeof Chart === 'undefined') return;
 
     const isDark = document.documentElement.classList.contains('dark');
     const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
     const fontColor = isDark ? '#9CA3AF' : '#6B7280';
     
+    const radar = playerState.statsRadar || { pusat: 10, aura: 10, peka: 10, sigma: 10, derma: 10, stoic: 10 };
     const labels = ['Pusat', 'Aura', 'Peka', 'Sigma', 'Derma', 'Stoic'];
-    const dataPts = [window.statsRadar.pusat, window.statsRadar.aura, window.statsRadar.peka, window.statsRadar.sigma, window.statsRadar.derma, window.statsRadar.stoic];
+    const dataPts = [radar.pusat, radar.aura, radar.peka, radar.sigma, radar.derma, radar.stoic];
 
     if (window.radarChartInstance) window.radarChartInstance.destroy();
-    window.radarChartInstance = new Chart(ctxR, {
+    window.radarChartInstance = new Chart(ctxR.getContext('2d'), {
         type: 'radar',
         data: {
             labels: labels,
@@ -64,23 +127,29 @@ window.renderCharts = function() {
     let percentVal = totalBoxes === 0 ? 0 : Math.floor((checkedBoxes/totalBoxes)*100);
     
     if (window.donutChartInstance) window.donutChartInstance.destroy();
-    window.donutChartInstance = new Chart(ctxD, {
+    window.donutChartInstance = new Chart(ctxD.getContext('2d'), {
         type: 'doughnut',
         data: { labels: ['Selesai', 'Sisa'], datasets: [{ data: [checkedBoxes, Math.max(0, totalBoxes - checkedBoxes)], backgroundColor: ['#10B981', gridColor], borderWidth: 0, cutout: '75%' }] },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: {enabled: false} } }
     });
 
-    document.getElementById('donut-percent').innerText = `${percentVal}%`;
+    const donutPercentEl = document.getElementById('donut-percent');
+    if (donutPercentEl) donutPercentEl.innerText = `${percentVal}%`;
 
     const maxStatName = labels[ dataPts.indexOf(Math.max(...dataPts)) ];
-    // Mengambil level via fungsi yang nanti ada di player.js secara aman
-    const userLvl = typeof window.calculateLevelInfo === 'function' ? window.calculateLevelInfo(window.totalExp || 0).level : 1;
-    document.getElementById('aura-badge-container').innerHTML = window.getAuraBadgeUI(userLvl, maxStatName);
+    const levelInfo = calculateLevelInfo(playerState.exp || 0);
+    const auraBadgeContainer = document.getElementById('aura-badge-container');
+    if (auraBadgeContainer) {
+        auraBadgeContainer.innerHTML = window.getAuraBadgeUI(levelInfo.level || 1, maxStatName);
+    }
 }
 
-window.updateChartTheme = function() { window.renderCharts(); }
+// --- 4. HEATMAP (JEJAK AKTIVITAS 7 HARI) ---
+window.activityHistory = (() => {
+    try { return JSON.parse(localStorage.getItem('activityHistory')) || []; }
+    catch(e) { return []; }
+})();
 
-window.activityHistory = window.safeJSONParse('activityHistory', []);
 window.updateHeatmap = function() {
     const container = document.getElementById('heatmap-container');
     if(!container) return;
@@ -111,3 +180,22 @@ window.logActivityForHeatmap = function() {
     localStorage.setItem('activityHistory', JSON.stringify(window.activityHistory));
     window.updateHeatmap();
 }
+
+// --- 5. JEMBATAN LEGACY & EVENT LISTENER ---
+window.renderCharts = renderCharts;
+window.updateBadges = updateBadges;
+window.updateChartTheme = function() { renderCharts(); };
+
+// Inisialisasi Awal
+setTimeout(() => {
+    updateBadges();
+    renderCharts();
+}, 500);
+
+// Auto-update saat state berubah
+document.addEventListener('stateUpdated', () => {
+    setTimeout(() => {
+        updateBadges();
+        renderCharts();
+    }, 50);
+});
