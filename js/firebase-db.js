@@ -11,13 +11,12 @@ import { updatePlayerUI } from './player.js';
 
 // --- CONFIG FIREBASE ANDA ---
 const firebaseConfig = {
-    apiKey: "AIzaSyDE_xxx", // PASTIKAN API KEY ANDA BENAR DI SINI!
-    authDomain: "amalpad-f7a60.firebaseapp.com",
-    projectId: "amalpad-f7a60",
-    storageBucket: "amalpad-f7a60.firebasestorage.app",
-    messagingSenderId: "598444154942",
-    appId: "1:598444154942:web:6ee1e9389e81b6dcfe1bb5",
-    measurementId: "G-MDFG1QZ44L"
+    apiKey: "AIzaSyDxabPizF0ShqaQSaJ142Rapxa9JcNq65o", // PASTIKAN API KEY ANDA BENAR DI SINI!
+    authDomain: "amalin-app.firebaseapp.com",
+    projectId: "amalin-app",
+    storageBucket: "amalin-app.firebasestorage.app",
+    messagingSenderId: "745183481034",
+    appId: "1:745183481034:web:23b7ba95bf02c355c8f833"
 };
 
 // Inisialisasi!
