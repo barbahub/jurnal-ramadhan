@@ -1,11 +1,13 @@
-// GANTI ANGKA VERSI INI SETIAP KALI ANDA MENGUBAH INDEX.HTML
-const CACHE_NAME = 'amalpad-skena-v1.58'; 
+// GANTI ANGKA VERSI INI SETIAP KALI ANDA MENGUBAH INDEX.HTML ATAU FILE PENTING LAINNYA
+const CACHE_NAME = 'amalpad-skena-v2.9-eksperimen'; 
 
 const urlsToCache = [
   '/',
   '/index.html',
   '/css/style.css',
   '/js/ui-core.js',
+  '/js/state.js',    // 👈 FILE BARU DIDAFTARKAN
+  '/js/main.js',     // 👈 FILE BARU DIDAFTARKAN
   '/js/player.js',
   '/js/quests.js',
   '/js/charts.js',
@@ -56,54 +58,6 @@ self.addEventListener('fetch', event => {
         })
     );
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

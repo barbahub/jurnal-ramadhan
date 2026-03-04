@@ -1,37 +1,16 @@
-// ============================================================
-// --- INISIALISASI STATE & DATA (ANTI-CRASH) ---
-// ============================================================
+// File: js/shop.js
+// Fungsi: Mengatur Toko, Gacha, dan Pemakaian Item (Equip)
 
-// Ubah nama fungsi menjadi getShopSafeJSON agar tidak bentrok dengan player.js
-const getShopSafeJSON = (key, fallback) => {
-    try {
-        const item = localStorage.getItem(key);
-        return item ? JSON.parse(item) : fallback;
-    } catch (e) {
-        console.error(`Error parsing ${key} from localStorage`, e);
-        return fallback;
-    }
-};
+import { playerState, spendKoin, updateInventory, updateEquipped, addKoin } from './state.js';
 
-window.totalKoin = parseInt(localStorage.getItem('totalKoin')) || 10000; 
-window.unlockedItems = getShopSafeJSON('unlockedItems', ["tasbih_kayu"]);
-window.inventory = getShopSafeJSON('inventory', {});
-window.equippedItems = getShopSafeJSON('equippedItems', { tasbih_skin: 'tasbih_kayu', name_fx: null, aura: null });
+// ============================================================
+// --- INISIALISASI STATE ---
+// ============================================================
 window.currentShopFilter = 'all';
-
-// Sinkronisasi UI Koin Awal
-const updateKoinUI = () => {
-    const mainKoinDisplay = document.getElementById('koin-display');
-    const shopKoinDisplay = document.getElementById('shop-koin-display');
-    if(mainKoinDisplay) mainKoinDisplay.innerText = window.totalKoin; 
-    if(shopKoinDisplay) shopKoinDisplay.innerText = window.totalKoin.toLocaleString('id-ID');
-};
-updateKoinUI();
 
 // ============================================================
 // --- DATA KATALOG TOKO & STYLES ---
 // ============================================================
-
 window.shopCatalog = [
     { id: "tasbih_kayu", name: "Kayu Kokka", price: 10000, icon: "🪵", type: "tasbih_skin", desc: "Desain klasik kayu kokka yang menenangkan hati." },
     { id: "tasbih_kristal", name: "Kristal Makkah", price: 18000, icon: "💎", type: "tasbih_skin", desc: "Tombol tasbih mewah berkilau layaknya permata." },
@@ -68,13 +47,12 @@ window.previewStyles = {
 // ============================================================
 
 window.toggleEquipItem = function(id, type) {
-    if (window.equippedItems[type] === id) {
-        window.equippedItems[type] = null; // Lepas jika sedang dipakai
+    // Cek di gudang moduler
+    if (playerState.equippedItems[type] === id) {
+        updateEquipped(type, null); // Lepas jika sedang dipakai
     } else {
-        window.equippedItems[type] = id; // Pakai / Replace yang lama
+        updateEquipped(type, id); // Pakai / Replace yang lama
     }
-    
-    localStorage.setItem('equippedItems', JSON.stringify(window.equippedItems));
     
     // Refresh UI secara instan
     window.renderShop();
@@ -84,7 +62,7 @@ window.toggleEquipItem = function(id, type) {
     // TRIGGER UPDATE SKIN TASBIH INSTAN DI SINI
     if(typeof window.applyTasbihSkin === 'function') window.applyTasbihSkin(); 
     
-    // 👇 SINKRONISASI KE FIREBASE 👇
+    // SINKRONISASI KE FIREBASE
     if (typeof window.saveShopDataToFirebase === 'function') window.saveShopDataToFirebase();
 };
 
@@ -107,42 +85,36 @@ window.buyItem = function(id, price) {
     
     let totalPrice = price * qtyToBuy;
 
-    if (window.totalKoin < totalPrice) { 
+    // Cek Koin via Player State
+    if (playerState.koin < totalPrice) { 
         alert(`Koin kamu kurang bos!\nButuh 🪙 ${totalPrice.toLocaleString('id-ID')} untuk membeli ${qtyToBuy}x ${itemDef.name}.`); 
         return; 
     }
     
     if (!confirm(`Yakin ingin menukarkan 🪙 ${totalPrice.toLocaleString('id-ID')} koin untuk membeli ${qtyToBuy}x ${itemDef.name}?`)) return;
     
-    // Proses Transaksi
-    window.totalKoin -= totalPrice; 
-    localStorage.setItem('totalKoin', window.totalKoin);
-    
-    if (itemDef.type === 'item') {
-        window.inventory[id] = (window.inventory[id] || 0) + qtyToBuy;
-        localStorage.setItem('inventory', JSON.stringify(window.inventory));
-    } else {
-        window.unlockedItems.push(id);
-        localStorage.setItem('unlockedItems', JSON.stringify(window.unlockedItems));
+    // Proses Transaksi Potong Koin via Kasir State
+    if (spendKoin(totalPrice)) {
+        if (itemDef.type === 'item') {
+            updateInventory(id, qtyToBuy);
+        } else {
+            updateInventory(id, 1);
+            updateEquipped(itemDef.type, id); // Auto-equip kosmetik baru
+            if(typeof window.updatePlayerUI === 'function') window.updatePlayerUI();
+            if(typeof window.applyTasbihSkin === 'function') window.applyTasbihSkin(); // Auto-apply jika tipe tasbih
+        }
         
-        // Auto-equip saat pertama kali beli Cosmetic
-        window.equippedItems[itemDef.type] = id;
-        localStorage.setItem('equippedItems', JSON.stringify(window.equippedItems));
-        if(typeof window.updatePlayerUI === 'function') window.updatePlayerUI();
-        if(typeof window.applyTasbihSkin === 'function') window.applyTasbihSkin(); // Auto-apply jika tipe tasbih
+        // Refresh UI
+        window.renderShop();
+        window.renderFeaturedItems();
+        
+        if(typeof confetti === 'function') {
+            confetti({ particleCount: 150, spread: 80, zIndex: 9999, origin: { y: 0.6 } });
+        }
+        
+        // SINKRONISASI KE FIREBASE
+        if (typeof window.saveShopDataToFirebase === 'function') window.saveShopDataToFirebase();
     }
-    
-    // Refresh UI
-    updateKoinUI();
-    window.renderShop();
-    window.renderFeaturedItems();
-    
-    if(typeof confetti === 'function') {
-        confetti({ particleCount: 150, spread: 80, zIndex: 9999, origin: { y: 0.6 } });
-    }
-    
-    // 👇 SINKRONISASI KE FIREBASE 👇
-    if (typeof window.saveShopDataToFirebase === 'function') window.saveShopDataToFirebase();
 };
 
 // ============================================================
@@ -153,28 +125,15 @@ window.renderFeaturedItems = function() {
     const container = document.getElementById('featured-items-container');
     if(!container) return;
     
-    // --- PROTEKSI ANTI CRASH ---
-    if (!Array.isArray(window.unlockedItems)) {
-        window.unlockedItems = ["tasbih_kayu"]; // Paksa jadi array jika corrupt
-    }
-    if (!window.equippedItems || typeof window.equippedItems !== 'object') {
-        window.equippedItems = { tasbih_skin: 'tasbih_kayu', name_fx: null, aura: null };
-    }
-    if (!window.inventory || typeof window.inventory !== 'object') {
-        window.inventory = {}; // Mencegah crash pembacaan inventory
-    }
-    // ---------------------------
-    
     container.innerHTML = '';
-    
     const featuredIds = ['aura_sss', 'tiket_emas'];
     
     featuredIds.forEach(id => {
         const item = window.shopCatalog.find(i => i.id === id);
         if(!item) return;
         
-        const isOwned = window.unlockedItems.includes(item.id);
-        const qty = window.inventory[item.id] || 0;
+        const isOwned = playerState.unlockedItems.includes(item.id);
+        const qty = playerState.inventory[item.id] || 0;
         
         const card = document.createElement('div');
         card.className = "bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 p-2.5 rounded-2xl border border-gray-200 dark:border-gray-600 flex items-center gap-3 cursor-pointer hover:shadow-md transition group";
@@ -209,27 +168,14 @@ window.renderShop = function() {
     const container = document.getElementById('shop-container');
     if(!container) return; 
     
-    // --- PROTEKSI ANTI CRASH ---
-    if (!Array.isArray(window.unlockedItems)) {
-        window.unlockedItems = ["tasbih_kayu"]; // Paksa jadi array jika corrupt
-    }
-    if (!window.equippedItems || typeof window.equippedItems !== 'object') {
-        window.equippedItems = { tasbih_skin: 'tasbih_kayu', name_fx: null, aura: null };
-    }
-    if (!window.inventory || typeof window.inventory !== 'object') {
-        window.inventory = {}; // Mencegah crash pembacaan inventory
-    }
-    // ---------------------------
-    
     container.innerHTML = ''; 
-    
     const filteredItems = window.shopCatalog.filter(item => window.currentShopFilter === 'all' || item.type === window.currentShopFilter);
 
     filteredItems.forEach(item => {
         const isConsumable = item.type === 'item';
-        const isOwned = !isConsumable && window.unlockedItems.includes(item.id);
-        const isEquipped = isOwned && window.equippedItems[item.type] === item.id;
-        const qty = window.inventory[item.id] || 0;
+        const isOwned = !isConsumable && playerState.unlockedItems.includes(item.id);
+        const isEquipped = isOwned && playerState.equippedItems[item.type] === item.id;
+        const qty = playerState.inventory[item.id] || 0;
         
         const typeColors = {
             tasbih_skin: 'text-teal-600 bg-teal-100 dark:text-teal-300 dark:bg-teal-900/40 border-teal-200 dark:border-teal-800',
@@ -302,7 +248,7 @@ window.previewItem = function(itemId) {
     const desc = document.getElementById('preview-desc');
     const actionBtn = document.getElementById('preview-action');
     
-    if(!modal || !canvas) return; // Keamanan anti-crash
+    if(!modal || !canvas) return; 
     
     title.innerText = item.name;
     desc.innerText = item.desc;
@@ -385,9 +331,9 @@ window.previewItem = function(itemId) {
 
     // TOMBOL AKSI MODAL PREVIEW 
     const isConsumable = item.type === 'item';
-    const isOwned = !isConsumable && window.unlockedItems.includes(item.id);
-    const isEquipped = isOwned && window.equippedItems[item.type] === item.id;
-    const qty = window.inventory[item.id] || 0;
+    const isOwned = !isConsumable && playerState.unlockedItems.includes(item.id);
+    const isEquipped = isOwned && playerState.equippedItems[item.type] === item.id;
+    const qty = playerState.inventory[item.id] || 0;
 
     if(isOwned) {
         if (isEquipped) {
@@ -430,17 +376,17 @@ window.gachaPool = [
 ];
 
 window.rollGachaPremium = function() {
-    let tiketCount = window.inventory['tiket_emas'] || 0;
+    let tiketCount = playerState.inventory['tiket_emas'] || 0;
     
     if (tiketCount < 1) {
-        alert("Bos, kamu tidak punya Tiket Emas 🎫!\nSilakan beli dulu di Toko Flexing harganya 1.000 Koin.");
+        alert("Bos, kamu tidak punya Tiket Emas 🎫!\nSilakan beli dulu di Toko Flexing harganya 5.000 Koin.");
         return;
     }
     
     if (!confirm("Gunakan 1 Tiket Emas untuk memutar Gacha Premium?")) return;
     
-    window.inventory['tiket_emas'] -= 1;
-    localStorage.setItem('inventory', JSON.stringify(window.inventory));
+    // Potong Tiket Emas (-1)
+    updateInventory('tiket_emas', -1);
 
     const rand = Math.random();
     let cumulative = 0;
@@ -457,29 +403,24 @@ window.rollGachaPremium = function() {
     let msg = `🎉 GACHA BERHASIL! 🎉\n\nKamu mendapatkan [TIER ${wonItem.tier.toUpperCase()}] - ${wonItem.name}!\n\n`;
 
     if (wonItem.type === 'currency') {
-        window.totalKoin += wonItem.value;
-        localStorage.setItem('totalKoin', window.totalKoin);
+        addKoin(wonItem.value);
         msg += `Selamat! Saldo Koin kamu langsung bertambah +${wonItem.value}.`;
         
     } else if (wonItem.type === 'cosmetic') {
-        if (window.unlockedItems.includes(wonItem.id)) {
-            window.totalKoin += 500;
-            localStorage.setItem('totalKoin', window.totalKoin);
+        if (playerState.unlockedItems.includes(wonItem.id)) {
+            addKoin(500);
             msg += `Karena kamu sudah punya item ini, hadiah dikonversi otomatis menjadi 500 Koin kompensasi!`;
         } else {
-            window.unlockedItems.push(wonItem.id);
-            localStorage.setItem('unlockedItems', JSON.stringify(window.unlockedItems));
+            updateInventory(wonItem.id, 1);
             msg += `Wow! Item eksklusif ini telah ditambahkan ke Rak Koleksimu dan bisa langsung dipakai.`;
         }
         
     } else if (wonItem.type === 'consumable') {
-        window.inventory[wonItem.id] = (window.inventory[wonItem.id] || 0) + 1;
-        localStorage.setItem('inventory', JSON.stringify(window.inventory));
+        updateInventory(wonItem.id, 1);
         msg += `Item Consumable telah disimpan dengan aman di dalam tasmu!`;
     }
     
     // Refresh Seluruh UI
-    updateKoinUI();
     window.renderShop();
     window.renderFeaturedItems();
 
@@ -496,7 +437,7 @@ window.rollGachaPremium = function() {
 
     setTimeout(() => alert(msg), 300);
     
-    // 👇 SINKRONISASI KE FIREBASE 👇
+    // SINKRONISASI KE FIREBASE
     if (typeof window.saveShopDataToFirebase === 'function') window.saveShopDataToFirebase();
 };
 
@@ -517,12 +458,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const isClosed = contentShop.classList.contains('hidden');
             if (isClosed) {
                 contentShop.classList.remove('hidden');
-                // teaserShop.classList.add('hidden'); // <-- Di-comment agar tidak hilang
                 if(iconToggleShop) iconToggleShop.style.transform = 'rotate(180deg)';
                 if(textToggleShop) textToggleShop.innerText = 'Tutup Katalog';
             } else {
                 contentShop.classList.add('hidden');
-                // teaserShop.classList.remove('hidden'); // <-- Di-comment agar tidak bentrok
                 if(iconToggleShop) iconToggleShop.style.transform = 'rotate(0deg)';
                 if(textToggleShop) textToggleShop.innerText = 'Buka Katalog Lengkap';
             }
@@ -545,6 +484,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Inisialisasi awal saat script dimuat
+    window.renderShop();
+    window.renderFeaturedItems();
+});
+
+// Listener dari brankas state.js, setiap data berubah, otomatis re-render isi toko
+document.addEventListener('stateUpdated', () => {
     window.renderShop();
     window.renderFeaturedItems();
 });

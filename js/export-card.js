@@ -1,3 +1,9 @@
+// File: js/export-card.js
+// Fungsi: Menampilkan Aura Card / CV Akhirat untuk di-screenshot pengguna
+
+import { playerState } from './state.js';
+import { calculateLevelInfo, getTitle } from './player.js';
+
 // Event Listener Tombol Generate Player Card (AURA AURA CARD) - MODE POPUP SCREENSHOT
 const btnShare = document.getElementById('btn-share');
 const cardPreviewModal = document.getElementById('card-preview-modal');
@@ -16,8 +22,9 @@ if(btnShare) {
         btnShare.disabled = true;
 
         try {
-            // Ambil info level
-            let info = window.calculateLevelInfo ? window.calculateLevelInfo(window.totalExp) : {level: 1};
+            // AMBIL DATA DARI MODULE STATE
+            let currentExp = playerState.exp || 0;
+            let info = calculateLevelInfo(currentExp);
             let overall = Math.min(99, Math.floor(info.level * 1.8) + 10); 
             
             // 1. Set Basic Info
@@ -26,14 +33,15 @@ if(btnShare) {
 
             const userNameEl = document.getElementById('user-name');
             const cardName = document.getElementById('card-name');
-            let playerName = userNameEl ? (userNameEl.value || 'PLAYER') : 'PLAYER';
+            // Prioritaskan input DOM, fallback ke state, fallback lagi ke 'PLAYER'
+            let playerName = userNameEl ? (userNameEl.value || playerState.name || 'PLAYER') : (playerState.name || 'PLAYER');
             if(cardName) cardName.innerText = playerName;
             
             const cardTitle = document.getElementById('card-title');
-            if(cardTitle) cardTitle.innerText = window.getTitle ? window.getTitle(info.level) : "NPC Duniawi";
+            if(cardTitle) cardTitle.innerText = getTitle(info.level);
             
             const cardExp = document.getElementById('card-exp');
-            if(cardExp) cardExp.innerText = (window.totalExp || 0).toLocaleString('id-ID');
+            if(cardExp) cardExp.innerText = currentExp.toLocaleString('id-ID');
 
             // 1.5 Set Info Circle Dinamis (DENGAN AUTO-GENERATE LOGO)
             const circleNameDisp = document.getElementById('circle-name-display');
@@ -73,9 +81,10 @@ if(btnShare) {
                 }
             }
 
-            // 3. Set 6 Atribut
+            // 3. Set 6 Atribut (AMBIL DARI STATE)
             const getStat = (val) => Math.min(99, Math.floor((val || 0) / 2) + 20);
-            const radar = window.statsRadar || {};
+            const radar = playerState.statsRadar || { pusat:0, aura:0, peka:0, sigma:0, derma:0, stoic:0 };
+            
             let stPusat = getStat(radar.pusat);
             let stAura = getStat(radar.aura);
             let stPeka = getStat(radar.peka);
@@ -107,11 +116,11 @@ if(btnShare) {
             if (window.auth && window.auth.currentUser && !window.auth.currentUser.isAnonymous) {
                 try {
                     if(window.getDocs && window.query && window.collection && window.db && window.where) {
-                        const qRank = window.query(window.collection(window.db, "users"), window.where("monthly_exp", ">", window.totalExp));
+                        const qRank = window.query(window.collection(window.db, "users"), window.where("monthly_exp", ">", currentExp));
                         const snapRank = await window.getDocs(qRank);
                         let actualRank = snapRank.size + 1; 
                         
-                        if (actualRank <= 10 && window.totalExp > 0 && rankBanner) {
+                        if (actualRank <= 10 && currentExp > 0 && rankBanner) {
                             rankBanner.innerText = `GLOBAL RANK ${actualRank}`;
                             rankBanner.classList.remove('hidden');
                         }
@@ -132,63 +141,6 @@ if(btnShare) {
         } catch (err) {
             console.error(err);
             btnShare.innerText = "🃏 Flex Prayer Card"; btnShare.disabled = false;
-        }
-    });
-}
-
-// ============================================================================
-// BONUS SENIOR DEV: Fungsi Export Card menjadi Image PNG menggunakan html2canvas
-// ============================================================================
-const btnExport = document.getElementById('btn-export');
-if(btnExport) {
-    btnExport.addEventListener('click', async () => {
-        btnExport.innerText = "⏳ Memproses...";
-        btnExport.disabled = true;
-
-        try {
-            // Jika modal belum terbuka, kita auto-klik tombol share untuk mengisi data
-            if(cardPreviewModal && cardPreviewModal.classList.contains('hidden')) {
-                if(btnShare) btnShare.click(); 
-            }
-            
-            // Beri waktu sebentar agar gambar external (Dicebear/Foto Google) selesai di-load di DOM
-            setTimeout(async () => {
-                const cardEl = document.getElementById('export-card');
-                if(!cardEl) {
-                    alert("Waduh, komponen kartu tidak ditemukan!");
-                    btnExport.innerHTML = "📜 Cetak CV Akhirat";
-                    btnExport.disabled = false;
-                    return;
-                }
-
-                // Render menjadi gambar resolusi tinggi (scale: 2)
-                const canvas = await html2canvas(cardEl, {
-                    scale: 2, 
-                    useCORS: true, // Izinkan cross-origin image render agar foto profil ikut tampil
-                    backgroundColor: null, 
-                    logging: false
-                });
-
-                // Buat tag <a> virtual untuk auto-download gambar
-                const link = document.createElement('a');
-                link.download = `AmalPad_AuraCard_${new Date().getTime()}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-
-                // Kembalikan status tombol
-                btnExport.innerHTML = "📜 Cetak CV Akhirat";
-                btnExport.disabled = false;
-                
-                // Tutup popup jika player hanya ingin mendownload tanpa memamerkan popupnya
-                setTimeout(() => window.closeCardPreview(), 500);
-
-            }, 1000); // Jeda 1 detik agar animasi pop-up dan loading gambar beres
-            
-        } catch (error) {
-            console.error("Gagal export PNG:", error);
-            alert("Sistem gagal mencetak gambar, coba gunakan tombol screenshot manual ya bos.");
-            btnExport.innerHTML = "📜 Cetak CV Akhirat";
-            btnExport.disabled = false;
         }
     });
 }

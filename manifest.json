@@ -1,6 +1,6 @@
 {
-  "name": "AmalPad",
-  "short_name": "AmalPad",
+  "name": "Amalpad",
+  "short_name": "Amalpad",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -18,3 +18,4 @@
     }
   ]
 }
+

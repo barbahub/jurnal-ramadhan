@@ -1,10 +1,19 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, signInAnonymously, linkWithPopup } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, increment, collection, query, orderBy, limit, getDocs, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-messaging.js";
+// File: js/firebase-db.js
+// Fungsi: Integrasi Cloud Database, Auth, & Leaderboard yang tersinkronisasi dengan State Management
 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, signInAnonymously, linkWithPopup } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, increment, collection, query, orderBy, limit, getDocs, where } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { getDatabase, ref, set, get, update, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-messaging.js";
+
+// Import State & Helper!
+import { playerState } from './state.js';
+import { updatePlayerUI, calculateLevelInfo } from './player.js';
+
+// --- CONFIG FIREBASE ANDA ---
 const firebaseConfig = {
-    apiKey: "AIzaSyDxabPizF0ShqaQSaJ142Rapxa9JcNq65o",
+    apiKey: "AIzaSyDxabPizF0ShqaQSaJ142Rapxa9JcNq65o", 
     authDomain: "amalin-app.firebaseapp.com",
     projectId: "amalin-app",
     storageBucket: "amalin-app.firebasestorage.app",
@@ -12,15 +21,18 @@ const firebaseConfig = {
     appId: "1:745183481034:web:23b7ba95bf02c355c8f833"
 };
 
+// Inisialisasi!
 const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const firestoreDb = getFirestore(app);
 const auth = getAuth(app);
-const db = getFirestore(app);
 const messaging = getMessaging(app);
 const provider = new GoogleAuthProvider();
+let currentUserUid = null;
 
 // Simpan objek penting ke global
 window.auth = auth;
-window.db = db;
+window.firestoreDb = firestoreDb;
 window.getDocs = getDocs;
 window.query = query;
 window.collection = collection;
@@ -52,7 +64,7 @@ window.fetchLeaderboard = async function() {
     
     try {
         if (typeof window.currentLbTab === 'undefined' || window.currentLbTab === 'individu') {
-            const qLeaderboard = query(collection(db, "users"), orderBy("monthly_exp", "desc"), limit(10));
+            const qLeaderboard = query(collection(firestoreDb, "users"), orderBy("monthly_exp", "desc"), limit(10));
             const snapshot = await getDocs(qLeaderboard);
             lbContainer.innerHTML = ''; let rank = 1;
             
@@ -67,17 +79,14 @@ window.fetchLeaderboard = async function() {
                     let safeInitial = safeName.charAt(0).toUpperCase();
                     let safeExp = userL.monthly_exp || 0;
                     
-                    // --- BACA EFEK KOSMETIK PLAYER ---
                     let equipped = userL.equippedItems || {};
                     let fxStyles = window.previewStyles || {};
-                    
                     let nameFxClass = equipped.name_fx ? fxStyles[equipped.name_fx] : '';
                     let auraClass = '';
                     
-                    // Aturan khusus Aura
                     if (equipped.aura === 'aura_sss') auraClass = 'avatar-aura-sss border-transparent !text-white';
                     else if (equipped.aura === 'aura_vip') auraClass = 'avatar-aura-vip border-transparent !text-white';
-                    else if (equipped.aura) auraClass = (fxStyles[equipped.aura] || '').replace('scale-110', 'scale-100'); // Kecilkan sedikit untuk list
+                    else if (equipped.aura) auraClass = (fxStyles[equipped.aura] || '').replace('scale-110', 'scale-100'); 
                     
                     let photoHTML = userL.photo 
                         ? `<img src="${userL.photo}" class="w-full h-full rounded-full object-cover relative z-10" onerror="this.style.display='none'; this.parentNode.innerText='${safeInitial}'">` 
@@ -86,23 +95,21 @@ window.fetchLeaderboard = async function() {
                     el.innerHTML = `
                         <div class="flex items-center gap-3">
                             <span class="font-black text-lg w-5 text-center">${rank}</span>
-                            
                             <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center font-bold text-xs uppercase overflow-visible relative ${auraClass}">
                                 ${photoHTML}
                             </div>
-                            
                             <span class="font-bold text-sm text-white truncate max-w-[120px] transition ${nameFxClass}">${safeName}</span>
                         </div>
                         <span class="text-xs font-black bg-black/30 px-2 py-1 rounded-lg">${safeExp} EXP</span>`;
                     
-                    el.onclick = () => window.showUserPopup(safeName, 'Top Global Ranker', safeInitial, safeExp);
+                    if(window.showUserPopup) el.onclick = () => window.showUserPopup(safeName, 'Top Global Ranker', safeInitial, safeExp);
                     lbContainer.appendChild(el); rank++;
                 }
             });
             if(rank === 1) lbContainer.innerHTML = '<div class="text-center text-xs py-4 text-indigo-200">Belum ada yang aktif bulan ini. Curi start sekarang!</div>';
         } else {
             // TAB CIRCLE
-            const qCircleRank = query(collection(db, "circles"), orderBy("total_exp", "desc"), limit(10));
+            const qCircleRank = query(collection(firestoreDb, "circles"), orderBy("total_exp", "desc"), limit(10));
             const snapshot = await getDocs(qCircleRank);
             lbContainer.innerHTML = ''; let rank = 1;
             
@@ -126,7 +133,7 @@ window.fetchLeaderboard = async function() {
                     </div>
                     <span class="text-[10px] font-black bg-black/30 px-2 py-1 rounded-lg">${safeCExp} EXP</span>`;
                 
-                el.onclick = () => window.showCirclePopup(safeCName, safeCExp, safeCLogo, safeCMotto, safeCMembers);
+                if(window.showCirclePopup) el.onclick = () => window.showCirclePopup(safeCName, safeCExp, safeCLogo, safeCMotto, safeCMembers);
                 lbContainer.appendChild(el); rank++;
             });
             if(rank === 1) lbContainer.innerHTML = '<div class="text-center text-xs py-4 text-indigo-200">Belum ada circle yang terbentuk. Buat yang pertama!</div>';
@@ -149,8 +156,8 @@ window.syncExpToFirebase = (expVal) => {
     syncTimeout = setTimeout(async () => {
         const finalExp = pendingExpSync; pendingExpSync = 0; 
         try { 
-            await updateDoc(doc(db, "users", auth.currentUser.uid), { total_exp: increment(finalExp), monthly_exp: increment(finalExp) });
-            if(window.userCircleId) { await updateDoc(doc(db, "circles", window.userCircleId), { total_exp: increment(finalExp) }); window.fetchCircleData(window.userCircleId); }
+            await updateDoc(doc(firestoreDb, "users", auth.currentUser.uid), { total_exp: increment(finalExp), monthly_exp: increment(finalExp) });
+            if(window.userCircleId) { await updateDoc(doc(firestoreDb, "circles", window.userCircleId), { total_exp: increment(finalExp) }); window.fetchCircleData(window.userCircleId); }
         } catch (e) { console.warn("Firebase sync limit reached, retrying later."); }
     }, 2000); 
 };
@@ -158,15 +165,15 @@ window.syncExpToFirebase = (expVal) => {
 window.syncProfileToFirebase = async () => {
     const user = auth.currentUser; if(!user || user.isAnonymous) return;
     try { 
-        await updateDoc(doc(db, "users", user.uid), { 
+        await updateDoc(doc(firestoreDb, "users", user.uid), { 
             name: nameInputFire ? nameInputFire.value : "Player", 
             bio: bioInputFire ? bioInputFire.value : "", 
             quote: quoteInputFire ? quoteInputFire.value : "" 
         });
+        playerState.name = nameInputFire ? nameInputFire.value : "Player";
     } catch (e) { console.warn("Gagal simpan profil ke cloud"); }
 };
 
-// Listener untuk menyimpan bio dan nama otomatis saat diketik
 if(nameInputFire) nameInputFire.addEventListener('change', window.syncProfileToFirebase);
 if(bioInputFire) bioInputFire.addEventListener('change', window.syncProfileToFirebase);
 if(quoteInputFire) quoteInputFire.addEventListener('change', window.syncProfileToFirebase);
@@ -174,8 +181,8 @@ if(quoteInputFire) quoteInputFire.addEventListener('change', window.syncProfileT
 window.syncStatsToFirebase = async () => {
     const user = auth.currentUser; if(!user || user.isAnonymous) return;
     try { 
-        await updateDoc(doc(db, "users", user.uid), { 
-            statsRadar: window.statsRadar, 
+        await updateDoc(doc(firestoreDb, "users", user.uid), { 
+            statsRadar: playerState.statsRadar, 
             activityHistory: window.activityHistory,
             streakNum: parseInt(localStorage.getItem('streakNum') || 0),
             lastStreakClaim: localStorage.getItem('lastStreakClaim') || ''
@@ -193,10 +200,11 @@ if(btnEditProfile) {
             try {
                 let updateData = { name: newName };
                 if(newPhoto && newPhoto.trim() !== "") updateData.photo = newPhoto;
-                await updateDoc(doc(db, "users", auth.currentUser.uid), updateData);
+                await updateDoc(doc(firestoreDb, "users", auth.currentUser.uid), updateData);
                 
                 if(nameInputFire) nameInputFire.value = newName; 
                 localStorage.setItem('userName', newName);
+                playerState.name = newName;
                 
                 if(updateData.photo) { document.getElementById('avatar-initial').innerHTML = `<img src="${updateData.photo}" class="w-full h-full rounded-full object-cover">`; } 
                 else { document.getElementById('avatar-initial').innerText = newName.charAt(0).toUpperCase(); }
@@ -219,7 +227,7 @@ const selisihMingguGlobal = Math.floor(Math.max(0, todayFB - tglRilisFB) / (1000
 const misiSaatIni = daftarMisiGlobal[selisihMingguGlobal % daftarMisiGlobal.length];
 const nomorMinggu = selisihMingguGlobal + 1; 
 
-const globalMisiRef = doc(db, "global_stats", `misi_minggu_ke_${nomorMinggu}`);
+const globalMisiRef = doc(firestoreDb, "global_stats", `misi_minggu_ke_${nomorMinggu}`);
 window.fetchGlobalProgress = async function() {
     try {
         const docSnap = await getDoc(globalMisiRef);
@@ -265,7 +273,7 @@ const circleCoopQuests = [
 window.fetchCircleData = async (circleId) => {
     if(!circleId) { if(unjoinedUI) unjoinedUI.classList.remove('hidden'); if(joinedUI) joinedUI.classList.add('hidden'); return; }
     try {
-        const snap = await getDoc(doc(db, "circles", circleId));
+        const snap = await getDoc(doc(firestoreDb, "circles", circleId));
         if(snap.exists()) {
             const data = snap.data();
             if(unjoinedUI) unjoinedUI.classList.add('hidden'); 
@@ -282,13 +290,13 @@ window.fetchCircleData = async (circleId) => {
             circleOwnerId = data.created_by; 
 
             let cExp = data.total_exp || 0; let cLvl = 1;
-            while(cExp >= window.getGuildExpRequirement(cLvl)) { cLvl++; }
-            let cExpCurrent = cExp - window.getGuildExpRequirement(cLvl - 1);
-            let cExpNeed = window.getGuildExpRequirement(cLvl) - window.getGuildExpRequirement(cLvl - 1);
+            while(cExp >= (cLvl * 1000)) { cLvl++; } // Simplified Guild Exp Requirement
+            let cExpCurrent = cExp - ((cLvl - 1) * 1000);
+            let cExpNeed = 1000;
             
             document.getElementById('circle-level-display').innerText = `Lv. ${cLvl}`;
             document.getElementById('circle-exp-text').innerText = cExp.toLocaleString('id-ID');
-            document.getElementById('circle-exp-target').innerText = window.getGuildExpRequirement(cLvl).toLocaleString('id-ID');
+            document.getElementById('circle-exp-target').innerText = (cLvl * 1000).toLocaleString('id-ID');
             document.getElementById('circle-exp-bar').style.width = `${(cExpCurrent / cExpNeed) * 100}%`;
 
             if(auth.currentUser?.uid === circleOwnerId) { document.getElementById('btn-edit-circle').classList.remove('hidden'); }
@@ -315,7 +323,7 @@ window.fetchCircleData = async (circleId) => {
             let memberHtml = '';
             for (let uid of data.members) {
                 let isMe = (uid === auth.currentUser?.uid); let isOwner = (uid === circleOwnerId);
-                let userSnap = await getDoc(doc(db, "users", uid));
+                let userSnap = await getDoc(doc(firestoreDb, "users", uid));
                 let uname = userSnap.exists() ? userSnap.data().name : "User Misterius";
                 let kickBtn = '';
                 if (auth.currentUser?.uid === circleOwnerId && !isOwner) { kickBtn = `<button onclick="window.kickMember('${uid}')" class="text-[8px] bg-red-500/80 px-1.5 rounded text-white hover:bg-red-600">Kick</button>`; }
@@ -330,7 +338,7 @@ window.contributeCircleQuest = async function(qId) {
     let amount = parseInt(prompt("Berapa banyak jumlah yang mau disumbangkan dari usahamu hari ini? (Hati-hati, sumbangan palsu dosanya ditanggung sendiri 🗿):", "10"));
     if(!amount || isNaN(amount) || amount <= 0) return;
     try {
-        const circleRef = doc(db, "circles", window.userCircleId);
+        const circleRef = doc(firestoreDb, "circles", window.userCircleId);
         await updateDoc(circleRef, { [`coop_progress.${qId}`]: increment(amount), total_exp: increment(amount * 2) });
         alert("Sumbangan berhasil masuk ke Circle! (+Bonus EXP Guild)");
         window.fetchCircleData(window.userCircleId);
@@ -345,7 +353,7 @@ if(btnEditCircle) {
         if(newLogo || newMotto) {
             let updates = {}; if(newLogo) updates.logo = newLogo; if(newMotto) updates.motto = newMotto;
             try {
-                await updateDoc(doc(db, "circles", window.userCircleId), updates);
+                await updateDoc(doc(firestoreDb, "circles", window.userCircleId), updates);
                 window.fetchCircleData(window.userCircleId);
                 alert("Berhasil mengupdate identitas Circle!");
             } catch(e) { alert("Gagal: " + e.message); }
@@ -356,12 +364,12 @@ if(btnEditCircle) {
 window.kickMember = async (targetUid) => {
     if(!confirm("Tendang member ini dari Circle?")) return;
     try {
-        const circleRef = doc(db, "circles", window.userCircleId);
+        const circleRef = doc(firestoreDb, "circles", window.userCircleId);
         const circleSnap = await getDoc(circleRef);
         let currentMembers = circleSnap.data().members;
         let newMembers = currentMembers.filter(id => id !== targetUid);
         await updateDoc(circleRef, { members: newMembers });
-        await updateDoc(doc(db, "users", targetUid), { circle_id: null });
+        await updateDoc(doc(firestoreDb, "users", targetUid), { circle_id: null });
         alert("Member berhasil di-kick!"); window.fetchCircleData(window.userCircleId);
     } catch(e) { alert("Error kick: " + e.message); }
 };
@@ -371,12 +379,12 @@ if(btnLeaveCircle) {
     btnLeaveCircle.addEventListener('click', async () => {
         if(!confirm("Yakin ingin keluar dari Circle ini? EXP yang sudah disumbangkan tidak bisa ditarik lho!")) return;
         try {
-            const circleRef = doc(db, "circles", window.userCircleId);
+            const circleRef = doc(firestoreDb, "circles", window.userCircleId);
             const circleSnap = await getDoc(circleRef);
             let currentMembers = circleSnap.data().members;
             let newMembers = currentMembers.filter(id => id !== auth.currentUser.uid);
             await updateDoc(circleRef, { members: newMembers });
-            await updateDoc(doc(db, "users", auth.currentUser.uid), { circle_id: null });
+            await updateDoc(doc(firestoreDb, "users", auth.currentUser.uid), { circle_id: null });
             window.userCircleId = null; alert("Berhasil keluar dari Circle."); window.fetchCircleData(null);
         } catch(e) { alert("Error: " + e.message); }
     });
@@ -386,41 +394,41 @@ const btnCreateCircle = document.getElementById('btn-create-circle');
 if(btnCreateCircle) {
     btnCreateCircle.addEventListener('click', async () => {
         if(!auth.currentUser || auth.currentUser.isAnonymous) return alert("⚠️ Tautkan akun Google-mu dulu di tab Stats untuk buat Circle!");
-        let userLevel = Math.floor(window.totalExp / 100) + 1;
-        let userStreak = parseInt(localStorage.getItem('streakNum') || 0);
         
-        if (userLevel < 5) return alert("Sabar Bos! Minimal Level 5 buat jadi Ketua Circle. Grinding EXP dulu ya.");
+        let levelInfo = calculateLevelInfo(playerState.exp);
+        if (levelInfo.level < 5) return alert("Sabar Bos! Minimal Level 5 buat jadi Ketua Circle. Grinding EXP dulu ya.");
+        
+        let userStreak = parseInt(localStorage.getItem('streakNum') || 0);
         if (userStreak < 3) return alert("Imam harus istiqomah! Buktikan Streak 🔥 3 hari berturut-turut dulu.");
-        if (window.totalKoin < 500) return alert("Saldo koin kurang! Butuh 500 Koin untuk mahar bangun markas Circle.");
+        
+        if (playerState.koin < 500) return alert("Saldo koin kurang! Butuh 500 Koin untuk mahar bangun markas Circle.");
 
-        // FIX TOKO: Cek Tiket Pendiri
-        const tiketPendiri = window.inventory && window.inventory['item_guild'] ? window.inventory['item_guild'] : 0;
+        const tiketPendiri = playerState.inventory && playerState.inventory['item_guild'] ? playerState.inventory['item_guild'] : 0;
         if (tiketPendiri < 1) return alert("⚠️ Kamu butuh item 'Tiket Pendiri' dari Toko Flexing untuk membuat Circle baru!");
 
         const circleName = prompt("Masukkan Nama Circle (Misal: Pejuang Subuh Jaksel):");
         if(!circleName) return;
         
-        window.totalKoin -= 500; 
-        window.inventory['item_guild'] -= 1; // Kurangi tiket setelah dipakai
+        // POTONG KOIN & ITEM MELALUI STATE
+        playerState.koin -= 500; 
+        playerState.inventory['item_guild'] -= 1; 
         
-        localStorage.setItem('totalKoin', window.totalKoin);
-        localStorage.setItem('inventory', JSON.stringify(window.inventory));
+        localStorage.setItem('totalKoin', playerState.koin);
+        localStorage.setItem('inventory', JSON.stringify(playerState.inventory));
         
-        const koinDisp = document.getElementById('koin-display');
-        if(koinDisp) koinDisp.innerText = window.totalKoin;
-        
-        if(typeof window.renderShop === 'function') window.renderShop(); // Refresh UI toko
+        // PERINTAHKAN UI UNTUK UPDATE
+        document.dispatchEvent(new CustomEvent('stateUpdated', { detail: playerState }));
 
         const inviteCode = Math.random().toString(36).substring(2, 8).toUpperCase();
         const newCircleId = `circle_${Date.now()}`;
         
         try {
-            await setDoc(doc(db, "circles", newCircleId), { name: circleName, invite_code: inviteCode, members: [auth.currentUser.uid], total_exp: 0, created_by: auth.currentUser.uid });
-            await updateDoc(doc(db, "users", auth.currentUser.uid), { circle_id: newCircleId, koin: window.totalKoin, totalKoin: window.totalKoin, inventory: window.inventory });
+            await setDoc(doc(firestoreDb, "circles", newCircleId), { name: circleName, invite_code: inviteCode, members: [auth.currentUser.uid], total_exp: 0, created_by: auth.currentUser.uid });
+            await updateDoc(doc(firestoreDb, "users", auth.currentUser.uid), { circle_id: newCircleId, koin: playerState.koin, totalKoin: playerState.koin, inventory: playerState.inventory });
             window.userCircleId = newCircleId;
             alert(`Berhasil! Circle "${circleName}" aktif. Saldo terpotong 500 Koin & 1 Tiket Pendiri.\nKode Invite: ${inviteCode}\nBagikan kode ini ke temanmu!`);
             window.fetchCircleData(newCircleId);
-            if(window.pushToLiveFeed) window.pushToLiveFeed(circleName, 'Markas baru telah didirikan!', 'circle_update');
+            if(window.pushToLiveFeed) window.pushToLiveFeed(circleName, 'Markas baru telah didirikan!', 'circle_update', 0);
         } catch(e) { alert("Gagal: " + e.message); }
     });
 }
@@ -433,7 +441,7 @@ if(btnJoinCircle) {
         if(!code) return;
 
         try {
-            const q = query(collection(db, "circles"), where("invite_code", "==", code.toUpperCase()));
+            const q = query(collection(firestoreDb, "circles"), where("invite_code", "==", code.toUpperCase()));
             const querySnapshot = await getDocs(q);
             if(querySnapshot.empty) return alert("Waduh, Circle tidak ditemukan! Cek lagi kodenya.");
          
@@ -443,8 +451,8 @@ if(btnJoinCircle) {
             if(circleData.members.length >= 10) return alert("Circle ini sudah penuh (Max 10)!");
             if(circleData.members.includes(auth.currentUser.uid)) return alert("Kamu sudah gabung di sini!");
          
-            await updateDoc(doc(db, "circles", foundCircleId), { members: arrayUnion(auth.currentUser.uid) });
-            await updateDoc(doc(db, "users", auth.currentUser.uid), { circle_id: foundCircleId });
+            await updateDoc(doc(firestoreDb, "circles", foundCircleId), { members: arrayUnion(auth.currentUser.uid) });
+            await updateDoc(doc(firestoreDb, "users", auth.currentUser.uid), { circle_id: foundCircleId });
             window.userCircleId = foundCircleId;
             alert(`Mantap! Berhasil gabung ke Circle "${circleData.name}"!`);
             window.fetchCircleData(foundCircleId);
@@ -460,7 +468,7 @@ async function requestNotificationPermission() {
         if (permission === 'granted') {
             const token = await getToken(messaging, { vapidKey: 'GANTI_DENGAN_VAPID_KEY_FIREBASE_KAMU' });
             if (token) {
-                if(auth.currentUser && !auth.currentUser.isAnonymous) { await updateDoc(doc(db, "users", auth.currentUser.uid), { fcmToken: token }); }
+                if(auth.currentUser && !auth.currentUser.isAnonymous) { await updateDoc(doc(firestoreDb, "users", auth.currentUser.uid), { fcmToken: token }); }
                 btnEnableNotif.classList.add('hidden'); alert("Alhamdulillah, Pengingat Ibadah diaktifkan!");
             }
         } else { alert("Akses notifikasi ditolak."); }
@@ -501,7 +509,7 @@ onAuthStateChanged(auth, async (user) => {
         if(user.uid === "UID_ADMIN_KAMU_DISINI" && btnAdminReset) { btnAdminReset.classList.remove('hidden'); btnAdminReset.classList.add('block'); }
         if(Notification.permission !== 'granted' && btnEnableNotif) btnEnableNotif.classList.remove('hidden');
 
-        const userRef = doc(db, "users", user.uid);
+        const userRef = doc(firestoreDb, "users", user.uid);
         const docSnap = await getDoc(userRef);
         const currentMonthStr = `${window.today ? window.today.getMonth() + 1 : new Date().getMonth() + 1}-${window.today ? window.today.getFullYear() : new Date().getFullYear()}`;
      
@@ -512,10 +520,10 @@ onAuthStateChanged(auth, async (user) => {
             let defaultName = user.displayName || "User";
             await setDoc(userRef, {
                 name: defaultName, photo: user.photoURL || "", bio: "", quote: "",
-                koin: window.totalKoin, totalKoin: window.totalKoin, total_exp: window.totalExp,
-                monthly_exp: window.totalExp, unlockedItems: window.unlockedItems, inventory: window.inventory,
-                equippedItems: window.equippedItems || { tasbih_skin: 'tasbih_kayu', name_fx: null, aura: null }, // <--- DI SINI
-                statsRadar: window.statsRadar, activityHistory: window.activityHistory,
+                koin: playerState.koin, totalKoin: playerState.koin, total_exp: playerState.exp,
+                monthly_exp: playerState.exp, unlockedItems: playerState.unlockedItems, inventory: playerState.inventory,
+                equippedItems: playerState.equippedItems || { tasbih_skin: 'tasbih_kayu', name_fx: null, aura: null },
+                statsRadar: playerState.statsRadar, activityHistory: window.activityHistory,
                 streakNum: parseInt(localStorage.getItem('streakNum') || 0), 
                 lastStreakClaim: localStorage.getItem('lastStreakClaim') || '', 
                 circle_id: null, last_reset_month: currentMonthStr 
@@ -523,6 +531,8 @@ onAuthStateChanged(auth, async (user) => {
             
             if(nameInputFire) nameInputFire.value = defaultName; 
             localStorage.setItem('userName', defaultName);
+            playerState.name = defaultName;
+            
             if(user.photoURL) { document.getElementById('avatar-initial').innerHTML = `<img src="${user.photoURL}" class="w-full h-full rounded-full object-cover">`; }
         } else {
             const data = docSnap.data();
@@ -531,6 +541,7 @@ onAuthStateChanged(auth, async (user) => {
             let customName = data.name || user.displayName || "User";
             if(nameInputFire) nameInputFire.value = customName; 
             localStorage.setItem('userName', customName);
+            playerState.name = customName;
             
             if(bioInputFire) bioInputFire.value = data.bio || "";
             if(quoteInputFire) quoteInputFire.value = data.quote || "";
@@ -539,30 +550,19 @@ onAuthStateChanged(auth, async (user) => {
                 document.getElementById('avatar-initial').innerHTML = `<img src="${data.photo}" class="w-full h-full rounded-full object-cover" onerror="this.style.display='none'; this.parentNode.innerText='${customName.charAt(0).toUpperCase()}'">`;
             } else { document.getElementById('avatar-initial').innerText = customName.charAt(0).toUpperCase(); }
             
-            // 2. Tarik Data Toko dan Koin (DIUBAH DI SINI)
-            window.totalExp = data.total_exp || window.totalExp; 
-            window.totalKoin = data.totalKoin !== undefined ? data.totalKoin : (data.koin || window.totalKoin);
-            window.unlockedItems = data.unlockedItems || data.unlocked_items || window.unlockedItems || [];
-            window.inventory = data.inventory || window.inventory || {};
-            // 👇 MENARIK BARANG YANG DIPAKAI
-            window.equippedItems = data.equippedItems || window.equippedItems || { tasbih_skin: 'tasbih_kayu', name_fx: null, aura: null };
+            // 2. Tarik Data Toko dan Koin (LANGSUNG KE BRANKAS STATE.JS)
+            playerState.exp = data.total_exp || playerState.exp; 
+            playerState.koin = data.totalKoin !== undefined ? data.totalKoin : (data.koin || playerState.koin);
+            playerState.unlockedItems = data.unlockedItems || data.unlocked_items || playerState.unlockedItems || [];
+            playerState.inventory = data.inventory || playerState.inventory || {};
+            playerState.equippedItems = data.equippedItems || playerState.equippedItems || { tasbih_skin: 'tasbih_kayu', name_fx: null, aura: null };
 
-            localStorage.setItem('totalExp', window.totalExp); 
-            localStorage.setItem('totalKoin', window.totalKoin);
-            localStorage.setItem('unlockedItems', JSON.stringify(window.unlockedItems));
-            localStorage.setItem('inventory', JSON.stringify(window.inventory));
-            // 👇 MENYIMPAN EQUIPPED ITEMS KE LOKAL
-            localStorage.setItem('equippedItems', JSON.stringify(window.equippedItems));
+            localStorage.setItem('totalExp', playerState.exp); 
+            localStorage.setItem('totalKoin', playerState.koin);
+            localStorage.setItem('unlockedItems', JSON.stringify(playerState.unlockedItems));
+            localStorage.setItem('inventory', JSON.stringify(playerState.inventory));
+            localStorage.setItem('equippedItems', JSON.stringify(playerState.equippedItems));
             
-            const koinDisp = document.getElementById('koin-display');
-            if(koinDisp) koinDisp.innerText = window.totalKoin;
-            const shopKoinDisp = document.getElementById('shop-koin-display');
-            if(shopKoinDisp) shopKoinDisp.innerText = window.totalKoin.toLocaleString('id-ID');
-
-            if(typeof window.renderShop === 'function') window.renderShop();
-            if(typeof window.renderFeaturedItems === 'function') window.renderFeaturedItems();
-            if(typeof window.updateStatsUI === 'function') window.updateStatsUI();
-
             // 3. Tarik Data Streak
             if (data.streakNum !== undefined) {
                 window.streakNum = data.streakNum;
@@ -576,15 +576,13 @@ onAuthStateChanged(auth, async (user) => {
             
             // 4. Tarik Data Grafik / Radar
             if(data.statsRadar) {
-                let localTotal = Object.values(window.statsRadar).reduce((a, b) => a + b, 0);
+                let localTotal = Object.values(playerState.statsRadar).reduce((a, b) => a + b, 0);
                 let cloudTotal = Object.values(data.statsRadar).reduce((a, b) => a + b, 0);
                 
                 if(cloudTotal >= localTotal) {
-                    window.statsRadar = data.statsRadar; 
+                    playerState.statsRadar = data.statsRadar; 
                     localStorage.setItem('statsRadar', JSON.stringify(data.statsRadar));
                 } else { window.syncStatsToFirebase(); }
-                if(window.renderCharts) window.renderCharts();
-                if(window.updateBadges) window.updateBadges();
             }
             
             if(data.activityHistory) {
@@ -603,6 +601,9 @@ onAuthStateChanged(auth, async (user) => {
 
             // 6. Tarik Data Circle
             if(data.circle_id) { window.userCircleId = data.circle_id; window.fetchCircleData(window.userCircleId); }
+
+            // 🔥 TRIGGER MAGISNYA DI SINI: Update seluruh UI setelah data ditarik!
+            document.dispatchEvent(new CustomEvent('stateUpdated', { detail: playerState }));
         }
      
         window.fetchLeaderboard(); window.fetchGlobalProgress();
@@ -652,13 +653,13 @@ window.saveShopDataToFirebase = async function() {
         return;
     }
     try {
-        const userRef = doc(db, "users", auth.currentUser.uid);
+        const userRef = doc(firestoreDb, "users", auth.currentUser.uid);
         await updateDoc(userRef, {
-            totalKoin: window.totalKoin,
-            koin: window.totalKoin, // backup format lama
-            unlockedItems: window.unlockedItems,
-            inventory: window.inventory,
-            equippedItems: window.equippedItems // Menyimpan status barang yang dipakai
+            totalKoin: playerState.koin,
+            koin: playerState.koin, // backup format lama
+            unlockedItems: playerState.unlockedItems,
+            inventory: playerState.inventory,
+            equippedItems: playerState.equippedItems // Menyimpan status barang yang dipakai
         });
         console.log("Transaksi toko & perlengkapan berhasil diamankan ke Cloud!");
     } catch (error) {
